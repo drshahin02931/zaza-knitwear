@@ -176,9 +176,148 @@
     input:checked + .slider {
       background-color: var(--accent-neon);
     }
-    input:checked + .slider:before {
-      transform: translateX(24px);
-      background-color: #000;
+    /* Custom Chic Confirmation Modal */
+    .confirm-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 4, 6, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 20px;
+    }
+
+    .confirm-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .confirm-modal-card {
+      background: #111116;
+      border: 1.5px solid rgba(255, 77, 77, 0.45);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 77, 77, 0.22);
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 28px;
+      text-align: center;
+      transform: scale(0.92) translateY(12px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .confirm-modal-overlay.active .confirm-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .confirm-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255, 77, 77, 0.12);
+      border: 1.5px solid #FF4D4D;
+      color: #FF4D4D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 18px;
+      box-shadow: 0 0 20px rgba(255, 77, 77, 0.35);
+    }
+
+    .confirm-modal-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+
+    .confirm-modal-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .confirm-target-box {
+      background: #09090C;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .confirm-order-pill {
+      font-weight: 900;
+      color: var(--accent-neon);
+      font-size: 0.95rem;
+    }
+
+    .confirm-order-sub {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .confirm-modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .confirm-btn-cancel {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .confirm-btn-cancel:hover {
+      background: #1C1C24;
+      color: #FFFFFF;
+    }
+
+    .confirm-btn-danger {
+      flex: 1.2;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      background: #FF3B30;
+      border: none;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(255, 59, 48, 0.45);
+      transition: all var(--transition-fast);
+    }
+
+    .confirm-btn-danger:hover {
+      background: #E02E24;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(255, 59, 48, 0.6);
     }
   </style>
 </head>
@@ -470,7 +609,39 @@
       </form>
     </section>
 
-  </main>
+  <!-- Custom Chic Confirmation Modal (Replaces Browser Popup) -->
+  <div class="confirm-modal-overlay" id="customConfirmModal">
+    <div class="confirm-modal-card">
+      <div class="confirm-icon-wrap" id="confirmModalIcon">
+        <i class="fa-solid fa-trash-can"></i>
+      </div>
+      <h3 class="confirm-modal-title" id="confirmModalTitle">Delete Order?</h3>
+      <p class="confirm-modal-desc" id="confirmModalDesc">
+        Are you sure you want to permanently remove this order from the system? This action cannot be reversed.
+      </p>
+      
+      <div class="confirm-target-box" id="confirmTargetBox" style="display:none;">
+        <span class="confirm-order-pill" id="confirmOrderBadge">#ZAZA-8380</span>
+        <span class="confirm-order-sub" id="confirmOrderDetails">Omar Bahaa • 1,190 EGP</span>
+      </div>
+
+      <div class="confirm-modal-actions">
+        <button type="button" class="confirm-btn-cancel" onclick="closeCustomConfirmModal()">
+          Cancel
+        </button>
+        <button type="button" class="confirm-btn-danger" id="confirmModalActionBtn">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Delete Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
+    <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
+    <span id="toastText">Action completed successfully!</span>
+  </div>
 
   <!-- Supabase Cloud Database Client -->
   <script src="supabase-client.js"></script>
@@ -712,27 +883,82 @@
       }
     }
 
+    // --- CHIC CUSTOM CONFIRMATION MODAL LOGIC ---
+    let pendingConfirmAction = null;
+
+    function showCustomConfirm({ title, desc, badge, details, dangerText, onConfirm }) {
+      document.getElementById('confirmModalTitle').textContent = title || 'Confirm Action';
+      document.getElementById('confirmModalDesc').textContent = desc || 'Are you sure you want to proceed?';
+      
+      const targetBox = document.getElementById('confirmTargetBox');
+      if (badge || details) {
+        targetBox.style.display = 'flex';
+        document.getElementById('confirmOrderBadge').textContent = badge || '';
+        document.getElementById('confirmOrderDetails').textContent = details || '';
+      } else {
+        targetBox.style.display = 'none';
+      }
+
+      const actionBtn = document.getElementById('confirmModalActionBtn');
+      actionBtn.querySelector('span').textContent = dangerText || 'Delete Now';
+
+      pendingConfirmAction = onConfirm;
+      document.getElementById('customConfirmModal').classList.add('active');
+    }
+
+    function closeCustomConfirmModal() {
+      document.getElementById('customConfirmModal').classList.remove('active');
+      pendingConfirmAction = null;
+    }
+
+    document.getElementById('confirmModalActionBtn').addEventListener('click', () => {
+      if (pendingConfirmAction) {
+        pendingConfirmAction();
+      }
+      closeCustomConfirmModal();
+    });
+
+    // Close on backdrop click
+    document.getElementById('customConfirmModal').addEventListener('click', (e) => {
+      if (e.target.id === 'customConfirmModal') closeCustomConfirmModal();
+    });
+
     function deleteOrder(orderId) {
-      if (!confirm(`Are you sure you want to permanently delete Order #${orderId}?`)) return;
+      const orders = getOrders();
+      const ord = orders.find(o => o.id === orderId);
+      const custInfo = ord ? `${ord.customerName} • ${ord.total} EGP` : '';
 
-      let orders = getOrders();
-      orders = orders.filter(o => o.id !== orderId);
-      saveOrders(orders);
+      showCustomConfirm({
+        title: 'Delete Order?',
+        desc: 'Are you sure you want to permanently delete this order? It will be removed from your dashboard and database.',
+        badge: `#${orderId}`,
+        details: custInfo,
+        dangerText: 'Delete Order',
+        onConfirm: () => {
+          let updated = getOrders().filter(o => o.id !== orderId);
+          saveOrders(updated);
 
-      if (window.ZAZA_DB) window.ZAZA_DB.deleteOrder(orderId);
-      fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' }).catch(() => {});
+          if (window.ZAZA_DB) window.ZAZA_DB.deleteOrder(orderId);
+          fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' }).catch(() => {});
 
-      loadAdminData();
-      showToast(`Order #${orderId} removed from dashboard! 🗑️`);
+          loadAdminData();
+          showToast(`Order #${orderId} deleted permanently! 🗑️`);
+        }
+      });
     }
 
     function clearAllOrders() {
-      if (!confirm('Are you sure you want to delete ALL orders from the dashboard? This action cannot be undone.')) return;
-
-      saveOrders([]);
-      if (window.ZAZA_DB) window.ZAZA_DB.clearAllOrders();
-      loadAdminData();
-      showToast('All orders cleared! Dashboard reset 🧹');
+      showCustomConfirm({
+        title: 'Clear All Orders?',
+        desc: 'Are you sure you want to delete ALL orders from the dashboard? This action cannot be undone.',
+        dangerText: 'Clear Everything',
+        onConfirm: () => {
+          saveOrders([]);
+          if (window.ZAZA_DB) window.ZAZA_DB.clearAllOrders();
+          loadAdminData();
+          showToast('All orders cleared! Dashboard reset 🧹');
+        }
+      });
     }
 
     function addSimulatedOrder() {
