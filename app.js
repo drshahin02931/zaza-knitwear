@@ -122,10 +122,37 @@ const BASE_PRODUCTS = [
   }
 ];
 
-// Helper to get all products including admin added ones
+// Helper to get all products including database and admin added ones
+let dbProducts = null;
+
 function getAllProducts() {
+  if (dbProducts && dbProducts.length > 0) {
+    return dbProducts;
+  }
   const custom = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
   return [...custom, ...BASE_PRODUCTS];
+}
+
+async function fetchProductsFromDatabase() {
+  try {
+    const res = await fetch('/api/products');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        dbProducts = data.map(p => ({
+          ...p,
+          oldPrice: p.old_price,
+          categoryName: p.category_name,
+          reviewsCount: p.reviews_count,
+          colors: typeof p.colors === 'string' ? JSON.parse(p.colors) : p.colors,
+          sizes: typeof p.sizes === 'string' ? JSON.parse(p.sizes) : p.sizes
+        }));
+        renderProducts();
+      }
+    }
+  } catch (err) {
+    // Graceful offline fallback
+  }
 }
 
 // --- 2. SAMPLE ORDERS FOR ADMIN DASHBOARD ---
@@ -207,6 +234,7 @@ let activeModalProduct = null;
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderProducts();
+  fetchProductsFromDatabase();
   updateCartUI();
   setupEventListeners();
   initSpecialOfferCountdown();
@@ -830,6 +858,13 @@ function handleCheckoutSubmit(e) {
   let orders = JSON.parse(localStorage.getItem('zaza_orders')) || [];
   orders.unshift(newOrder);
   localStorage.setItem('zaza_orders', JSON.stringify(orders));
+
+  // Sync order to Supabase PostgreSQL database
+  fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newOrder)
+  }).then(() => console.log('Order saved to Supabase')).catch(() => {});
 
   // Clear cart
   cart = [];

@@ -437,9 +437,25 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Description & Material Specs *</label>
-          <textarea id="newProdDesc" rows="2" required placeholder="Describe the knit texture, compatibility, and features..."></textarea>
+        <!-- Product Photo Upload with Live Compression & Preview -->
+        <div class="form-grid-2" style="align-items: center; background: rgba(132, 255, 0, 0.04); padding: 16px; border-radius: var(--radius-md); border: 1px dashed var(--border-neon); margin-bottom: 20px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label><i class="fa-solid fa-camera" style="color:var(--accent-neon);"></i> Product Photo (Auto-Compressed for Ultra-Fast Loading) *</label>
+            <input type="file" id="newProdImageInput" accept="image/*" onchange="handleNewProductImageUpload(event)" style="padding: 8px;">
+            <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:4px;">
+              ⚡ Any photo you upload will be compressed automatically to ~35KB so it loads instantly on phone & desktop!
+            </span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="width:75px; height:75px; border-radius:12px; overflow:hidden; border:2px solid var(--accent-neon); background:#000; flex-shrink:0;">
+              <img id="newProdImagePreview" src="images/neon_cat_helmet.jpg" alt="Product Preview" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">Photo Status: <span id="newProdPhotoStatus" style="color:var(--accent-neon);">Ready ✓</span></div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Will appear in store catalog</div>
+            </div>
+          </div>
         </div>
 
         <div style="display:flex; justify-content:flex-end;">
@@ -706,6 +722,47 @@
       showToast('Simulated rider order added! ⚡');
     }
 
+    let currentNewProductImageData = 'images/neon_cat_helmet.jpg';
+
+    function handleNewProductImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 520;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          currentNewProductImageData = compressedDataUrl;
+          document.getElementById('newProdImagePreview').src = compressedDataUrl;
+
+          const sizeKb = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
+          document.getElementById('newProdPhotoStatus').textContent = `Ultra-Light (${sizeKb} KB) ✓`;
+          showToast(`Photo optimized to ${sizeKb} KB for instant loading! ⚡`);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function handleAddNewProduct(e) {
       e.preventDefault();
       const title = document.getElementById('newProdTitle').value.trim();
@@ -714,7 +771,6 @@
       const oldPrice = parseInt(document.getElementById('newProdOldPrice').value, 10) || price + 150;
       const desc = document.getElementById('newProdDesc').value.trim();
 
-      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
       const newProduct = {
         id: 'zaza-custom-' + Date.now(),
         title: title,
@@ -726,16 +782,27 @@
         tagType: 'tag-hot',
         rating: 5.0,
         reviewsCount: 1,
-        image: 'images/neon_cat_helmet.jpg',
+        image: currentNewProductImageData,
         description: desc,
-        colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: 'images/neon_cat_helmet.jpg' }],
+        colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: currentNewProductImageData }],
         sizes: ['Universal Stretch']
       };
 
+      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
       customProducts.unshift(newProduct);
       localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
 
+      // Sync to Supabase Database API
+      fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      }).then(() => console.log('Synced product to database')).catch(() => {});
+
       document.getElementById('addProductForm').reset();
+      currentNewProductImageData = 'images/neon_cat_helmet.jpg';
+      document.getElementById('newProdImagePreview').src = 'images/neon_cat_helmet.jpg';
+      document.getElementById('newProdPhotoStatus').textContent = 'Ready ✓';
       showToast('New gear published to live store! 🚀');
     }
 
