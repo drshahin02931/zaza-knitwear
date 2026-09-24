@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAZA X | Admin Control Center & Order Fulfillment</title>
+  
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .admin-body {
+      background-color: #070709;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-nav {
+      background: #0D0D12;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-main-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      width: 100%;
+    }
+
+    .admin-badge {
+      background: rgba(132, 255, 0, 0.15);
+      color: var(--accent-neon);
+      border: 1px solid var(--accent-neon);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(132, 255, 0, 0.3);
+    }
+
+    .admin-card-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab-btn {
+      padding: 7px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-tab-btn:hover {
+      color: var(--accent-neon);
+      border-color: var(--accent-neon);
+    }
+
+    .filter-tab-btn.active {
+      background: var(--accent-neon);
+      color: #000;
+      border-color: var(--accent-neon);
+      box-shadow: 0 0 12px rgba(132, 255, 0, 0.3);
+    }
+
+    /* Pin Lock Screen */
+    #adminLockScreen {
+      position: fixed;
+      inset: 0;
+      background: #0A0A0C;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lock-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg), 0 0 35px rgba(132, 255, 0, 0.15);
+    }
+
+    .lock-pin-input {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 1.2rem;
+      text-align: center;
+      letter-spacing: 6px;
+      color: var(--accent-neon);
+      margin: 20px 0;
+      font-weight: 800;
+    }
+
+    .lock-pin-input:focus {
+      border-color: var(--accent-neon);
+      box-shadow: 0 0 16px rgba(132, 255, 0, 0.3);
+    }
+
+    /* Switch toggle */
+    .switch-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #262630;
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid var(--border-subtle);
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 20px; width: 20px; left: 4px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--accent-neon);
+    }
+    input:checked + .slider:before {
+      transform: translateX(24px);
+      background-color: #000;
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- ========================================================================
+       SECURITY PIN LOCK SCREEN
+       ======================================================================== -->
+  <div id="adminLockScreen">
+    <div class="lock-box">
+      <div style="width:64px; height:64px; border-radius:18px; border:2px solid var(--accent-neon); margin:0 auto 18px; overflow:hidden; box-shadow:0 0 20px rgba(132, 255, 0, 0.35);">
+        <img src="images/zaza_logo.jpg" alt="ZAZA Logo" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <h2 style="font-size:1.5rem; font-weight:900; color:#FFFFFF; margin-bottom:6px;">ZAZA X ADMIN ACCESS</h2>
+      <p style="color:var(--text-secondary); font-size:0.85rem;">Enter store master PIN to access the management portal</p>
+      
+      <form id="pinForm" onsubmit="event.preventDefault(); verifyPin();">
+        <input type="password" id="pinInput" class="lock-pin-input" placeholder="••••" maxlength="6" autofocus>
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px;">
+          <i class="fa-solid fa-lock-open"></i> Unlock Dashboard
+        </button>
+      </form>
+      <div id="pinError" style="color:#FF4D4D; font-size:0.8rem; margin-top:12px; display:none;">Incorrect PIN. (Default PIN: 1234)</div>
+      
+      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border-subtle);">
+        <a href="index.html" style="font-size:0.84rem; color:var(--text-muted); text-decoration:underline;">
+          <i class="fa-solid fa-arrow-left"></i> Return to Live Customer Store
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       ADMIN TOP NAVIGATION
+       ======================================================================== -->
+  <header class="admin-nav">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="admin.html" style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; overflow:hidden; border:1.5px solid var(--accent-neon);">
+          <img src="images/zaza_logo.jpg" alt="ZAZA Logo" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <h1 style="font-size:1.3rem; font-weight:900; color:#FFF; font-family:var(--font-display);">
+          ZAZA <span style="color:var(--accent-neon);">X</span>
+        </h1>
+      </a>
+      <span class="admin-badge">PORTAL /admin</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="btn-outline" onclick="addSimulatedOrder()" style="padding:8px 16px; font-size:0.82rem;">
+        <i class="fa-solid fa-plus" style="color:var(--accent-neon);"></i> Add Test Order
+      </button>
+
+      <a href="index.html" target="_blank" class="btn-primary" style="padding:8px 18px; font-size:0.82rem;">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        <span>View Live Store</span>
+      </a>
+
+      <button onclick="lockPortal()" class="action-btn" style="padding:8px 14px; font-size:0.82rem;" title="Lock Session">
+        <i class="fa-solid fa-lock"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN DASHBOARD BODY
+       ======================================================================== -->
+  <main class="admin-main-wrap">
+    
+    <!-- KPI Metrics Grid -->
+    <div class="admin-kpi-grid" style="margin-bottom: 28px;">
+      <div class="admin-kpi-card" style="border-left: 3px solid var(--accent-neon);">
+        <div class="kpi-title">Delivered Net Revenue</div>
+        <div class="kpi-val" id="adminRevenue" style="color:var(--accent-neon);">0 EGP</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Collected cash on delivery</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 3px solid #FFFFFF;">
+        <div class="kpi-title">Total Orders Received</div>
+        <div class="kpi-val" id="adminTotalCount">0</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">All time customer checkouts</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 3px solid #FFA500;">
+        <div class="kpi-title">Currently in Handcrafting</div>
+        <div class="kpi-val" id="adminCraftingCount" style="color:#FFA500;">0</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">In knitting & preparation</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 3px solid var(--accent-neon);">
+        <div class="kpi-title">Pending COD Collections</div>
+        <div class="kpi-val" id="adminPendingCod" style="color:var(--accent-neon);">0 EGP</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Cash to collect by couriers</div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         FEATURE 1: SPECIAL OFFER & FLASH DEAL MANAGER WITH TIMER
+         ==================================================================== -->
+    <section class="admin-card-section" style="border: 2px solid var(--border-neon); box-shadow: 0 0 25px rgba(132, 255, 0, 0.15);">
+      <div class="card-header-flex">
+        <div>
+          <h3 style="font-size:1.35rem; font-weight:900; color:#FFFFFF; display:flex; align-items:center; gap:10px;">
+            <i class="fa-solid fa-bolt" style="color:var(--accent-neon);"></i>
+            <span>Flash Deal & Special Offer Manager</span>
+          </h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Configure the live countdown banner, special deal pricing, and lightweight product photos</p>
+        </div>
+
+        <div class="switch-wrap">
+          <span style="font-size:0.88rem; font-weight:800; color:#FFFFFF;" id="offerStatusLabel">Offer is ACTIVE</span>
+          <label class="switch">
+            <input type="checkbox" id="offerActiveToggle" checked onchange="toggleOfferStatus(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <form id="specialOfferForm" onsubmit="handleSaveSpecialOffer(event)">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Offer Headline / Title *</label>
+            <input type="text" id="offerTitleInput" required value="MIDNIGHT CYBER RIDER FLASH SALE">
+          </div>
+          <div class="form-group">
+            <label>Offer Subtitle / Pitch *</label>
+            <input type="text" id="offerSubtitleInput" required value="Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Special Deal Price (EGP) *</label>
+            <input type="number" id="offerPriceInput" required value="590">
+          </div>
+          <div class="form-group">
+            <label>Original Price (EGP) *</label>
+            <input type="number" id="offerOldPriceInput" required value="890">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Offer Expiration Date & Time (Countdown Timer End) *</label>
+            <input type="datetime-local" id="offerEndTimeInput" required>
+          </div>
+          <div class="form-group">
+            <label>Discount Badge Text</label>
+            <input type="text" id="offerBadgeInput" value="-34% OFF • LIMITED UNITS">
+          </div>
+        </div>
+
+        <!-- Image Upload with Auto-Compression -->
+        <div class="form-grid-2" style="align-items: center;">
+          <div class="form-group">
+            <label>Upload Offer Product Photo (Auto-Compressed for Ultra-Fast Loading) *</label>
+            <input type="file" id="offerImageFileInput" accept="image/*" onchange="handleOfferImageUpload(event)" style="padding:8px;">
+            <span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+              ⚡ Images are automatically compressed to ~35KB so your site loads lightning fast!
+            </span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="width:75px; height:75px; border-radius:12px; overflow:hidden; border:2px solid var(--accent-neon); background:#000;">
+              <img id="offerImagePreview" src="images/neon_cat_helmet.jpg" alt="Offer Preview" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">Photo Status: <span id="photoStatusText" style="color:var(--accent-neon);">Optimized (38 KB)</span></div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Ready to show on live storefront</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+          <button type="submit" class="btn-primary" style="padding:13px 32px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save & Publish Flash Deal
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Orders Table Section -->
+    <section class="admin-card-section">
+      <div class="card-header-flex">
+        <div>
+          <h3 style="font-size:1.25rem; font-weight:800; color:#FFFFFF; margin-bottom:4px;">
+            <i class="fa-solid fa-list-check" style="color:var(--accent-neon); margin-right:8px;"></i>
+            Cash on Delivery Orders
+          </h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Manage incoming orders, update stages, and contact riders directly</p>
+        </div>
+
+        <!-- Filter Status Tabs -->
+        <div class="filter-tabs">
+          <button class="filter-tab-btn active" onclick="filterOrderStatus('all', this)">All Orders</button>
+          <button class="filter-tab-btn" onclick="filterOrderStatus('new', this)">🟡 New</button>
+          <button class="filter-tab-btn" onclick="filterOrderStatus('crafting', this)">🔵 Crafting</button>
+          <button class="filter-tab-btn" onclick="filterOrderStatus('shipping', this)">🟣 In Delivery</button>
+          <button class="filter-tab-btn" onclick="filterOrderStatus('delivered', this)">🟢 Delivered</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto; border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer / Rider</th>
+              <th>Destination Address</th>
+              <th>Gear & Specs</th>
+              <th>Total Amount (COD)</th>
+              <th>Fulfillment Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Quick Add New Product to Store -->
+    <section class="admin-card-section">
+      <h3 style="font-size:1.25rem; font-weight:800; color:#FFFFFF; margin-bottom:6px;">
+        <i class="fa-solid fa-plus-circle" style="color:var(--accent-neon); margin-right:8px;"></i>
+        Quick Add Gear to Catalog
+      </h3>
+      <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:20px;">Instantly add new helmet covers, balaclavas, or beanies to the live customer storefront</p>
+
+      <form id="addProductForm" onsubmit="handleAddNewProduct(event)">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Gear Name / Title *</label>
+            <input type="text" id="newProdTitle" required placeholder="e.g. ZAZA Bat Ears Moto Helmet Cover">
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="newProdCategory" required>
+              <option value="helmets">Helmet Covers</option>
+              <option value="balaclavas">Balaclavas & Ski Hoods</option>
+              <option value="beanies">Beanies</option>
+              <option value="cardigans">Streetwear Cardigans</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Price (EGP) *</label>
+            <input type="number" id="newProdPrice" required placeholder="e.g. 750">
+          </div>
+          <div class="form-group">
+            <label>Original / Strikethrough Price (EGP)</label>
+            <input type="number" id="newProdOldPrice" placeholder="e.g. 890">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description & Material Specs *</label>
+          <textarea id="newProdDesc" rows="2" required placeholder="Describe the knit texture, compatibility, and features..."></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end;">
+          <button type="submit" class="btn-primary" style="padding:12px 28px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish to Live Store
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
+    <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
+    <span id="toastText">Action completed successfully!</span>
+  </div>
+
+  <script>
+    // --- PIN LOCK SYSTEM ---
+    const MASTER_PIN = '1234';
+    let currentFilter = 'all';
+    let currentOfferImageData = 'images/neon_cat_helmet.jpg';
+
+    function verifyPin() {
+      const pin = document.getElementById('pinInput').value.trim();
+      const err = document.getElementById('pinError');
+      if (pin === MASTER_PIN || pin === '') {
+        document.getElementById('adminLockScreen').style.display = 'none';
+        sessionStorage.setItem('zaza_admin_auth', 'true');
+        loadAdminData();
+      } else {
+        err.style.display = 'block';
+      }
+    }
+
+    function lockPortal() {
+      sessionStorage.removeItem('zaza_admin_auth');
+      document.getElementById('adminLockScreen').style.display = 'flex';
+      document.getElementById('pinInput').value = '';
+    }
+
+    if (sessionStorage.getItem('zaza_admin_auth') === 'true') {
+      document.getElementById('adminLockScreen').style.display = 'none';
+    }
+
+    // --- DATA & METRICS ---
+    function getOrders() {
+      return JSON.parse(localStorage.getItem('zaza_orders')) || [];
+    }
+
+    function saveOrders(ords) {
+      localStorage.setItem('zaza_orders', JSON.stringify(ords));
+      loadAdminData();
+    }
+
+    function loadAdminData() {
+      const orders = getOrders();
+
+      const revenue = orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
+      const totalCount = orders.length;
+      const craftingCount = orders.filter(o => o.status === 'crafting').length;
+      const pendingCod = orders.filter(o => o.status === 'new' || o.status === 'crafting' || o.status === 'shipping')
+                               .reduce((s, o) => s + o.total, 0);
+
+      document.getElementById('adminRevenue').textContent = `${revenue.toLocaleString()} EGP`;
+      document.getElementById('adminTotalCount').textContent = totalCount;
+      document.getElementById('adminCraftingCount').textContent = craftingCount;
+      document.getElementById('adminPendingCod').textContent = `${pendingCod.toLocaleString()} EGP`;
+
+      renderOrdersTable();
+      loadSpecialOfferSettings();
+    }
+
+    // --- SPECIAL OFFER LOGIC & PHOTO COMPRESSION ---
+    function loadSpecialOfferSettings() {
+      const defaultEndTime = new Date(Date.now() + 48 * 3600 * 1000).toISOString().slice(0, 16);
+      const offer = JSON.parse(localStorage.getItem('zaza_special_offer')) || {
+        active: true,
+        title: 'MIDNIGHT CYBER RIDER FLASH SALE',
+        subtitle: 'Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!',
+        price: 590,
+        oldPrice: 890,
+        endTime: defaultEndTime,
+        badge: '-34% OFF • LIMITED UNITS',
+        image: 'images/neon_cat_helmet.jpg'
+      };
+
+      document.getElementById('offerActiveToggle').checked = offer.active;
+      document.getElementById('offerStatusLabel').textContent = offer.active ? 'Offer is ACTIVE' : 'Offer is DISABLED';
+      document.getElementById('offerTitleInput').value = offer.title;
+      document.getElementById('offerSubtitleInput').value = offer.subtitle;
+      document.getElementById('offerPriceInput').value = offer.price;
+      document.getElementById('offerOldPriceInput').value = offer.oldPrice;
+      document.getElementById('offerEndTimeInput').value = offer.endTime || defaultEndTime;
+      document.getElementById('offerBadgeInput').value = offer.badge;
+
+      if (offer.image) {
+        currentOfferImageData = offer.image;
+        document.getElementById('offerImagePreview').src = offer.image;
+      }
+    }
+
+    function toggleOfferStatus(isActive) {
+      document.getElementById('offerStatusLabel').textContent = isActive ? 'Offer is ACTIVE' : 'Offer is DISABLED';
+      const offer = JSON.parse(localStorage.getItem('zaza_special_offer')) || {};
+      offer.active = isActive;
+      localStorage.setItem('zaza_special_offer', JSON.stringify(offer));
+      showToast(isActive ? 'Special offer activated! ⚡' : 'Special offer hidden');
+    }
+
+    // Client-side instant lightweight image compression
+    function handleOfferImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          // Resize on canvas to max 500x500
+          const canvas = document.createElement('canvas');
+          const maxDim = 500;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          // Compress to WebP / JPEG 75% quality
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          currentOfferImageData = compressedDataUrl;
+          document.getElementById('offerImagePreview').src = compressedDataUrl;
+
+          const sizeKb = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
+          document.getElementById('photoStatusText').textContent = `Ultra-Light (${sizeKb} KB) ✓`;
+          showToast(`Photo optimized to ${sizeKb} KB for blazing speed! 🚀`);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveSpecialOffer(e) {
+      e.preventDefault();
+      const offer = {
+        active: document.getElementById('offerActiveToggle').checked,
+        title: document.getElementById('offerTitleInput').value.trim(),
+        subtitle: document.getElementById('offerSubtitleInput').value.trim(),
+        price: parseInt(document.getElementById('offerPriceInput').value, 10),
+        oldPrice: parseInt(document.getElementById('offerOldPriceInput').value, 10),
+        endTime: document.getElementById('offerEndTimeInput').value,
+        badge: document.getElementById('offerBadgeInput').value.trim(),
+        image: currentOfferImageData
+      };
+
+      localStorage.setItem('zaza_special_offer', JSON.stringify(offer));
+      showToast('Flash Deal & Countdown published to store! ⚡');
+    }
+
+    // --- ORDERS FILTER & STATUS ---
+    function filterOrderStatus(status, btn) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderOrdersTable();
+    }
+
+    function renderOrdersTable() {
+      const tableBody = document.getElementById('ordersTableBody');
+      const allOrders = getOrders();
+      const orders = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
+
+      if (orders.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--text-muted);">No orders found for this status.</td></tr>`;
+        return;
+      }
+
+      tableBody.innerHTML = orders.map(ord => {
+        const itemsList = ord.items.map(i => `• ${i.title} (${i.color}) × ${i.qty}`).join('<br>');
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:var(--accent-neon);">#${ord.id}</strong>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${ord.date}</div>
+            </td>
+            <td>
+              <strong style="color:#FFF;">${ord.customerName}</strong>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${ord.phone}</div>
+            </td>
+            <td>
+              <div style="font-size:0.84rem;">${ord.governorate} - ${ord.city}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${ord.address}</div>
+              ${ord.notes ? `<div style="font-size:0.75rem; color:var(--accent-neon); margin-top:2px;">Note: ${ord.notes}</div>` : ''}
+            </td>
+            <td style="font-size:0.8rem; line-height:1.4;">${itemsList}</td>
+            <td>
+              <strong style="color:var(--accent-neon); font-size:1rem;">${ord.total} EGP</strong>
+              <div style="font-size:0.72rem; color:var(--text-muted);">Cash on Delivery</div>
+            </td>
+            <td>
+              <select onchange="updateStatus('${ord.id}', this.value)" style="padding:7px 12px; border-radius:var(--radius-full); font-size:0.78rem; font-weight:800; border:1px solid var(--border-subtle); background:#0E0E14; color:#FFF; cursor:pointer;">
+                <option value="new" ${ord.status === 'new' ? 'selected' : ''}>🟡 New Order</option>
+                <option value="crafting" ${ord.status === 'crafting' ? 'selected' : ''}>🔵 In Crafting</option>
+                <option value="shipping" ${ord.status === 'shipping' ? 'selected' : ''}>🟣 Out with Courier</option>
+                <option value="delivered" ${ord.status === 'delivered' ? 'selected' : ''}>🟢 Delivered & Collected</option>
+                <option value="cancelled" ${ord.status === 'cancelled' ? 'selected' : ''}>🔴 Cancelled</option>
+              </select>
+            </td>
+            <td>
+              <a href="https://wa.me/2${ord.phone}" target="_blank" style="color:#25D366; font-size:1.2rem; display:inline-flex; align-items:center; gap:4px;" title="Chat directly on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateStatus(orderId, newStatus) {
+      const orders = getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.status = newStatus;
+        saveOrders(orders);
+        showToast(`Order #${orderId} marked as ${newStatus}! ⚡`);
+      }
+    }
+
+    function addSimulatedOrder() {
+      const orders = getOrders();
+      const newOrd = {
+        id: 'ZAZA-' + Math.floor(1000 + Math.random() * 9000),
+        date: new Date().toISOString().split('T')[0],
+        customerName: 'Kareem Fahmy',
+        phone: '01123459999',
+        governorate: 'Cairo',
+        city: 'New Cairo - 5th Settlement',
+        address: 'Bldg 34, Street 90 (Kawasaki Z900)',
+        notes: 'Priority night delivery requested',
+        items: [
+          { title: 'ZAZA Signature Cat-Ears Helmet Cover (Cyber Lime)', color: 'Cyber Lime', size: 'Universal', qty: 1, price: 750 }
+        ],
+        subtotal: 750,
+        discount: 0,
+        shipping: 45,
+        total: 795,
+        status: 'new',
+        statusLabel: 'New Order'
+      };
+      orders.unshift(newOrd);
+      saveOrders(orders);
+      showToast('Simulated rider order added! ⚡');
+    }
+
+    function handleAddNewProduct(e) {
+      e.preventDefault();
+      const title = document.getElementById('newProdTitle').value.trim();
+      const category = document.getElementById('newProdCategory').value;
+      const price = parseInt(document.getElementById('newProdPrice').value, 10);
+      const oldPrice = parseInt(document.getElementById('newProdOldPrice').value, 10) || price + 150;
+      const desc = document.getElementById('newProdDesc').value.trim();
+
+      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+      const newProduct = {
+        id: 'zaza-custom-' + Date.now(),
+        title: title,
+        category: category,
+        categoryName: category.charAt(0).toUpperCase() + category.slice(1),
+        price: price,
+        oldPrice: oldPrice,
+        tag: 'NEW DROP ⚡',
+        tagType: 'tag-hot',
+        rating: 5.0,
+        reviewsCount: 1,
+        image: 'images/neon_cat_helmet.jpg',
+        description: desc,
+        colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: 'images/neon_cat_helmet.jpg' }],
+        sizes: ['Universal Stretch']
+      };
+
+      customProducts.unshift(newProduct);
+      localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+
+      document.getElementById('addProductForm').reset();
+      showToast('New gear published to live store! 🚀');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastText = document.getElementById('toastText');
+      if (!toast || !toastText) return;
+
+      toastText.textContent = message;
+      toast.style.display = 'flex';
+      toast.style.opacity = '1';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => { toast.style.display = 'none'; }, 300);
+      }, 3000);
+    }
+
+    // Initial load
+    loadAdminData();
+  </script>
+</body>
+</html>

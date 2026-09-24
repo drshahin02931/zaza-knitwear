@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAZA X | Edgy Moto Knitwear & Neon Helmet Covers</title>
+  <meta name="description" content="Official ZAZA X store. Handmade cyber lime cat-ear motorcycle helmet covers, tactical balaclavas, and streetwear knitwear. Cash on Delivery available.">
+  
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement">
+    <div class="marquee-content">
+      <span class="marquee-badge">ZAZA DROP 01</span>
+      <span id="topAnnounceText">FREE SHIPPING ON ORDERS OVER 600 EGP ⚡</span>
+      <span class="marquee-separator">•</span>
+      <span>CASH ON DELIVERY WITH PARCEL INSPECTION 📦</span>
+      <span class="marquee-separator">•</span>
+      <span>100% HANDMADE TACTICAL MOTO KNITWEAR 🧶</span>
+    </div>
+  </div>
+
+  <!-- Header / Navigation (Clean Buyer-Facing Navbar) -->
+  <header class="main-header">
+    <div class="header-container">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="brand-logo" id="homeLogo">
+        <div class="logo-img-wrap">
+          <img src="images/zaza_logo.jpg" alt="ZAZA X Brand Logo" loading="eager">
+        </div>
+        <div class="brand-text-wrap">
+          <h1>ZAZA <span class="brand-x">X</span></h1>
+          <span>MOTO & STREET KNITWEAR</span>
+        </div>
+      </a>
+
+      <!-- Live Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrap">
+          <button class="search-icon-btn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <input type="text" id="searchInput" placeholder="Search helmet covers, balaclavas, beanies, cardigans...">
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="header-nav">
+        <a href="#catalog" class="nav-link active">Shop Catalog</a>
+        <a href="#special-offer-anchor" class="nav-link" id="navFlashDealLink" style="color:var(--accent-neon);">⚡ Flash Deal</a>
+        <a href="#custom-order" class="nav-link">Bespoke Orders</a>
+        <a href="#reviews" class="nav-link">Rider Reviews</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Cart Button -->
+        <button class="action-btn cart-btn" id="openCartBtn" aria-label="Shopping Cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span>Cart</span>
+          <span class="badge-count" id="cartCount">0</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-grid">
+      
+      <div class="hero-text-content">
+        <div class="hero-tag">
+          <i class="fa-solid fa-bolt"></i> Cyber Lime Collection • Drop 01
+        </div>
+        <h2 class="hero-title">
+          Next-Gen Moto Knitwear <br>
+          Ride With <span class="highlight">Electric Attitude</span>
+        </h2>
+        <p class="hero-subtitle">
+          Handcrafted high-visibility chunky knit cat-ears helmet covers, urban ski balaclavas, and tactical street knitwear built to stand out on the streets. Built for riders who dare to be different.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#catalog" class="btn-primary">
+            <span>Shop The Drop</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <button class="btn-outline" id="heroCustomBtn">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Custom Colorway Request</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Featured Showcase -->
+      <div class="hero-showcase">
+        <div class="hero-card-featured">
+          <img src="images/neon_cat_helmet.jpg" alt="ZAZA X Signature Neon Cat-Ears Motorcycle Helmet Cover" loading="eager">
+          
+          <div class="hero-floating-badge">
+            <div class="floating-badge-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="floating-badge-text">
+              <strong>ZAZA Signature Piece</strong>
+              <span>Electric Lime Glow • Universal Fit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FEATURE: SPECIAL OFFER & FLASH DEAL SECTION (LIVE COUNTDOWN TIMER)
+       ======================================================================== -->
+  <div id="special-offer-anchor"></div>
+  <section class="special-offer-section" id="specialOfferSection">
+    <div class="special-offer-card">
+      <div class="offer-text-box">
+        <span class="offer-badge-pill" id="offerStickerBadge">⚡ FLASH RIDER DEAL • LIMITED DROP</span>
+        <h3 class="offer-title" id="offerTitleDisplay">MIDNIGHT CYBER RIDER FLASH SALE</h3>
+        <p class="offer-pitch" id="offerSubtitleDisplay">Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!</p>
+
+        <!-- Live Countdown Timer -->
+        <div class="countdown-clock-wrap">
+          <div class="countdown-box">
+            <span class="countdown-val" id="timerDays">00</span>
+            <span class="countdown-label">Days</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-box">
+            <span class="countdown-val" id="timerHours">00</span>
+            <span class="countdown-label">Hours</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-box">
+            <span class="countdown-val" id="timerMins">00</span>
+            <span class="countdown-label">Mins</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-box">
+            <span class="countdown-val" id="timerSecs">00</span>
+            <span class="countdown-label">Secs</span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+          <div>
+            <span style="font-size:1.6rem; font-weight:900; color:var(--accent-neon);" id="offerPriceDisplay">590 EGP</span>
+            <span style="font-size:1rem; color:var(--text-muted); text-decoration:line-through; margin-left:8px;" id="offerOldPriceDisplay">890 EGP</span>
+          </div>
+
+          <button class="btn-primary" onclick="claimSpecialOfferDeal()" style="padding:12px 28px;">
+            <i class="fa-solid fa-bolt"></i> Claim Flash Deal Now
+          </button>
+        </div>
+      </div>
+
+      <div class="offer-visual-box">
+        <div class="offer-img-frame">
+          <img id="offerImageDisplay" src="images/neon_cat_helmet.jpg" alt="Special Deal Product">
+        </div>
+        <div class="offer-discount-sticker" id="offerStickerDiscount">SAVE 34%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Strip -->
+  <section class="features-strip">
+    <div class="features-grid">
+      
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="feature-text">
+          <h4>High-Visibility Neon</h4>
+          <p>Eye-catching road presence & safety</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+        </div>
+        <div class="feature-text">
+          <h4>Cash on Delivery</h4>
+          <p>Inspect your gear before paying</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fa-solid fa-mitten"></i>
+        </div>
+        <div class="feature-text">
+          <h4>100% Handcrafted</h4>
+          <p>Chunky wool & heavy double stitches</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div class="feature-text">
+          <h4>Nationwide Fast Dispatch</h4>
+          <p>Delivered safely to your door</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Storefront / Catalog Section -->
+  <section class="storefront-header" id="catalog">
+    <div class="section-head-wrap">
+      <div>
+        <h2>ZAZA X Catalog</h2>
+        <p>Choose your signature piece or build your custom colorway</p>
+      </div>
+
+      <div class="sort-wrap">
+        <label for="sortSelect" style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">Sort by:</label>
+        <select id="sortSelect" class="sort-select">
+          <option value="featured">Featured & Best Sellers</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Highest Customer Rating</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Category Pills Filter -->
+    <div class="filter-pills-bar" id="categoryPills">
+      <button class="pill-btn active" data-category="all">
+        <i class="fa-solid fa-border-all"></i> All Pieces
+      </button>
+      <button class="pill-btn" data-category="helmets">
+        <i class="fa-solid fa-shield-halved"></i> Helmet Covers
+      </button>
+      <button class="pill-btn" data-category="balaclavas">
+        <i class="fa-solid fa-mask"></i> Balaclavas & Ski Hoods
+      </button>
+      <button class="pill-btn" data-category="beanies">
+        <i class="fa-solid fa-hat-cowboy-side"></i> Beanies
+      </button>
+      <button class="pill-btn" data-category="cardigans">
+        <i class="fa-solid fa-shirt"></i> Streetwear Cardigans
+      </button>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="products-container">
+    <div class="products-grid" id="productsGrid">
+      <!-- Dynamically injected products via JavaScript -->
+    </div>
+  </section>
+
+  <!-- Custom Bespoke Order Strip -->
+  <section class="custom-order-strip" id="custom-order">
+    <div class="custom-banner">
+      <div class="custom-banner-text">
+        <h3>Want Custom Neon Colors or Tailored Sizing?</h3>
+        <p>
+          At ZAZA X, we take custom orders for motorcycle clubs, ski crews, and individual riders. Choose your specific ear shape (cat, bat, devil horns), color combinations, and exact helmet specs.
+        </p>
+
+        <div class="custom-steps">
+          <div class="step-item">
+            <span class="step-num">1</span>
+            <span>Choose Your Shape & Colors</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">2</span>
+            <span>Specify Helmet Brand/Size</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">3</span>
+            <span>Hand-Knitted in 3-5 Days</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="openCustomOrderModalBtn">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Request Custom ZAZA Piece</span>
+        </button>
+      </div>
+
+      <div style="text-align: center;">
+        <img src="images/zaza_logo.jpg" alt="ZAZA X Custom Design" style="max-width: 300px; width: 100%; border-radius: 20px; border: 2px solid var(--accent-neon); box-shadow: 0 0 30px rgba(132, 255, 0, 0.4);">
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="reviews-section" id="reviews">
+    <div class="section-head-wrap" style="text-align:center; justify-content:center; margin-bottom: 36px;">
+      <div>
+        <h2>Verified Rider Reviews</h2>
+        <p>Real feedback from bikers, skiers, and streetwear enthusiasts</p>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-avatar">Z</div>
+          <div>
+            <div class="reviewer-name">Zeyad Mostafa</div>
+            <div class="reviewer-city">Cairo (Zamalek) • Yamaha R6 Rider</div>
+          </div>
+        </div>
+        <div class="rating-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">
+          "The Cyber Lime Cat-Ears cover is literally insane! The neon color pops crazily during night rides, and the fit over my AGV helmet is rock solid with zero flapping at 120 km/h. Paid cash upon delivery after trying it on. 100/10!"
+        </p>
+        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Rider • ZAZA Signature Cat-Ears Cover</span>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-avatar">M</div>
+          <div>
+            <div class="reviewer-name">Maya El-Gazzar</div>
+            <div class="reviewer-city">Giza (New Zayed)</div>
+          </div>
+        </div>
+        <div class="rating-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">
+          "Got the Cyber Balaclava. The contrast between pitch black and neon lime is so sharp. Extremely soft wool, keeps the cold wind out completely, and looks unreal in photos."
+        </p>
+        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Rider • Tactical Cyber Balaclava</span>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-avatar">O</div>
+          <div>
+            <div class="reviewer-name">Omar Bahaa</div>
+            <div class="reviewer-city">Alexandria • Ninja 400</div>
+          </div>
+        </div>
+        <div class="rating-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">
+          "Top quality stitching. The courier brought it, I inspected the fabric density and the bottom elastic cinch, and paid cash. Best purchase for my motorcycle gear this season."
+        </p>
+        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Rider • ZAZA Dragon Horns Cover</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-top-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 16px;">
+            <div class="logo-img-wrap" style="width:38px; height:38px;">
+              <img src="images/zaza_logo.jpg" alt="ZAZA X Logo">
+            </div>
+            <div class="brand-text-wrap">
+              <h1 style="color:#FFF; font-size:1.3rem;">ZAZA <span class="brand-x">X</span></h1>
+              <span style="color:var(--accent-neon);">MOTO & STREET KNITWEAR</span>
+            </div>
+          </div>
+          <p style="color:#8C95A0; font-size: 0.88rem; line-height: 1.7; max-width: 320px;">
+            Bold, handcrafted tactical knitwear and high-visibility helmet covers. Designed for riders, ravers, and streetwear visionaries.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Collections</h5>
+          <ul class="footer-links">
+            <li><a href="#catalog" onclick="filterCategory('helmets')">Cat-Ears & Horns Helmet Covers</a></li>
+            <li><a href="#catalog" onclick="filterCategory('balaclavas')">Tactical Cyber Balaclavas</a></li>
+            <li><a href="#catalog" onclick="filterCategory('beanies')">Neon Chunky Beanies</a></li>
+            <li><a href="#catalog" onclick="filterCategory('cardigans')">Oversized Streetwear Cardigans</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Rider Support</h5>
+          <ul class="footer-links">
+            <li><a href="javascript:void(0)" id="footerTrackBtn">Cash on Delivery (COD) Policy</a></li>
+            <li><a href="javascript:void(0)" id="footerSizeGuideBtn">Helmet Fit & Size Guide</a></li>
+            <li><a href="javascript:void(0)" id="footerShippingBtn">Delivery Times & Rates</a></li>
+            <li><a href="https://wa.me/201000000000" target="_blank">Direct WhatsApp Rider Line</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>ZAZA X Authenticity</h5>
+          <p style="color:#8C95A0; font-size:0.86rem; margin-bottom: 16px;">
+            Every piece is made with reinforced elastic cords and dense wool yarns tested against road wind drag.
+          </p>
+          <div style="display:flex; gap:14px; font-size:1.3rem; color:#84FF00;">
+            <a href="https://instagram.com" target="_blank" title="Instagram" style="color:inherit;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://tiktok.com" target="_blank" title="TikTok" style="color:inherit;"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://wa.me/201000000000" target="_blank" title="WhatsApp" style="color:inherit;"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 ZAZA X. All rights reserved • Electric Streetwear.</div>
+        <div style="display: flex; align-items:center; gap: 20px;">
+          <span>💵 Cash on Delivery (COD)</span>
+          <span>⚡ Highway Tested</span>
+          <!-- Discreet Admin Portal Link for Store Owner Only -->
+          <a href="admin.html" target="_blank" style="color:#555A64; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;" title="Store Staff & Owner Login">
+            <i class="fa-solid fa-lock"></i> Staff Login
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       MODAL 1: SLIDE-OUT CART DRAWER
+       ======================================================================== -->
+  <div class="cart-drawer-overlay" id="cartOverlay">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3>
+          <i class="fa-solid fa-bag-shopping" style="color:var(--accent-neon);"></i>
+          <span>ZAZA Gear Cart</span>
+          <span class="badge-count" id="drawerCartCount">0</span>
+        </h3>
+        <button class="close-drawer-btn" id="closeCartBtn" aria-label="Close Cart">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Free Shipping Tracker -->
+      <div class="free-shipping-bar">
+        <div id="freeShippingNotice" style="font-weight:700; color:#FFFFFF;">
+          Add 600 EGP more to unlock FREE Shipping! ⚡
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="shippingMeterFill"></div>
+        </div>
+      </div>
+
+      <!-- Cart Items Container -->
+      <div class="cart-items-body" id="cartItemsContainer">
+        <!-- Rendered items or empty state -->
+      </div>
+
+      <!-- Cart Footer -->
+      <div class="cart-footer">
+        <!-- Promo code input -->
+        <div class="promo-row">
+          <input type="text" id="promoInput" class="promo-input" placeholder="Promo code (try ZAZA10)">
+          <button class="promo-btn" id="applyPromoBtn">Apply</button>
+        </div>
+        <div id="promoMessage" style="font-size:0.78rem; margin-top:-10px; margin-bottom:10px;"></div>
+
+        <!-- Price breakdown -->
+        <div class="calc-row">
+          <span>Subtotal:</span>
+          <span id="cartSubtotal" style="font-weight:700; color:#FFFFFF;">0 EGP</span>
+        </div>
+        <div class="calc-row" id="discountRow" style="display:none; color:var(--accent-neon);">
+          <span>Promo Discount:</span>
+          <span id="cartDiscount" style="font-weight:700;">- 0 EGP</span>
+        </div>
+        <div class="calc-row">
+          <span>Courier Shipping Fee:</span>
+          <span id="cartShippingEstimate" style="font-weight:700; color:#FFFFFF;">45 EGP</span>
+        </div>
+        <div class="calc-row total-row">
+          <span>Total for Cash on Delivery:</span>
+          <span id="cartTotal" style="color:var(--accent-neon); font-size:1.25rem;">0 EGP</span>
+        </div>
+
+        <button class="checkout-btn" id="startCheckoutBtn">
+          <span>Proceed to Checkout (COD)</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: QUICK VIEW & PRODUCT DETAILS MODAL
+       ======================================================================== -->
+  <div class="modal-overlay" id="quickViewModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="closeQvBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="quick-view-grid">
+        <div class="qv-image-box">
+          <img src="" alt="" id="qvImage">
+        </div>
+
+        <div class="qv-details">
+          <span class="product-category-text" id="qvCategory">Helmet Covers</span>
+          <h3 class="qv-title" id="qvTitle">Item Title</h3>
+          
+          <div class="rating-stars" style="margin-bottom: 10px;">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <span class="rating-count" id="qvReviews">(54 verified reviews)</span>
+          </div>
+
+          <div class="qv-price" id="qvPrice">680 EGP</div>
+          <p class="qv-desc" id="qvDesc">Item description and yarn specifications...</p>
+
+          <!-- Color options -->
+          <div>
+            <span class="option-title">Colorway: <strong id="selectedColorName" style="color:var(--accent-neon);">Cyber Neon Lime</strong></span>
+            <div class="color-options-row" id="qvColors">
+              <!-- Swatches injected via JS -->
+            </div>
+          </div>
+
+          <!-- Size options -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="option-title">Fit & Helmet Type:</span>
+              <button id="qvSizeGuideBtn" style="font-size:0.78rem; color:var(--accent-neon); text-decoration:underline;">
+                <i class="fa-solid fa-ruler-combined"></i> Helmet Size Guide
+              </button>
+            </div>
+            <div class="size-options-row" id="qvSizes">
+              <button class="size-btn selected" data-size="Universal Stretch (Full/Half Face)">Universal Stretch (Full/Half Face)</button>
+              <button class="size-btn" data-size="Custom Fit">Custom Helmet Specs (Enter below)</button>
+            </div>
+          </div>
+
+          <!-- Custom note -->
+          <div>
+            <label class="option-title" for="qvCustomNote">Helmet Model / Custom Notes (Optional):</label>
+            <input type="text" id="qvCustomNote" class="custom-note-input" placeholder="e.g. AGV K1 Size L, or custom ear shape...">
+          </div>
+
+          <!-- Handcraft badge -->
+          <div class="craft-time-badge">
+            <i class="fa-solid fa-clock"></i>
+            <span>Each piece is hand-knitted individually and dispatches within 3-5 business days.</span>
+          </div>
+
+          <!-- Action buttons -->
+          <div style="display:flex; gap:12px; margin-top:auto;">
+            <button class="btn-primary" id="qvAddToCartBtn" style="flex:1; justify-content:center;">
+              <i class="fa-solid fa-bag-shopping"></i>
+              <span>Add to Gear Cart</span>
+            </button>
+            <button class="btn-outline" id="qvDirectBuyBtn" style="justify-content:center;">
+              <span>Instant Buy (COD)</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: 1-STEP COD CHECKOUT MODAL
+       ======================================================================== -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content checkout-modal-content">
+      <button class="modal-close-btn" id="closeCheckoutBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="checkout-header">
+        <h3><i class="fa-solid fa-box-open" style="color:var(--accent-neon);"></i> Cash on Delivery Checkout</h3>
+        <p>Enter your shipping info and our studio will prepare your ZAZA piece</p>
+      </div>
+
+      <div class="cod-badge-banner">
+        <i class="fa-solid fa-handshake" style="font-size:1.4rem;"></i>
+        <div>
+          <div>100% Cash on Delivery</div>
+          <div style="font-size:0.78rem; font-weight:normal; opacity:0.9;">No credit card required upfront. Inspect your handcrafted package before paying the courier.</div>
+        </div>
+      </div>
+
+      <form id="checkoutForm">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="orderName">Rider Full Name *</label>
+            <input type="text" id="orderName" required placeholder="e.g. Zeyad Mostafa">
+          </div>
+          <div class="form-group">
+            <label for="orderPhone">Mobile Phone *</label>
+            <input type="tel" id="orderPhone" required placeholder="01xxxxxxxxx">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="orderGovernorate">Governorate / Region *</label>
+            <select id="orderGovernorate" required>
+              <option value="45|Cairo">Cairo (Shipping: 45 EGP)</option>
+              <option value="45|Giza">Giza (Shipping: 45 EGP)</option>
+              <option value="55|Alexandria">Alexandria (Shipping: 55 EGP)</option>
+              <option value="60|Delta Cities (Mansoura, Tanta)">Delta & Nile Cities (Shipping: 60 EGP)</option>
+              <option value="60|Canal Zone (Ismailia, Port Said, Suez)">Canal Zone (Shipping: 60 EGP)</option>
+              <option value="75|Upper Egypt">Upper Egypt (Shipping: 75 EGP)</option>
+              <option value="90|Red Sea & Sinai">Red Sea & Sinai (Shipping: 90 EGP)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="orderCity">City / District *</label>
+            <input type="text" id="orderCity" required placeholder="e.g. Maadi, Zamalek, Smouha...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="orderAddress">Full Street Address (Building #, Floor, Apt) *</label>
+          <input type="text" id="orderAddress" required placeholder="Street name, building number, apartment, landmark...">
+        </div>
+
+        <div class="form-group">
+          <label for="orderNotes">Delivery Instructions or Preferred Timing (Optional)</label>
+          <textarea id="orderNotes" rows="2" placeholder="e.g. Please call 30 minutes before arrival..."></textarea>
+        </div>
+
+        <!-- Summary box -->
+        <div class="checkout-summary-box">
+          <div style="font-weight:700; margin-bottom:8px; font-size:0.92rem; color:#FFFFFF;">Order Invoice Breakdown:</div>
+          <div class="calc-row">
+            <span>Items Subtotal:</span>
+            <span id="coSubtotal">0 EGP</span>
+          </div>
+          <div class="calc-row" id="coDiscountRow" style="display:none; color:var(--accent-neon);">
+            <span>Promo Discount:</span>
+            <span id="coDiscount">- 0 EGP</span>
+          </div>
+          <div class="calc-row">
+            <span>Delivery Fee:</span>
+            <span id="coShipping">45 EGP</span>
+          </div>
+          <div class="calc-row total-row" style="margin-top:6px; padding-top:8px;">
+            <span>Total Cash to Pay Courier:</span>
+            <span id="coTotal" style="color:var(--accent-neon); font-size:1.3rem;">0 EGP</span>
+          </div>
+        </div>
+
+        <button type="submit" class="checkout-btn" style="padding:15px; font-size:1.05rem;">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Confirm Cash on Delivery Order</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 4: ORDER SUCCESS & WHATSAPP CONFIRMATION
+       ======================================================================== -->
+  <div class="modal-overlay" id="orderSuccessModal">
+    <div class="modal-content success-modal-content">
+      <div class="success-icon-wrap">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 style="font-size:1.6rem; font-weight:900; margin-bottom:8px; color:#FFFFFF;">Order Placed Successfully! ⚡</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem;">
+        Welcome to the ZAZA X crew. Our studio is prepping your custom gear.
+      </p>
+
+      <div class="success-order-num" id="successOrderNumber">#ZAZA-8421</div>
+
+      <div style="background:var(--bg-secondary); padding:16px; border-radius:var(--radius-md); text-align:left; font-size:0.86rem; margin:16px 0; border:1px solid var(--border-subtle);">
+        <div style="margin-bottom:6px;"><strong>Rider:</strong> <span id="successCustomerName"></span></div>
+        <div style="margin-bottom:6px;"><strong>Phone:</strong> <span id="successCustomerPhone"></span></div>
+        <div style="margin-bottom:6px;"><strong>Destination:</strong> <span id="successCustomerAddress"></span></div>
+        <div style="margin-bottom:6px;"><strong>Total Due upon Delivery:</strong> <span id="successTotalAmount" style="color:var(--accent-neon); font-weight:800;"></span></div>
+      </div>
+
+      <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5;">
+        Tap below to send your receipt directly to our WhatsApp hotline for immediate dispatch priority and knitting progress shots!
+      </p>
+
+      <a href="#" id="successWhatsappBtn" target="_blank" class="whatsapp-confirm-btn">
+        <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i>
+        <span>Confirm Order via WhatsApp</span>
+      </a>
+
+      <button class="btn-outline" id="successCloseBtn" style="margin-top:12px; width:100%; justify-content:center;">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 5: CUSTOM BESPOKE REQUEST MODAL
+       ======================================================================== -->
+  <div class="modal-overlay" id="customOrderModal">
+    <div class="modal-content" style="max-width:620px; padding:32px;">
+      <button class="modal-close-btn" id="closeCustomModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="font-size:2.2rem; margin-bottom:8px;">⚡🏍️</div>
+        <h3 style="font-size:1.6rem; font-weight:900; color:#FFFFFF;">Bespoke ZAZA Custom Request</h3>
+        <p style="color:var(--text-secondary); font-size:0.88rem;">Specify your helmet brand, ear shape, and neon colors for an exclusive 1-of-1 piece</p>
+      </div>
+
+      <form id="customBespokeForm">
+        <div class="form-group">
+          <label>Piece Type</label>
+          <select id="customPieceType" required>
+            <option value="Cat-Ears Neon Helmet Cover">Cat-Ears Neon Helmet Cover (Signature)</option>
+            <option value="Devil Horns Helmet Cover">Devil Horns Helmet Cover</option>
+            <option value="Tactical Cyber Balaclava Ski Hood">Tactical Cyber Balaclava Ski Hood</option>
+            <option value="Chunky Neon Streetwear Cardigan">Chunky Neon Streetwear Cardigan</option>
+            <option value="Custom Moto Club Group Order">Custom Moto Club Group Order</option>
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Color Palette</label>
+            <input type="text" id="customColors" required placeholder="e.g. Electric Lime Green & Jet Black">
+          </div>
+          <div class="form-group">
+            <label>Helmet Model / Size</label>
+            <input type="text" id="customSize" required placeholder="e.g. Shoei RF-1400 / AGV K3 (Size L)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Design Details (reflective stitches, custom ears, embroidery...)</label>
+          <textarea id="customNotes" rows="3" required placeholder="Describe what you want us to craft..."></textarea>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="customClientName" required placeholder="Full Name">
+          </div>
+          <div class="form-group">
+            <label>Mobile / WhatsApp Number</label>
+            <input type="tel" id="customClientPhone" required placeholder="01xxxxxxxxx">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span>Send Custom Request via WhatsApp</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
+    <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
+    <span id="toastText">Action completed successfully!</span>
+  </div>
+
+  <!-- Main Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
