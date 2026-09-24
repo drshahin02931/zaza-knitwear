@@ -90,6 +90,45 @@ const ZAZA_DB = {
     }
   },
 
+  async updateProduct(productId, product) {
+    try {
+      const payload = {};
+      if (product.title !== undefined) payload.title = product.title;
+      if (product.category !== undefined) payload.category = product.category;
+      if (product.categoryName !== undefined) payload.category_name = product.categoryName;
+      if (product.price !== undefined) payload.price = product.price;
+      if (product.oldPrice !== undefined) payload.old_price = product.oldPrice;
+      if (product.tag !== undefined) payload.tag = product.tag;
+      if (product.image !== undefined) payload.image = product.image;
+      if (product.description !== undefined) payload.description = product.description;
+      if (product.colors !== undefined) payload.colors = product.colors;
+      if (product.sizes !== undefined) payload.sizes = product.sizes;
+
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/products?id=eq.${productId}`, {
+        method: 'PATCH',
+        headers: this.getHeaders(true),
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        // If product was an original base product not yet stored in Supabase, insert it
+        const check = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/products?id=eq.${productId}&select=id`, {
+          headers: this.getHeaders()
+        });
+        if (check.ok) {
+          const rows = await check.json();
+          if (!rows || rows.length === 0) {
+            return await this.addProduct({ id: productId, ...product });
+          }
+        }
+      }
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to update product in Supabase:', err);
+      return false;
+    }
+  },
+
   async setProductSpecialOffer(productId, offerData) {
     try {
       const payload = {

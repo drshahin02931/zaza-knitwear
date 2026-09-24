@@ -130,7 +130,9 @@ function getAllProducts() {
     return dbProducts;
   }
   const custom = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
-  return [...custom, ...BASE_PRODUCTS];
+  const customIds = new Set(custom.map(p => p.id));
+  const remainingBase = BASE_PRODUCTS.filter(p => !customIds.has(p.id));
+  return [...custom, ...remainingBase];
 }
 
 async function fetchProductsFromDatabase() {

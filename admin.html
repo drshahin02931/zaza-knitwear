@@ -216,6 +216,26 @@
       box-shadow: 0 0 14px rgba(255, 0, 60, 0.6);
       transform: translateY(-1px);
     }
+    .btn-edit-prod {
+      background: rgba(132, 255, 0, 0.1);
+      border: 1px solid rgba(132, 255, 0, 0.35);
+      color: var(--accent-neon);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-edit-prod:hover {
+      background: var(--accent-neon);
+      color: #000;
+      box-shadow: 0 0 14px rgba(132, 255, 0, 0.5);
+      transform: translateY(-1px);
+    }
     /* Custom Chic Confirmation Modal */
     .confirm-modal-overlay {
       position: fixed;
@@ -686,6 +706,91 @@
       </form>
     </section>
 
+  <!-- Modal: Edit Product Details -->
+  <div class="confirm-modal-overlay" id="editProductModal">
+    <div class="confirm-modal-card" style="border-color:var(--border-neon); box-shadow:0 0 35px rgba(132, 255, 0, 0.2); max-width:540px; text-align:left; max-height:92vh; overflow-y:auto;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+        <h3 style="font-size:1.25rem; font-weight:900; color:#FFF; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-pen-to-square" style="color:var(--accent-neon);"></i>
+          <span>Edit Product Details</span>
+        </h3>
+        <button type="button" onclick="closeEditProductModal()" style="color:var(--text-muted); font-size:1.2rem; cursor:pointer; background:none; border:none;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="editProductForm" onsubmit="handleSaveProductEdit(event)">
+        <input type="hidden" id="editProdId">
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Product Name / Title *</label>
+          <input type="text" id="editProdTitle" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+        </div>
+
+        <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Category *</label>
+            <select id="editProdCategory" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+              <option value="helmets">Helmet Covers</option>
+              <option value="balaclavas">Balaclavas</option>
+              <option value="beanies">Beanies</option>
+              <option value="cardigans">Cardigans</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Badge / Tag</label>
+            <input type="text" id="editProdTag" placeholder="e.g. BESTSELLER 🔥" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+          </div>
+        </div>
+
+        <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Regular Price (EGP) *</label>
+            <input type="number" id="editProdPrice" required min="10" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--accent-neon); font-size:1.05rem; font-weight:800;">
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Original / Strike Price (EGP)</label>
+            <input type="number" id="editProdOldPrice" min="10" placeholder="e.g. 890" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#AAA; font-size:0.95rem;">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Description</label>
+          <textarea id="editProdDesc" rows="3" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.88rem; resize:vertical;"></textarea>
+        </div>
+
+        <!-- Product Photo Edit with Auto-Compression -->
+        <div style="background:rgba(132, 255, 0, 0.04); border:1px dashed var(--border-neon); border-radius:10px; padding:14px; margin-bottom:20px;">
+          <label style="font-size:0.84rem; font-weight:700; color:#FFF; display:block; margin-bottom:8px;">
+            <i class="fa-solid fa-camera" style="color:var(--accent-neon);"></i> Product Photo (Auto-Compressed)
+          </label>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="width:68px; height:68px; border-radius:10px; overflow:hidden; border:2px solid var(--accent-neon); background:#000; flex-shrink:0;">
+              <img id="editProdImagePreview" src="" alt="Thumbnail" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div style="flex:1;">
+              <input type="file" id="editProdImageFileInput" accept="image/*" onchange="handleEditProductImageUpload(event)" style="padding:6px; font-size:0.8rem; width:100%;">
+              <div id="editProdPhotoStatus" style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+                Upload any picture to replace the current photo (auto-compressed to ~35KB).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" class="confirm-btn-cancel" onclick="closeEditProductModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary" style="padding:10px 24px;">
+            <i class="fa-solid fa-check"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Set Special Offer for Individual Product (Hot Red) -->
   <div class="confirm-modal-overlay" id="productSpecialOfferModal">
     <div class="confirm-modal-card" style="border-color:rgba(255, 0, 60, 0.5); box-shadow:0 0 35px rgba(255, 0, 60, 0.25); max-width:480px; text-align:left;">
@@ -931,6 +1036,9 @@
             </td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-edit-prod" onclick="openEditProductModal('${prod.id}')" title="Edit Gear Details (Name, Price, Category, Photo)">
+                  <i class="fa-solid fa-pen-to-square"></i> Edit
+                </button>
                 <button class="btn-mark-offer" onclick="openProductSpecialOfferModal('${prod.id}')" title="Configure Special Offer Price & Time">
                   <i class="fa-solid fa-fire"></i> ${isDeal ? 'Edit Deal' : 'Set Special Offer'}
                 </button>
@@ -942,6 +1050,128 @@
           </tr>
         `;
       }).join('');
+    }
+
+    // --- EDIT PRODUCT DETAILS LOGIC ---
+    let activeEditProductId = null;
+    let currentEditProductImageData = null;
+
+    function openEditProductModal(productId) {
+      const prod = allAdminProducts.find(p => p.id === productId);
+      if (!prod) return;
+
+      activeEditProductId = productId;
+      document.getElementById('editProdId').value = prod.id;
+      document.getElementById('editProdTitle').value = prod.title || '';
+      document.getElementById('editProdCategory').value = prod.category || 'helmets';
+      document.getElementById('editProdTag').value = prod.tag || '';
+      document.getElementById('editProdPrice').value = prod.price || 0;
+      document.getElementById('editProdOldPrice').value = prod.oldPrice || '';
+      document.getElementById('editProdDesc').value = prod.description || '';
+
+      currentEditProductImageData = prod.image || 'images/neon_cat_helmet.jpg';
+      document.getElementById('editProdImagePreview').src = currentEditProductImageData;
+      document.getElementById('editProdPhotoStatus').textContent = 'Current Photo Ready ✓';
+
+      document.getElementById('editProductModal').classList.add('active');
+    }
+
+    function closeEditProductModal() {
+      document.getElementById('editProductModal').classList.remove('active');
+      activeEditProductId = null;
+    }
+
+    function handleEditProductImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 520;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          currentEditProductImageData = compressedDataUrl;
+          document.getElementById('editProdImagePreview').src = compressedDataUrl;
+
+          const sizeKb = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
+          document.getElementById('editProdPhotoStatus').textContent = `New Photo Compressed (${sizeKb} KB) ✓`;
+          showToast(`Photo optimized to ${sizeKb} KB! ⚡`);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function handleSaveProductEdit(e) {
+      e.preventDefault();
+      if (!activeEditProductId) return;
+
+      const title = document.getElementById('editProdTitle').value.trim();
+      const category = document.getElementById('editProdCategory').value;
+      const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+      const tag = document.getElementById('editProdTag').value.trim() || 'FEATURED GEAR';
+      const price = parseInt(document.getElementById('editProdPrice').value, 10);
+      const oldPrice = parseInt(document.getElementById('editProdOldPrice').value, 10) || null;
+      const desc = document.getElementById('editProdDesc').value.trim();
+      const image = currentEditProductImageData;
+
+      const updatedFields = {
+        title,
+        category,
+        categoryName,
+        tag,
+        price,
+        oldPrice,
+        description: desc,
+        image
+      };
+
+      // 1. Update in-memory
+      const prodIdx = allAdminProducts.findIndex(p => p.id === activeEditProductId);
+      if (prodIdx > -1) {
+        Object.assign(allAdminProducts[prodIdx], updatedFields);
+        if (allAdminProducts[prodIdx].colors && allAdminProducts[prodIdx].colors.length > 0) {
+          allAdminProducts[prodIdx].colors[0].img = image;
+        }
+      }
+
+      // 2. Update Supabase
+      if (window.ZAZA_DB) {
+        await window.ZAZA_DB.updateProduct(activeEditProductId, updatedFields);
+      }
+
+      // 3. Update localStorage
+      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+      const cIdx = customProducts.findIndex(p => p.id === activeEditProductId);
+      if (cIdx > -1) {
+        Object.assign(customProducts[cIdx], updatedFields);
+      } else {
+        const fullProd = allAdminProducts.find(p => p.id === activeEditProductId);
+        if (fullProd) customProducts.unshift({ ...fullProd });
+      }
+      localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+
+      closeEditProductModal();
+      renderAdminProductsTable(allAdminProducts);
+      showToast('Product updated successfully across cloud & store! ⚡');
     }
 
     let activeOfferProductId = null;
