@@ -42,6 +42,7 @@ const ZAZA_DB = {
         reviewsCount: parseInt(r.reviews_count || 0, 10),
         image: r.image,
         description: r.description,
+        costPrice: r.cost_price ? parseFloat(r.cost_price) : 0,
         isSpecialOffer: r.is_special_offer || false,
         offerPrice: r.offer_price ? parseFloat(r.offer_price) : null,
         offerEndTime: r.offer_end_time || null,
@@ -63,6 +64,7 @@ const ZAZA_DB = {
         category: product.category,
         category_name: product.categoryName,
         price: product.price,
+        cost_price: product.costPrice !== undefined ? product.costPrice : 0,
         old_price: product.oldPrice,
         tag: product.tag,
         tag_type: product.tagType,
@@ -97,6 +99,7 @@ const ZAZA_DB = {
       if (product.category !== undefined) payload.category = product.category;
       if (product.categoryName !== undefined) payload.category_name = product.categoryName;
       if (product.price !== undefined) payload.price = product.price;
+      if (product.costPrice !== undefined) payload.cost_price = product.costPrice;
       if (product.oldPrice !== undefined) payload.old_price = product.oldPrice;
       if (product.tag !== undefined) payload.tag = product.tag;
       if (product.image !== undefined) payload.image = product.image;

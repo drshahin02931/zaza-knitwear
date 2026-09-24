@@ -236,6 +236,118 @@
       box-shadow: 0 0 14px rgba(132, 255, 0, 0.5);
       transform: translateY(-1px);
     }
+    /* Accounting & Profit KPI Boxes */
+    .accounting-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .accounting-box-card {
+      background: linear-gradient(145deg, #13131A 0%, #0B0B0F 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .accounting-box-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .accounting-box-card.highlight-profit {
+      background: linear-gradient(145deg, #0F1F0E 0%, #091208 100%);
+      border: 1.5px solid var(--accent-neon);
+      box-shadow: 0 0 30px rgba(132, 255, 0, 0.16), 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .accounting-box-card.highlight-profit:hover {
+      box-shadow: 0 0 40px rgba(132, 255, 0, 0.28), 0 8px 30px rgba(0,0,0,0.8);
+    }
+    .box-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .icon-lime {
+      background: rgba(132, 255, 0, 0.12);
+      color: var(--accent-neon);
+      border: 1px solid rgba(132, 255, 0, 0.3);
+    }
+    .icon-blue {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .icon-neon-glow {
+      background: var(--accent-neon);
+      color: #000000;
+      box-shadow: 0 0 16px rgba(132, 255, 0, 0.6);
+    }
+    .icon-orange {
+      background: rgba(251, 146, 60, 0.12);
+      color: #FB923C;
+      border: 1px solid rgba(251, 146, 60, 0.3);
+    }
+    .icon-purple {
+      background: rgba(192, 132, 252, 0.12);
+      color: #C084FC;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+    }
+    .box-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .box-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .box-value {
+      font-size: 1.65rem;
+      font-weight: 900;
+      font-family: var(--font-display);
+      color: #FFFFFF;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .text-neon-glow {
+      color: var(--accent-neon) !important;
+      text-shadow: 0 0 16px rgba(132, 255, 0, 0.35);
+    }
+    .text-blue {
+      color: #38BDF8 !important;
+    }
+    .text-orange {
+      color: #FB923C !important;
+    }
+    .box-subtext {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .badge-profit-pill {
+      background: rgba(132, 255, 0, 0.18);
+      color: var(--accent-neon);
+      border: 1px solid rgba(132, 255, 0, 0.45);
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+    }
     /* Custom Chic Confirmation Modal */
     .confirm-modal-overlay {
       position: fixed;
@@ -451,30 +563,73 @@
        ======================================================================== -->
   <main class="admin-main-wrap">
     
-    <!-- KPI Metrics Grid -->
-    <div class="admin-kpi-grid" style="margin-bottom: 28px;">
-      <div class="admin-kpi-card" style="border-left: 3px solid var(--accent-neon);">
-        <div class="kpi-title">Delivered Net Revenue</div>
-        <div class="kpi-val" id="adminRevenue" style="color:var(--accent-neon);">0 EGP</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Collected cash on delivery</div>
+    <!-- ========================================================================
+         ACCOUNTING & PROFIT KPI BOXES (CYBERPUNK GLASSMORPHIC CARDS)
+         ======================================================================== -->
+    <div class="accounting-boxes-grid">
+      <!-- BOX 1: Delivered Revenue -->
+      <div class="accounting-box-card">
+        <div class="box-icon-wrap icon-lime">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div class="box-content">
+          <span class="box-label">Delivered Revenue / المبيعات</span>
+          <div class="box-value" id="adminRevenue">0 EGP</div>
+          <div class="box-subtext">Cash collected on delivered orders</div>
+        </div>
       </div>
 
-      <div class="admin-kpi-card" style="border-left: 3px solid #FFFFFF;">
-        <div class="kpi-title">Total Orders Received</div>
-        <div class="kpi-val" id="adminTotalCount">0</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">All time customer checkouts</div>
+      <!-- BOX 2: Total Cost of Sold Goods -->
+      <div class="accounting-box-card">
+        <div class="box-icon-wrap icon-blue">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div class="box-content">
+          <span class="box-label">Sold Cost / تكلفة البضاعة المباعة</span>
+          <div class="box-value text-blue" id="adminTotalCost">0 EGP</div>
+          <div class="box-subtext" id="adminCostDesc">Raw materials & craft cost</div>
+        </div>
       </div>
 
-      <div class="admin-kpi-card" style="border-left: 3px solid #FFA500;">
-        <div class="kpi-title">Currently in Handcrafting</div>
-        <div class="kpi-val" id="adminCraftingCount" style="color:#FFA500;">0</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">In knitting & preparation</div>
+      <!-- BOX 3: Net Profit (HIGHLIGHTED BOX) -->
+      <div class="accounting-box-card highlight-profit">
+        <div class="box-icon-wrap icon-neon-glow">
+          <i class="fa-solid fa-sack-dollar"></i>
+        </div>
+        <div class="box-content">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+            <span class="box-label" style="margin-bottom:0; color:#FFF;">Net Profit / صافي المكسب 💰</span>
+            <span class="badge-profit-pill" id="adminMarginPill">+0% Margin</span>
+          </div>
+          <div class="box-value text-neon-glow" id="adminNetProfit">0 EGP</div>
+          <div class="box-subtext" style="color:rgba(132, 255, 0, 0.85);">
+            Revenue minus product costs (الربح الصافي)
+          </div>
+        </div>
       </div>
 
-      <div class="admin-kpi-card" style="border-left: 3px solid var(--accent-neon);">
-        <div class="kpi-title">Pending COD Collections</div>
-        <div class="kpi-val" id="adminPendingCod" style="color:var(--accent-neon);">0 EGP</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Cash to collect by couriers</div>
+      <!-- BOX 4: Pending COD Collections -->
+      <div class="accounting-box-card">
+        <div class="box-icon-wrap icon-orange">
+          <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div class="box-content">
+          <span class="box-label">Pending COD / معلق في التحصيل</span>
+          <div class="box-value text-orange" id="adminPendingCod">0 EGP</div>
+          <div class="box-subtext" id="adminPendingCountText">In shipping & crafting</div>
+        </div>
+      </div>
+
+      <!-- BOX 5: Total Orders & Status -->
+      <div class="accounting-box-card">
+        <div class="box-icon-wrap icon-purple">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+        <div class="box-content">
+          <span class="box-label">Orders Overview / حركة الطلبات</span>
+          <div class="box-value" id="adminTotalCount">0 Orders</div>
+          <div class="box-subtext" id="adminOrdersBreakdown">0 Delivered • 0 Crafting</div>
+        </div>
       </div>
     </div>
 
@@ -629,7 +784,9 @@
             <tr>
               <th>Gear / Thumbnail</th>
               <th>Category</th>
-              <th>Regular Price</th>
+              <th>Selling Price</th>
+              <th>Cost Price / التكلفة</th>
+              <th>Unit Profit / المكسب</th>
               <th>Special Offer Status</th>
               <th>Actions</th>
             </tr>
@@ -666,15 +823,24 @@
           </div>
         </div>
 
-        <div class="form-grid-2">
+        <div class="form-grid-3" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:12px;">
           <div class="form-group">
-            <label>Price (EGP) *</label>
-            <input type="number" id="newProdPrice" required placeholder="e.g. 750">
+            <label>Selling Price / سعر البيع (EGP) *</label>
+            <input type="number" id="newProdPrice" required placeholder="e.g. 750" oninput="updateNewProdProfitPreview()">
           </div>
           <div class="form-group">
-            <label>Original / Strikethrough Price (EGP)</label>
+            <label style="color:#38BDF8;">Cost Price / سعر التكلفة (EGP) *</label>
+            <input type="number" id="newProdCostPrice" placeholder="e.g. 260" oninput="updateNewProdProfitPreview()" style="border-color:rgba(56, 189, 248, 0.4); color:#38BDF8;">
+          </div>
+          <div class="form-group">
+            <label>Original / Strike Price (EGP)</label>
             <input type="number" id="newProdOldPrice" placeholder="e.g. 890">
           </div>
+        </div>
+
+        <div id="newProdProfitPreview" style="background:rgba(132, 255, 0, 0.06); border:1px solid rgba(132, 255, 0, 0.25); border-radius:8px; padding:10px 14px; margin-bottom:18px; font-size:0.84rem; color:var(--accent-neon); display:none; align-items:center; justify-content:space-between;">
+          <span><i class="fa-solid fa-coins"></i> Estimated Profit / المكسب المتوقع للقطعة: <strong id="newUnitProfitVal">0 EGP</strong></span>
+          <span id="newMarginVal" style="font-weight:800;">0% Margin</span>
         </div>
 
         <!-- Product Photo Upload with Live Compression & Preview -->
@@ -744,16 +910,26 @@
           </div>
         </div>
 
-        <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div class="form-grid-3" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Regular Price (EGP) *</label>
-            <input type="number" id="editProdPrice" required min="10" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--accent-neon); font-size:1.05rem; font-weight:800;">
+            <label style="color:#FFF; font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Selling Price (EGP) *</label>
+            <input type="number" id="editProdPrice" required min="10" oninput="updateEditProfitPreview()" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--accent-neon); font-size:1.05rem; font-weight:800;">
           </div>
 
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Original / Strike Price (EGP)</label>
-            <input type="number" id="editProdOldPrice" min="10" placeholder="e.g. 890" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#AAA; font-size:0.95rem;">
+            <label style="color:#38BDF8; font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Cost Price / التكلفة (EGP) *</label>
+            <input type="number" id="editProdCostPrice" min="0" placeholder="e.g. 260" oninput="updateEditProfitPreview()" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid rgba(56, 189, 248, 0.4); color:#38BDF8; font-size:1.05rem; font-weight:800;">
           </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="color:#AAA; font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Strike Price (EGP)</label>
+            <input type="number" id="editProdOldPrice" min="10" placeholder="e.g. 890" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#AAA; font-size:0.95rem;">
+          </div>
+        </div>
+
+        <div id="editProfitPreviewBadge" style="background:rgba(132, 255, 0, 0.08); border:1px solid rgba(132, 255, 0, 0.25); border-radius:8px; padding:8px 12px; margin-bottom:14px; font-size:0.82rem; color:var(--accent-neon); display:flex; align-items:center; justify-content:space-between;">
+          <span><i class="fa-solid fa-calculator"></i> Unit Profit / المكسب في القطعة: <strong id="editUnitProfitVal">0 EGP</strong></span>
+          <span id="editMarginVal" style="font-weight:800;">0% Margin</span>
         </div>
 
         <div class="form-group" style="margin-bottom:14px;">
@@ -931,22 +1107,67 @@
         } catch (e) {}
       }
 
+      // First ensure products are loaded for accurate cost price lookup
+      await loadAdminProducts();
+
       const orders = getOrders();
 
-      const revenue = orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
+      const deliveredOrders = orders.filter(o => o.status === 'delivered');
+      const revenue = deliveredOrders.reduce((s, o) => s + (o.subtotal || o.total), 0);
+
+      // Cost price lookup map
+      const costMap = {};
+      allAdminProducts.forEach(p => {
+        if (p.id) costMap[p.id] = parseFloat(p.costPrice) || 0;
+        if (p.title) costMap[p.title.toLowerCase().trim()] = parseFloat(p.costPrice) || 0;
+      });
+
+      let totalDeliveredCost = 0;
+      deliveredOrders.forEach(o => {
+        if (Array.isArray(o.items)) {
+          o.items.forEach(item => {
+            const qty = item.qty || 1;
+            let itemCost = 0;
+            if (item.id && costMap[item.id] !== undefined) {
+              itemCost = costMap[item.id];
+            } else if (item.title && costMap[item.title.toLowerCase().trim()] !== undefined) {
+              itemCost = costMap[item.title.toLowerCase().trim()];
+            } else {
+              itemCost = Math.round((item.price || 0) * 0.35);
+            }
+            totalDeliveredCost += (itemCost * qty);
+          });
+        }
+      });
+
+      const netProfit = Math.max(0, revenue - totalDeliveredCost);
+      const profitMargin = revenue > 0 ? Math.round((netProfit / revenue) * 100) : 0;
+
       const totalCount = orders.length;
       const craftingCount = orders.filter(o => o.status === 'crafting').length;
-      const pendingCod = orders.filter(o => o.status === 'new' || o.status === 'crafting' || o.status === 'shipping')
-                               .reduce((s, o) => s + o.total, 0);
+      const pendingOrders = orders.filter(o => o.status === 'new' || o.status === 'crafting' || o.status === 'shipping');
+      const pendingCod = pendingOrders.reduce((s, o) => s + o.total, 0);
 
-      document.getElementById('adminRevenue').textContent = `${revenue.toLocaleString()} EGP`;
-      document.getElementById('adminTotalCount').textContent = totalCount;
-      document.getElementById('adminCraftingCount').textContent = craftingCount;
-      document.getElementById('adminPendingCod').textContent = `${pendingCod.toLocaleString()} EGP`;
+      const elRevenue = document.getElementById('adminRevenue');
+      const elCost = document.getElementById('adminTotalCost');
+      const elProfit = document.getElementById('adminNetProfit');
+      const elMargin = document.getElementById('adminMarginPill');
+      const elPending = document.getElementById('adminPendingCod');
+      const elPendingCount = document.getElementById('adminPendingCountText');
+      const elTotal = document.getElementById('adminTotalCount');
+      const elBreakdown = document.getElementById('adminOrdersBreakdown');
+
+      if (elRevenue) elRevenue.textContent = `${revenue.toLocaleString()} EGP`;
+      if (elCost) elCost.textContent = `${totalDeliveredCost.toLocaleString()} EGP`;
+      if (elProfit) elProfit.textContent = `${netProfit.toLocaleString()} EGP`;
+      if (elMargin) elMargin.textContent = `+${profitMargin}% Margin`;
+      if (elPending) elPending.textContent = `${pendingCod.toLocaleString()} EGP`;
+      if (elPendingCount) elPendingCount.textContent = `${pendingOrders.length} orders in shipping & prep`;
+      if (elTotal) elTotal.textContent = `${totalCount} Orders`;
+      if (elBreakdown) elBreakdown.textContent = `${deliveredOrders.length} Delivered • ${craftingCount} In Crafting`;
 
       renderOrdersTable();
       loadSpecialOfferSettings();
-      loadAdminProducts();
     }
 
     // --- MANAGE PRODUCTS & HOT RED SPECIAL OFFERS ---
@@ -986,14 +1207,17 @@
       if (!tbody) return;
 
       if (!productsList || productsList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:32px; color:var(--text-muted);">No products found in catalog.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-muted);">No products found in catalog.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = productsList.map(prod => {
         const isDeal = Boolean(prod.isSpecialOffer && prod.offerPrice);
-        let dealStatusHtml = '';
+        const cost = parseFloat(prod.costPrice) || 0;
+        const unitProfit = prod.price - cost;
+        const marginPct = prod.price > 0 ? Math.round((unitProfit / prod.price) * 100) : 0;
 
+        let dealStatusHtml = '';
         if (isDeal) {
           dealStatusHtml = `
             <div>
@@ -1032,11 +1256,19 @@
               ${prod.oldPrice ? `<div style="font-size:0.72rem; color:var(--text-muted); text-decoration:line-through;">${prod.oldPrice} EGP</div>` : ''}
             </td>
             <td>
+              <strong style="font-size:0.92rem; color:#38BDF8;">${cost} EGP</strong>
+              <div style="font-size:0.7rem; color:var(--text-muted);">Raw Crafting Cost</div>
+            </td>
+            <td>
+              <strong style="font-size:0.92rem; color:var(--accent-neon);">+${unitProfit} EGP</strong>
+              <div style="font-size:0.72rem; color:rgba(132, 255, 0, 0.8); font-weight:700;">${marginPct}% Margin</div>
+            </td>
+            <td>
               ${dealStatusHtml}
             </td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
-                <button class="btn-edit-prod" onclick="openEditProductModal('${prod.id}')" title="Edit Gear Details (Name, Price, Category, Photo)">
+                <button class="btn-edit-prod" onclick="openEditProductModal('${prod.id}')" title="Edit Gear Details (Name, Price, Cost, Category, Photo)">
                   <i class="fa-solid fa-pen-to-square"></i> Edit
                 </button>
                 <button class="btn-mark-offer" onclick="openProductSpecialOfferModal('${prod.id}')" title="Configure Special Offer Price & Time">
@@ -1066,8 +1298,11 @@
       document.getElementById('editProdCategory').value = prod.category || 'helmets';
       document.getElementById('editProdTag').value = prod.tag || '';
       document.getElementById('editProdPrice').value = prod.price || 0;
+      document.getElementById('editProdCostPrice').value = prod.costPrice !== undefined ? prod.costPrice : 0;
       document.getElementById('editProdOldPrice').value = prod.oldPrice || '';
       document.getElementById('editProdDesc').value = prod.description || '';
+
+      updateEditProfitPreview();
 
       currentEditProductImageData = prod.image || 'images/neon_cat_helmet.jpg';
       document.getElementById('editProdImagePreview').src = currentEditProductImageData;
@@ -1079,6 +1314,18 @@
     function closeEditProductModal() {
       document.getElementById('editProductModal').classList.remove('active');
       activeEditProductId = null;
+    }
+
+    function updateEditProfitPreview() {
+      const price = parseFloat(document.getElementById('editProdPrice').value) || 0;
+      const cost = parseFloat(document.getElementById('editProdCostPrice').value) || 0;
+      const unitValEl = document.getElementById('editUnitProfitVal');
+      const marginEl = document.getElementById('editMarginVal');
+
+      const profit = price - cost;
+      const margin = price > 0 ? Math.round((profit / price) * 100) : 0;
+      if (unitValEl) unitValEl.textContent = `${profit >= 0 ? '+' : ''}${profit} EGP`;
+      if (marginEl) marginEl.textContent = `${margin}% Margin`;
     }
 
     function handleEditProductImageUpload(e) {
@@ -1129,6 +1376,7 @@
       const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
       const tag = document.getElementById('editProdTag').value.trim() || 'FEATURED GEAR';
       const price = parseInt(document.getElementById('editProdPrice').value, 10);
+      const costPrice = parseInt(document.getElementById('editProdCostPrice').value, 10) || 0;
       const oldPrice = parseInt(document.getElementById('editProdOldPrice').value, 10) || null;
       const desc = document.getElementById('editProdDesc').value.trim();
       const image = currentEditProductImageData;
@@ -1139,6 +1387,7 @@
         categoryName,
         tag,
         price,
+        costPrice,
         oldPrice,
         description: desc,
         image
@@ -1171,7 +1420,8 @@
 
       closeEditProductModal();
       renderAdminProductsTable(allAdminProducts);
-      showToast('Product updated successfully across cloud & store! ⚡');
+      loadAdminData();
+      showToast('Product & cost updated successfully! ⚡');
     }
 
     let activeOfferProductId = null;
@@ -1617,11 +1867,30 @@
       reader.readAsDataURL(file);
     }
 
+    function updateNewProdProfitPreview() {
+      const price = parseFloat(document.getElementById('newProdPrice').value) || 0;
+      const cost = parseFloat(document.getElementById('newProdCostPrice').value) || 0;
+      const previewEl = document.getElementById('newProdProfitPreview');
+      const unitValEl = document.getElementById('newUnitProfitVal');
+      const marginEl = document.getElementById('newMarginVal');
+
+      if (price > 0 && cost > 0) {
+        const profit = price - cost;
+        const margin = Math.round((profit / price) * 100);
+        if (unitValEl) unitValEl.textContent = `${profit >= 0 ? '+' : ''}${profit} EGP`;
+        if (marginEl) marginEl.textContent = `${margin}% Margin`;
+        if (previewEl) previewEl.style.display = 'flex';
+      } else {
+        if (previewEl) previewEl.style.display = 'none';
+      }
+    }
+
     async function handleAddNewProduct(e) {
       e.preventDefault();
       const title = document.getElementById('newProdTitle').value.trim();
       const category = document.getElementById('newProdCategory').value;
       const price = parseInt(document.getElementById('newProdPrice').value, 10);
+      const costPrice = parseInt(document.getElementById('newProdCostPrice').value, 10) || 0;
       const oldPrice = parseInt(document.getElementById('newProdOldPrice').value, 10) || price + 150;
       const desc = document.getElementById('newProdDesc').value.trim();
 
@@ -1631,6 +1900,7 @@
         category: category,
         categoryName: category.charAt(0).toUpperCase() + category.slice(1),
         price: price,
+        costPrice: costPrice,
         oldPrice: oldPrice,
         tag: 'NEW DROP ⚡',
         tagType: 'tag-hot',
@@ -1660,6 +1930,11 @@
       currentNewProductImageData = 'images/neon_cat_helmet.jpg';
       document.getElementById('newProdImagePreview').src = 'images/neon_cat_helmet.jpg';
       document.getElementById('newProdPhotoStatus').textContent = 'Ready ✓';
+      const previewEl = document.getElementById('newProdProfitPreview');
+      if (previewEl) previewEl.style.display = 'none';
+
+      await loadAdminProducts();
+      loadAdminData();
       showToast('New gear published to Supabase Cloud & Live Store! 🚀⚡');
     }
 
