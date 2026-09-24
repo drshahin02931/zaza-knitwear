@@ -472,12 +472,8 @@
 
   </main>
 
-  <!-- Toast Notification Container -->
-  <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
-    <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
-    <span id="toastText">Action completed successfully!</span>
-  </div>
-
+  <!-- Supabase Cloud Database Client -->
+  <script src="supabase-client.js"></script>
   <script>
     // --- PIN LOCK SYSTEM ---
     const MASTER_PIN = '1234';
@@ -516,7 +512,17 @@
       loadAdminData();
     }
 
-    function loadAdminData() {
+    async function loadAdminData() {
+      // 1. Live Sync with Supabase Cloud
+      if (window.ZAZA_DB) {
+        try {
+          const cloudOrders = await window.ZAZA_DB.getOrders();
+          if (cloudOrders && Array.isArray(cloudOrders)) {
+            localStorage.setItem('zaza_orders', JSON.stringify(cloudOrders));
+          }
+        } catch (e) {}
+      }
+
       const orders = getOrders();
 
       const revenue = orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
@@ -701,6 +707,7 @@
       if (order) {
         order.status = newStatus;
         saveOrders(orders);
+        if (window.ZAZA_DB) window.ZAZA_DB.updateOrderStatus(orderId, newStatus);
         showToast(`Order #${orderId} marked as ${newStatus}! ⚡`);
       }
     }
@@ -712,7 +719,7 @@
       orders = orders.filter(o => o.id !== orderId);
       saveOrders(orders);
 
-      // Sync delete with Supabase API
+      if (window.ZAZA_DB) window.ZAZA_DB.deleteOrder(orderId);
       fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' }).catch(() => {});
 
       loadAdminData();
@@ -723,6 +730,7 @@
       if (!confirm('Are you sure you want to delete ALL orders from the dashboard? This action cannot be undone.')) return;
 
       saveOrders([]);
+      if (window.ZAZA_DB) window.ZAZA_DB.clearAllOrders();
       loadAdminData();
       showToast('All orders cleared! Dashboard reset 🧹');
     }
@@ -794,7 +802,7 @@
       reader.readAsDataURL(file);
     }
 
-    function handleAddNewProduct(e) {
+    async function handleAddNewProduct(e) {
       e.preventDefault();
       const title = document.getElementById('newProdTitle').value.trim();
       const category = document.getElementById('newProdCategory').value;
@@ -823,18 +831,21 @@
       customProducts.unshift(newProduct);
       localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
 
-      // Sync to Supabase Database API
+      // Direct Cloud Save to Supabase
+      if (window.ZAZA_DB) {
+        await window.ZAZA_DB.addProduct(newProduct);
+      }
       fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct)
-      }).then(() => console.log('Synced product to database')).catch(() => {});
+      }).catch(() => {});
 
       document.getElementById('addProductForm').reset();
       currentNewProductImageData = 'images/neon_cat_helmet.jpg';
       document.getElementById('newProdImagePreview').src = 'images/neon_cat_helmet.jpg';
       document.getElementById('newProdPhotoStatus').textContent = 'Ready ✓';
-      showToast('New gear published to live store! 🚀');
+      showToast('New gear published to Supabase Cloud & Live Store! 🚀⚡');
     }
 
     function showToast(message) {

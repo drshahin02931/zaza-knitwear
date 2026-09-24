@@ -135,6 +135,17 @@ function getAllProducts() {
 
 async function fetchProductsFromDatabase() {
   try {
+    // 1. Direct Supabase Cloud sync (works on GitHub Pages & Vercel)
+    if (window.ZAZA_DB) {
+      const cloudProds = await window.ZAZA_DB.getProducts();
+      if (cloudProds && cloudProds.length > 0) {
+        dbProducts = cloudProds;
+        renderProducts();
+        return;
+      }
+    }
+
+    // 2. Serverless API sync
     const res = await fetch('/api/products');
     if (res.ok) {
       const data = await res.json();
@@ -859,12 +870,15 @@ function handleCheckoutSubmit(e) {
   orders.unshift(newOrder);
   localStorage.setItem('zaza_orders', JSON.stringify(orders));
 
-  // Sync order to Supabase PostgreSQL database
+  // Sync order to Supabase Cloud Database
+  if (window.ZAZA_DB) {
+    window.ZAZA_DB.createOrder(newOrder);
+  }
   fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newOrder)
-  }).then(() => console.log('Order saved to Supabase')).catch(() => {});
+  }).catch(() => {});
 
   // Clear cart
   cart = [];
