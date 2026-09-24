@@ -205,6 +205,7 @@ let activeModalProduct = null;
 
 // --- 4. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   renderProducts();
   updateCartUI();
   setupEventListeners();
@@ -343,6 +344,16 @@ function setupEventListeners() {
       renderProducts();
     });
   }
+
+  // Theme Switch Buttons
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const mobNavThemeBtn = document.getElementById('mobNavThemeBtn');
+  if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+  if (mobNavThemeBtn) mobNavThemeBtn.addEventListener('click', toggleTheme);
+
+  // Mobile Bottom Nav Cart Button
+  const mobNavCartBtn = document.getElementById('mobNavCartBtn');
+  if (mobNavCartBtn) mobNavCartBtn.addEventListener('click', openCartDrawer);
 
   // Cart Drawer Open/Close
   const openCartBtn = document.getElementById('openCartBtn');
@@ -575,6 +586,8 @@ function updateCartUI() {
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   if (cartCountEl) cartCountEl.textContent = totalItems;
   if (drawerCartCountEl) drawerCartCountEl.textContent = totalItems;
+  const mobCartCountEl = document.getElementById('mobCartCount');
+  if (mobCartCountEl) mobCartCountEl.textContent = totalItems;
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   
@@ -986,4 +999,28 @@ function claimSpecialOfferDeal() {
   toggleCartDrawer(true);
   showToast('Flash Deal claimed and added to cart! ⚡');
 }
+
+// --- 13. THEME TOGGLE (DARK / LIGHT MODE) ---
+function initTheme() {
+  const savedTheme = localStorage.getItem('zaza_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeLabels(savedTheme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('zaza_theme', newTheme);
+  updateThemeLabels(newTheme);
+  showToast(newTheme === 'light' ? 'Switched to Clean Light Mode ☀️' : 'Switched to Cyber Dark Mode ⚡');
+}
+
+function updateThemeLabels(theme) {
+  const mobLabel = document.getElementById('mobThemeLabel');
+  if (mobLabel) {
+    mobLabel.textContent = theme === 'light' ? 'Light' : 'Dark';
+  }
+}
+
 

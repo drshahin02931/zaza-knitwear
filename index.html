@@ -64,10 +64,17 @@
 
       <!-- Header Actions -->
       <div class="header-actions">
+        <!-- Theme Toggle Switch -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon moon-icon"></i>
+          <i class="fa-solid fa-sun sun-icon"></i>
+          <span class="toggle-slider"></span>
+        </button>
+
         <!-- Cart Button -->
         <button class="action-btn cart-btn" id="openCartBtn" aria-label="Shopping Cart">
           <i class="fa-solid fa-bag-shopping"></i>
-          <span>Cart</span>
+          <span class="cart-btn-text">Cart</span>
           <span class="badge-count" id="cartCount">0</span>
         </button>
       </div>
@@ -762,6 +769,33 @@
       </form>
     </div>
   </div>
+
+  <!-- Sticky Bottom Mobile Navigation Bar (Mobile-First Experience) -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <a href="#" class="mobile-nav-item active" id="mobNavHome">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="#special-offer-anchor" class="mobile-nav-item" id="mobNavOffer">
+      <i class="fa-solid fa-bolt" style="color:var(--accent-neon);"></i>
+      <span>Deals</span>
+    </a>
+    <a href="#catalog" class="mobile-nav-item" id="mobNavShop">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span>Shop</span>
+    </a>
+    <button class="mobile-nav-item" id="mobNavCartBtn" aria-label="Open Cart">
+      <div class="mob-icon-wrap">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="badge-count mob-cart-badge" id="mobCartCount">0</span>
+      </div>
+      <span>Cart</span>
+    </button>
+    <button class="mobile-nav-item" id="mobNavThemeBtn" aria-label="Toggle Light/Dark Theme">
+      <i class="fa-solid fa-circle-half-stroke"></i>
+      <span id="mobThemeLabel">Theme</span>
+    </button>
+  </nav>
 
   <!-- Toast Notification Container -->
   <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
