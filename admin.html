@@ -633,90 +633,6 @@
       </div>
     </div>
 
-    <!-- ====================================================================
-         FEATURE 1: SPECIAL OFFER & FLASH DEAL MANAGER WITH TIMER
-         ==================================================================== -->
-    <section class="admin-card-section" style="border: 2px solid var(--border-neon); box-shadow: 0 0 25px rgba(132, 255, 0, 0.15);">
-      <div class="card-header-flex">
-        <div>
-          <h3 style="font-size:1.35rem; font-weight:900; color:#FFFFFF; display:flex; align-items:center; gap:10px;">
-            <i class="fa-solid fa-bolt" style="color:var(--accent-neon);"></i>
-            <span>Flash Deal & Special Offer Manager</span>
-          </h3>
-          <p style="font-size:0.84rem; color:var(--text-secondary);">Configure the live countdown banner, special deal pricing, and lightweight product photos</p>
-        </div>
-
-        <div class="switch-wrap">
-          <span style="font-size:0.88rem; font-weight:800; color:#FFFFFF;" id="offerStatusLabel">Offer is ACTIVE</span>
-          <label class="switch">
-            <input type="checkbox" id="offerActiveToggle" checked onchange="toggleOfferStatus(this.checked)">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <form id="specialOfferForm" onsubmit="handleSaveSpecialOffer(event)">
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label>Offer Headline / Title *</label>
-            <input type="text" id="offerTitleInput" required value="MIDNIGHT CYBER RIDER FLASH SALE">
-          </div>
-          <div class="form-group">
-            <label>Offer Subtitle / Pitch *</label>
-            <input type="text" id="offerSubtitleInput" required value="Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!">
-          </div>
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label>Special Deal Price (EGP) *</label>
-            <input type="number" id="offerPriceInput" required value="590">
-          </div>
-          <div class="form-group">
-            <label>Original Price (EGP) *</label>
-            <input type="number" id="offerOldPriceInput" required value="890">
-          </div>
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label>Offer Expiration Date & Time (Countdown Timer End) *</label>
-            <input type="datetime-local" id="offerEndTimeInput" required>
-          </div>
-          <div class="form-group">
-            <label>Discount Badge Text</label>
-            <input type="text" id="offerBadgeInput" value="-34% OFF • LIMITED UNITS">
-          </div>
-        </div>
-
-        <!-- Image Upload with Auto-Compression -->
-        <div class="form-grid-2" style="align-items: center;">
-          <div class="form-group">
-            <label>Upload Offer Product Photo (Auto-Compressed for Ultra-Fast Loading) *</label>
-            <input type="file" id="offerImageFileInput" accept="image/*" onchange="handleOfferImageUpload(event)" style="padding:8px;">
-            <span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
-              ⚡ Images are automatically compressed to ~35KB so your site loads lightning fast!
-            </span>
-          </div>
-
-          <div style="display:flex; align-items:center; gap:16px;">
-            <div style="width:75px; height:75px; border-radius:12px; overflow:hidden; border:2px solid var(--accent-neon); background:#000;">
-              <img id="offerImagePreview" src="images/neon_cat_helmet.jpg" alt="Offer Preview" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-            <div>
-              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">Photo Status: <span id="photoStatusText" style="color:var(--accent-neon);">Optimized (38 KB)</span></div>
-              <div style="font-size:0.75rem; color:var(--text-muted);">Ready to show on live storefront</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:flex-end; margin-top:16px;">
-          <button type="submit" class="btn-primary" style="padding:13px 32px;">
-            <i class="fa-solid fa-floppy-disk"></i> Save & Publish Flash Deal
-          </button>
-        </div>
-      </form>
-    </section>
 
     <!-- Orders Table Section -->
     <section class="admin-card-section">
@@ -841,6 +757,11 @@
         <div id="newProdProfitPreview" style="background:rgba(132, 255, 0, 0.06); border:1px solid rgba(132, 255, 0, 0.25); border-radius:8px; padding:10px 14px; margin-bottom:18px; font-size:0.84rem; color:var(--accent-neon); display:none; align-items:center; justify-content:space-between;">
           <span><i class="fa-solid fa-coins"></i> Estimated Profit / المكسب المتوقع للقطعة: <strong id="newUnitProfitVal">0 EGP</strong></span>
           <span id="newMarginVal" style="font-weight:800;">0% Margin</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Product Description / تفاصيل القطعة والخامات</label>
+          <textarea id="newProdDesc" rows="3" placeholder="Write gear description, knit details, yarn quality, fit specs..."></textarea>
         </div>
 
         <!-- Product Photo Upload with Live Compression & Preview -->
@@ -1167,7 +1088,6 @@
       if (elBreakdown) elBreakdown.textContent = `${deliveredOrders.length} Delivered • ${craftingCount} In Crafting`;
 
       renderOrdersTable();
-      loadSpecialOfferSettings();
     }
 
     // --- MANAGE PRODUCTS & HOT RED SPECIAL OFFERS ---
@@ -1550,102 +1470,6 @@
       });
     }
 
-    // --- SPECIAL OFFER LOGIC & PHOTO COMPRESSION ---
-    function loadSpecialOfferSettings() {
-      const defaultEndTime = new Date(Date.now() + 48 * 3600 * 1000).toISOString().slice(0, 16);
-      const offer = JSON.parse(localStorage.getItem('zaza_special_offer')) || {
-        active: true,
-        title: 'MIDNIGHT CYBER RIDER FLASH SALE',
-        subtitle: 'Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!',
-        price: 590,
-        oldPrice: 890,
-        endTime: defaultEndTime,
-        badge: '-34% OFF • LIMITED UNITS',
-        image: 'images/neon_cat_helmet.jpg'
-      };
-
-      document.getElementById('offerActiveToggle').checked = offer.active;
-      document.getElementById('offerStatusLabel').textContent = offer.active ? 'Offer is ACTIVE' : 'Offer is DISABLED';
-      document.getElementById('offerTitleInput').value = offer.title;
-      document.getElementById('offerSubtitleInput').value = offer.subtitle;
-      document.getElementById('offerPriceInput').value = offer.price;
-      document.getElementById('offerOldPriceInput').value = offer.oldPrice;
-      document.getElementById('offerEndTimeInput').value = offer.endTime || defaultEndTime;
-      document.getElementById('offerBadgeInput').value = offer.badge;
-
-      if (offer.image) {
-        currentOfferImageData = offer.image;
-        document.getElementById('offerImagePreview').src = offer.image;
-      }
-    }
-
-    function toggleOfferStatus(isActive) {
-      document.getElementById('offerStatusLabel').textContent = isActive ? 'Offer is ACTIVE' : 'Offer is DISABLED';
-      const offer = JSON.parse(localStorage.getItem('zaza_special_offer')) || {};
-      offer.active = isActive;
-      localStorage.setItem('zaza_special_offer', JSON.stringify(offer));
-      showToast(isActive ? 'Special offer activated! ⚡' : 'Special offer hidden');
-    }
-
-    // Client-side instant lightweight image compression
-    function handleOfferImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = function() {
-          // Resize on canvas to max 500x500
-          const canvas = document.createElement('canvas');
-          const maxDim = 500;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          // Compress to WebP / JPEG 75% quality
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
-          currentOfferImageData = compressedDataUrl;
-          document.getElementById('offerImagePreview').src = compressedDataUrl;
-
-          const sizeKb = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
-          document.getElementById('photoStatusText').textContent = `Ultra-Light (${sizeKb} KB) ✓`;
-          showToast(`Photo optimized to ${sizeKb} KB for blazing speed! 🚀`);
-        };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function handleSaveSpecialOffer(e) {
-      e.preventDefault();
-      const offer = {
-        active: document.getElementById('offerActiveToggle').checked,
-        title: document.getElementById('offerTitleInput').value.trim(),
-        subtitle: document.getElementById('offerSubtitleInput').value.trim(),
-        price: parseInt(document.getElementById('offerPriceInput').value, 10),
-        oldPrice: parseInt(document.getElementById('offerOldPriceInput').value, 10),
-        endTime: document.getElementById('offerEndTimeInput').value,
-        badge: document.getElementById('offerBadgeInput').value.trim(),
-        image: currentOfferImageData
-      };
-
-      localStorage.setItem('zaza_special_offer', JSON.stringify(offer));
-      showToast('Flash Deal & Countdown published to store! ⚡');
-    }
-
     // --- ORDERS FILTER & STATUS ---
     function filterOrderStatus(status, btn) {
       currentFilter = status;
@@ -1887,55 +1711,76 @@
 
     async function handleAddNewProduct(e) {
       e.preventDefault();
-      const title = document.getElementById('newProdTitle').value.trim();
-      const category = document.getElementById('newProdCategory').value;
-      const price = parseInt(document.getElementById('newProdPrice').value, 10);
-      const costPrice = parseInt(document.getElementById('newProdCostPrice').value, 10) || 0;
-      const oldPrice = parseInt(document.getElementById('newProdOldPrice').value, 10) || price + 150;
-      const desc = document.getElementById('newProdDesc').value.trim();
+      try {
+        const titleEl = document.getElementById('newProdTitle');
+        const categoryEl = document.getElementById('newProdCategory');
+        const priceEl = document.getElementById('newProdPrice');
+        const costPriceEl = document.getElementById('newProdCostPrice');
+        const oldPriceEl = document.getElementById('newProdOldPrice');
+        const descEl = document.getElementById('newProdDesc');
 
-      const newProduct = {
-        id: 'zaza-custom-' + Date.now(),
-        title: title,
-        category: category,
-        categoryName: category.charAt(0).toUpperCase() + category.slice(1),
-        price: price,
-        costPrice: costPrice,
-        oldPrice: oldPrice,
-        tag: 'NEW DROP ⚡',
-        tagType: 'tag-hot',
-        rating: 5.0,
-        reviewsCount: 1,
-        image: currentNewProductImageData,
-        description: desc,
-        colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: currentNewProductImageData }],
-        sizes: ['Universal Stretch']
-      };
+        const title = titleEl ? titleEl.value.trim() : '';
+        const category = categoryEl ? categoryEl.value : 'helmets';
+        const price = priceEl ? parseInt(priceEl.value, 10) : 0;
+        const costPrice = costPriceEl ? (parseInt(costPriceEl.value, 10) || 0) : 0;
+        const oldPrice = (oldPriceEl && oldPriceEl.value) ? parseInt(oldPriceEl.value, 10) : price + 150;
+        const desc = (descEl && descEl.value.trim()) ? descEl.value.trim() : 'Handcrafted premium moto & streetwear knitwear piece.';
 
-      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
-      customProducts.unshift(newProduct);
-      localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+        if (!title || !price) {
+          showToast('Please enter gear title and selling price!');
+          return;
+        }
 
-      // Direct Cloud Save to Supabase
-      if (window.ZAZA_DB) {
-        await window.ZAZA_DB.addProduct(newProduct);
+        const newProduct = {
+          id: 'zaza-custom-' + Date.now(),
+          title: title,
+          category: category,
+          categoryName: category.charAt(0).toUpperCase() + category.slice(1),
+          price: price,
+          costPrice: costPrice,
+          oldPrice: oldPrice,
+          tag: 'NEW DROP ⚡',
+          tagType: 'tag-hot',
+          rating: 5.0,
+          reviewsCount: 1,
+          image: currentNewProductImageData || 'images/neon_cat_helmet.jpg',
+          description: desc,
+          colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: currentNewProductImageData || 'images/neon_cat_helmet.jpg' }],
+          sizes: ['Universal Stretch']
+        };
+
+        // 1. Add to in-memory list and immediately update table
+        allAdminProducts.unshift(newProduct);
+        renderAdminProductsTable(allAdminProducts);
+        const countEl = document.getElementById('adminProductsCount');
+        if (countEl) countEl.textContent = allAdminProducts.length;
+
+        // 2. Save to localStorage
+        let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+        customProducts.unshift(newProduct);
+        localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+
+        // 3. Direct Cloud Save to Supabase
+        if (window.ZAZA_DB) {
+          await window.ZAZA_DB.addProduct(newProduct);
+        }
+
+        // Reset form
+        document.getElementById('addProductForm').reset();
+        currentNewProductImageData = 'images/neon_cat_helmet.jpg';
+        const imgPrev = document.getElementById('newProdImagePreview');
+        if (imgPrev) imgPrev.src = 'images/neon_cat_helmet.jpg';
+        const statusEl = document.getElementById('newProdPhotoStatus');
+        if (statusEl) statusEl.textContent = 'Ready ✓';
+        const previewEl = document.getElementById('newProdProfitPreview');
+        if (previewEl) previewEl.style.display = 'none';
+
+        loadAdminData();
+        showToast('New gear published to Supabase Cloud & Live Store! 🚀⚡');
+      } catch (err) {
+        console.error('Error in handleAddNewProduct:', err);
+        showToast('Error saving product: ' + err.message);
       }
-      fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct)
-      }).catch(() => {});
-
-      document.getElementById('addProductForm').reset();
-      currentNewProductImageData = 'images/neon_cat_helmet.jpg';
-      document.getElementById('newProdImagePreview').src = 'images/neon_cat_helmet.jpg';
-      document.getElementById('newProdPhotoStatus').textContent = 'Ready ✓';
-      const previewEl = document.getElementById('newProdProfitPreview');
-      if (previewEl) previewEl.style.display = 'none';
-
-      await loadAdminProducts();
-      loadAdminData();
-      showToast('New gear published to Supabase Cloud & Live Store! 🚀⚡');
     }
 
     function showToast(message) {
