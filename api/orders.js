@@ -88,5 +88,19 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  if (req.method === 'DELETE') {
+    try {
+      const id = req.query.id || (req.body && req.body.id);
+      if (id) {
+        await pool.query('DELETE FROM orders WHERE id = $1;', [id]);
+        return res.status(200).json({ success: true });
+      }
+      return res.status(400).json({ error: 'Missing order id' });
+    } catch (err) {
+      console.error('Error deleting order:', err);
+      return res.status(500).json({ error: 'Failed to delete order from database' });
+    }
+  }
+
   return res.status(405).json({ error: 'Method not allowed' });
 };
