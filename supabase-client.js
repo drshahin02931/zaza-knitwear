@@ -42,6 +42,10 @@ const ZAZA_DB = {
         reviewsCount: parseInt(r.reviews_count || 0, 10),
         image: r.image,
         description: r.description,
+        isSpecialOffer: r.is_special_offer || false,
+        offerPrice: r.offer_price ? parseFloat(r.offer_price) : null,
+        offerEndTime: r.offer_end_time || null,
+        offerTitle: r.offer_title || null,
         colors: typeof r.colors === 'string' ? JSON.parse(r.colors) : (r.colors || []),
         sizes: typeof r.sizes === 'string' ? JSON.parse(r.sizes) : (r.sizes || [])
       }));
@@ -66,6 +70,10 @@ const ZAZA_DB = {
         reviews_count: product.reviewsCount,
         image: product.image,
         description: product.description,
+        is_special_offer: product.isSpecialOffer || false,
+        offer_price: product.offerPrice || null,
+        offer_end_time: product.offerEndTime || null,
+        offer_title: product.offerTitle || null,
         colors: product.colors,
         sizes: product.sizes
       };
@@ -78,6 +86,40 @@ const ZAZA_DB = {
       return res.ok;
     } catch (err) {
       console.error('Failed to add product to Supabase:', err);
+      return false;
+    }
+  },
+
+  async setProductSpecialOffer(productId, offerData) {
+    try {
+      const payload = {
+        is_special_offer: offerData.isSpecialOffer,
+        offer_price: offerData.offerPrice,
+        offer_end_time: offerData.offerEndTime || null,
+        offer_title: offerData.offerTitle || null
+      };
+
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/products?id=eq.${productId}`, {
+        method: 'PATCH',
+        headers: this.getHeaders(true),
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to update special offer in Supabase:', err);
+      return false;
+    }
+  },
+
+  async deleteProduct(productId) {
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/products?id=eq.${productId}`, {
+        method: 'DELETE',
+        headers: this.getHeaders()
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to delete product from Supabase:', err);
       return false;
     }
   },

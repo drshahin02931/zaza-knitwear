@@ -291,10 +291,26 @@ function renderProducts() {
       <span class="swatch-dot" style="background-color: ${c.hex};" title="${c.name}" onclick="event.stopPropagation(); previewProductColor('${product.id}', '${c.img}')"></span>
     `).join('');
 
+    const isDeal = Boolean(product.isSpecialOffer && product.offerPrice);
+    const displayPrice = isDeal ? product.offerPrice : product.price;
+    const strikePrice = isDeal ? product.price : product.oldPrice;
+    const badgeHtml = isDeal 
+      ? `<span class="badge-tag tag-deal-red"><i class="fa-solid fa-fire"></i> SPECIAL DEAL</span>`
+      : `<span class="badge-tag ${product.tagType}">${product.tag}</span>`;
+
+    let dealTimerHtml = '';
+    if (isDeal) {
+      if (product.offerEndTime) {
+        dealTimerHtml = `<div class="deal-timer-pill"><i class="fa-solid fa-clock"></i> Limited Time Drop</div>`;
+      } else {
+        dealTimerHtml = `<div class="deal-timer-pill"><i class="fa-solid fa-bolt"></i> Special Price Deal</div>`;
+      }
+    }
+
     return `
-      <article class="product-card" id="card-${product.id}">
+      <article class="product-card ${isDeal ? 'has-deal' : ''}" id="card-${product.id}">
         <div class="product-image-wrap" onclick="openProductModal('${product.id}')">
-          <span class="badge-tag ${product.tagType}">${product.tag}</span>
+          ${badgeHtml}
           <img src="${product.image}" alt="${product.title}" id="img-${product.id}" loading="lazy">
           <button class="quick-view-btn" onclick="event.stopPropagation(); openProductModal('${product.id}')">
             <i class="fa-solid fa-bolt"></i> Quick Specs & Fit
@@ -310,17 +326,19 @@ function renderProducts() {
             <span class="rating-count">(${product.reviewsCount})</span>
           </div>
 
+          ${dealTimerHtml}
+
           <div class="card-swatches">
             ${swatchesHtml}
           </div>
 
           <div class="product-footer">
             <div class="price-wrap">
-              <span class="current-price">${product.price} EGP</span>
-              <span class="old-price">${product.oldPrice} EGP</span>
+              <span class="current-price ${isDeal ? 'deal-price-red' : ''}">${displayPrice} EGP</span>
+              <span class="old-price">${strikePrice} EGP</span>
             </div>
             
-            <button class="add-cart-btn" onclick="quickAddToCart('${product.id}')" title="Quick Add to Gear Cart" aria-label="Add to cart">
+            <button class="add-cart-btn ${isDeal ? 'btn-offer-claim' : ''}" onclick="quickAddToCart('${product.id}')" title="Quick Add to Gear Cart" aria-label="Add to cart">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
@@ -427,10 +445,13 @@ function setupEventListeners() {
       const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size || activeModalProduct.sizes[0];
       const customNote = document.getElementById('qvCustomNote')?.value.trim() || '';
 
+      const isDeal = Boolean(activeModalProduct.isSpecialOffer && activeModalProduct.offerPrice);
+      const actualPrice = isDeal ? activeModalProduct.offerPrice : activeModalProduct.price;
+
       addToCart({
         id: activeModalProduct.id,
         title: activeModalProduct.title,
-        price: activeModalProduct.price,
+        price: actualPrice,
         image: activeModalProduct.image,
         color: selectedColor,
         size: selectedSize,
@@ -451,10 +472,13 @@ function setupEventListeners() {
       const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size || activeModalProduct.sizes[0];
       const customNote = document.getElementById('qvCustomNote')?.value.trim() || '';
 
+      const isDeal = Boolean(activeModalProduct.isSpecialOffer && activeModalProduct.offerPrice);
+      const actualPrice = isDeal ? activeModalProduct.offerPrice : activeModalProduct.price;
+
       addToCart({
         id: activeModalProduct.id,
         title: activeModalProduct.title,
-        price: activeModalProduct.price,
+        price: actualPrice,
         image: activeModalProduct.image,
         color: selectedColor,
         size: selectedSize,
@@ -558,10 +582,13 @@ function quickAddToCart(productId) {
   const prod = getAllProducts().find(p => p.id === productId);
   if (!prod) return;
 
+  const isDeal = Boolean(prod.isSpecialOffer && prod.offerPrice);
+  const actualPrice = isDeal ? prod.offerPrice : prod.price;
+
   addToCart({
     id: prod.id,
     title: prod.title,
-    price: prod.price,
+    price: actualPrice,
     image: prod.image,
     color: prod.colors[0].name,
     size: prod.sizes[0],
@@ -739,7 +766,17 @@ window.openProductModal = function(productId) {
   document.getElementById('qvImage').src = prod.image;
   document.getElementById('qvCategory').textContent = prod.categoryName;
   document.getElementById('qvTitle').textContent = prod.title;
-  document.getElementById('qvPrice').textContent = `${prod.price} EGP`;
+
+  const isDeal = Boolean(prod.isSpecialOffer && prod.offerPrice);
+  const priceEl = document.getElementById('qvPrice');
+  if (priceEl) {
+    if (isDeal) {
+      priceEl.innerHTML = `<span style="color:#FF1F53; font-weight:900;">${prod.offerPrice} EGP</span> <span style="font-size:0.95rem; color:var(--text-muted); text-decoration:line-through; margin-left:8px;">${prod.price} EGP</span> <span class="badge-tag tag-deal-red" style="font-size:0.7rem; padding:3px 10px; margin-left:8px;"><i class="fa-solid fa-fire"></i> SPECIAL DEAL</span>`;
+    } else {
+      priceEl.textContent = `${prod.price} EGP`;
+    }
+  }
+
   document.getElementById('qvReviews').textContent = `(${prod.reviewsCount} verified reviews)`;
   document.getElementById('qvDesc').textContent = prod.description;
   document.getElementById('selectedColorName').textContent = prod.colors[0].name;

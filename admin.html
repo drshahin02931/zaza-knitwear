@@ -176,6 +176,46 @@
     input:checked + .slider {
       background-color: var(--accent-neon);
     }
+    .offer-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+    .offer-status-active {
+      background: rgba(255, 0, 60, 0.15);
+      border: 1px solid rgba(255, 0, 60, 0.5);
+      color: #FF2E5B;
+      box-shadow: 0 0 10px rgba(255, 0, 60, 0.25);
+    }
+    .offer-status-none {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+    .btn-mark-offer {
+      background: rgba(255, 0, 60, 0.12);
+      border: 1px solid rgba(255, 0, 60, 0.4);
+      color: #FF2E5B;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-mark-offer:hover {
+      background: #FF003C;
+      color: #FFF;
+      box-shadow: 0 0 14px rgba(255, 0, 60, 0.6);
+      transform: translateY(-1px);
+    }
     /* Custom Chic Confirmation Modal */
     .confirm-modal-overlay {
       position: fixed;
@@ -544,6 +584,43 @@
       </div>
     </section>
 
+    <!-- ====================================================================
+         FEATURE 2: MANAGE STORE PRODUCTS CATALOG & SPECIAL OFFERS
+         ==================================================================== -->
+    <section class="admin-card-section" id="manageProductsSection">
+      <div class="card-header-flex">
+        <div>
+          <h3 style="font-size:1.35rem; font-weight:900; color:#FFFFFF; display:flex; align-items:center; gap:10px;">
+            <i class="fa-solid fa-boxes-stacked" style="color:var(--accent-neon);"></i>
+            <span>Manage Store Products</span>
+            <span class="badge-count" id="adminProductsCount" style="position:static; margin-left:6px; font-size:0.75rem;">0</span>
+          </h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Manage active gear, delete items, and mark products as Hot Red Special Offers with custom countdown timers</p>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px;">
+          <input type="text" id="adminProdSearchInput" placeholder="Search gear..." oninput="filterAdminProducts(this.value)" style="padding:8px 14px; border-radius:var(--radius-full); background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.82rem; width:220px;">
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Gear / Thumbnail</th>
+              <th>Category</th>
+              <th>Regular Price</th>
+              <th>Special Offer Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductsTableBody">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Quick Add New Product to Store -->
     <section class="admin-card-section">
       <h3 style="font-size:1.25rem; font-weight:800; color:#FFFFFF; margin-bottom:6px;">
@@ -608,6 +685,61 @@
         </div>
       </form>
     </section>
+
+  <!-- Modal: Set Special Offer for Individual Product (Hot Red) -->
+  <div class="confirm-modal-overlay" id="productSpecialOfferModal">
+    <div class="confirm-modal-card" style="border-color:rgba(255, 0, 60, 0.5); box-shadow:0 0 35px rgba(255, 0, 60, 0.25); max-width:480px; text-align:left;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <h3 style="font-size:1.3rem; font-weight:900; color:#FFF; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-fire" style="color:#FF003C;"></i>
+          <span>Set Special Offer</span>
+        </h3>
+        <button onclick="closeProductSpecialOfferModal()" style="color:var(--text-muted); font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:14px; background:#0B0B0F; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:18px;">
+        <img id="modalOfferProdImg" src="" style="width:50px; height:50px; border-radius:8px; object-fit:cover; border:1.5px solid #FF003C;">
+        <div>
+          <h4 id="modalOfferProdTitle" style="color:#FFF; font-size:0.92rem; margin-bottom:2px;">Product Title</h4>
+          <span style="font-size:0.78rem; color:var(--text-muted);">Current Price: <strong id="modalOfferProdRegularPrice" style="color:#FFF;">0 EGP</strong></span>
+        </div>
+      </div>
+
+      <form id="productOfferForm" onsubmit="handleSaveProductSpecialOffer(event)">
+        <input type="hidden" id="modalOfferProdId">
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="color:#FFF; font-size:0.85rem; font-weight:700;">Special Deal Price (EGP) *</label>
+          <input type="number" id="modalOfferPriceInput" required placeholder="e.g. 590" style="border-color:#FF003C; box-shadow:0 0 10px rgba(255, 0, 60, 0.2);">
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="color:#FFF; font-size:0.85rem; font-weight:700;">Offer Expiration Date & Time (Optional)</label>
+          <input type="datetime-local" id="modalOfferEndTimeInput">
+          <span style="font-size:0.75rem; color:#FF7A95; display:block; margin-top:4px;">
+            🕒 لو سيبته فاضي، الأوفر هيكون شغال علطول وبدون وقت انتهاء (No Expiration / Ongoing Deal).
+          </span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+          <label class="switch">
+            <input type="checkbox" id="modalOfferActiveToggle" checked>
+            <span class="slider" style="background-color:#FF003C;"></span>
+          </label>
+          <span style="font-size:0.84rem; font-weight:700; color:#FFF;">Activate this Special Offer immediately</span>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" class="confirm-btn-cancel" onclick="removeCurrentProductOffer()" style="color:#FF4D4D;">
+            Remove Offer
+          </button>
+          <button type="submit" class="btn-primary" style="background:#FF003C; border:none; box-shadow:0 4px 18px rgba(255, 0, 60, 0.45); padding:10px 22px;">
+            <i class="fa-solid fa-fire"></i> Save Hot Red Deal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Custom Chic Confirmation Modal (Replaces Browser Popup) -->
   <div class="confirm-modal-overlay" id="customConfirmModal">
@@ -709,6 +841,233 @@
 
       renderOrdersTable();
       loadSpecialOfferSettings();
+      loadAdminProducts();
+    }
+
+    // --- MANAGE PRODUCTS & HOT RED SPECIAL OFFERS ---
+    let allAdminProducts = [];
+
+    async function loadAdminProducts() {
+      let prods = [];
+      if (window.ZAZA_DB) {
+        try {
+          prods = await window.ZAZA_DB.getProducts();
+        } catch (e) {}
+      }
+
+      if (!prods || prods.length === 0) {
+        const custom = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+        const base = typeof BASE_PRODUCTS !== 'undefined' ? BASE_PRODUCTS : [];
+        prods = [...custom, ...base];
+      }
+
+      allAdminProducts = prods;
+      const countEl = document.getElementById('adminProductsCount');
+      if (countEl) countEl.textContent = allAdminProducts.length;
+      renderAdminProductsTable(allAdminProducts);
+    }
+
+    function filterAdminProducts(query) {
+      const q = (query || '').toLowerCase().trim();
+      const filtered = allAdminProducts.filter(p => 
+        (p.title || '').toLowerCase().includes(q) || 
+        (p.categoryName || p.category || '').toLowerCase().includes(q)
+      );
+      renderAdminProductsTable(filtered);
+    }
+
+    function renderAdminProductsTable(productsList) {
+      const tbody = document.getElementById('adminProductsTableBody');
+      if (!tbody) return;
+
+      if (!productsList || productsList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:32px; color:var(--text-muted);">No products found in catalog.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = productsList.map(prod => {
+        const isDeal = Boolean(prod.isSpecialOffer && prod.offerPrice);
+        let dealStatusHtml = '';
+
+        if (isDeal) {
+          dealStatusHtml = `
+            <div>
+              <div class="offer-status-badge offer-status-active">
+                <i class="fa-solid fa-fire"></i> SPECIAL DEAL: ${prod.offerPrice} EGP
+              </div>
+              <div style="font-size:0.72rem; color:#FF7A95; margin-top:3px;">
+                ${prod.offerEndTime ? 'Ends: ' + new Date(prod.offerEndTime).toLocaleString() : '🕒 Ongoing / No Expiry'}
+              </div>
+            </div>
+          `;
+        } else {
+          dealStatusHtml = `<span class="offer-status-badge offer-status-none">Standard Gear</span>`;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:48px; height:48px; border-radius:8px; overflow:hidden; border:1px solid ${isDeal ? '#FF003C' : 'var(--border-subtle)'}; background:#000; flex-shrink:0;">
+                  <img src="${prod.image}" alt="${prod.title}" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <strong style="color:#FFF; font-size:0.9rem;">${prod.title}</strong>
+                  <div style="font-size:0.72rem; color:var(--text-muted);">ID: ${prod.id}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span style="font-size:0.82rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">
+                ${prod.categoryName || prod.category}
+              </span>
+            </td>
+            <td>
+              <strong style="font-size:0.95rem; color:#FFF;">${prod.price} EGP</strong>
+              ${prod.oldPrice ? `<div style="font-size:0.72rem; color:var(--text-muted); text-decoration:line-through;">${prod.oldPrice} EGP</div>` : ''}
+            </td>
+            <td>
+              ${dealStatusHtml}
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-mark-offer" onclick="openProductSpecialOfferModal('${prod.id}')" title="Configure Special Offer Price & Time">
+                  <i class="fa-solid fa-fire"></i> ${isDeal ? 'Edit Deal' : 'Set Special Offer'}
+                </button>
+                <button onclick="confirmDeleteProduct('${prod.id}')" style="color:#FF4D4D; background:rgba(255,77,77,0.12); border:1px solid rgba(255,77,77,0.3); border-radius:6px; cursor:pointer; font-size:0.9rem; padding:5px 8px; transition:all 0.2s;" title="Delete this gear piece">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    let activeOfferProductId = null;
+
+    function openProductSpecialOfferModal(productId) {
+      const prod = allAdminProducts.find(p => p.id === productId);
+      if (!prod) return;
+
+      activeOfferProductId = productId;
+      document.getElementById('modalOfferProdId').value = prod.id;
+      document.getElementById('modalOfferProdTitle').textContent = prod.title;
+      document.getElementById('modalOfferProdRegularPrice').textContent = `${prod.price} EGP`;
+      document.getElementById('modalOfferProdImg').src = prod.image;
+
+      document.getElementById('modalOfferPriceInput').value = prod.offerPrice || Math.round(prod.price * 0.8);
+      document.getElementById('modalOfferEndTimeInput').value = prod.offerEndTime ? prod.offerEndTime.slice(0, 16) : '';
+      document.getElementById('modalOfferActiveToggle').checked = prod.isSpecialOffer !== false;
+
+      document.getElementById('productSpecialOfferModal').classList.add('active');
+    }
+
+    function closeProductSpecialOfferModal() {
+      document.getElementById('productSpecialOfferModal').classList.remove('active');
+      activeOfferProductId = null;
+    }
+
+    async function handleSaveProductSpecialOffer(e) {
+      e.preventDefault();
+      if (!activeOfferProductId) return;
+
+      const offerPrice = parseInt(document.getElementById('modalOfferPriceInput').value, 10);
+      const endTimeVal = document.getElementById('modalOfferEndTimeInput').value;
+      const isActive = document.getElementById('modalOfferActiveToggle').checked;
+
+      const offerData = {
+        isSpecialOffer: isActive,
+        offerPrice: offerPrice,
+        offerEndTime: endTimeVal ? new Date(endTimeVal).toISOString() : null,
+        offerTitle: 'SPECIAL DEAL 🔥'
+      };
+
+      // Update in memory
+      const prodIdx = allAdminProducts.findIndex(p => p.id === activeOfferProductId);
+      if (prodIdx > -1) {
+        allAdminProducts[prodIdx].isSpecialOffer = offerData.isSpecialOffer;
+        allAdminProducts[prodIdx].offerPrice = offerData.offerPrice;
+        allAdminProducts[prodIdx].offerEndTime = offerData.offerEndTime;
+      }
+
+      // Update in Supabase
+      if (window.ZAZA_DB) {
+        await window.ZAZA_DB.setProductSpecialOffer(activeOfferProductId, offerData);
+      }
+
+      // Update in localStorage
+      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+      const cIdx = customProducts.findIndex(p => p.id === activeOfferProductId);
+      if (cIdx > -1) {
+        customProducts[cIdx].isSpecialOffer = offerData.isSpecialOffer;
+        customProducts[cIdx].offerPrice = offerData.offerPrice;
+        customProducts[cIdx].offerEndTime = offerData.offerEndTime;
+        localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+      }
+
+      closeProductSpecialOfferModal();
+      renderAdminProductsTable(allAdminProducts);
+      showToast(endTimeVal ? 'Hot Red Special Offer with Timer activated! 🔥' : 'Ongoing Hot Red Special Offer saved! 🔥');
+    }
+
+    async function removeCurrentProductOffer() {
+      if (!activeOfferProductId) return;
+
+      const offerData = {
+        isSpecialOffer: false,
+        offerPrice: null,
+        offerEndTime: null
+      };
+
+      const prodIdx = allAdminProducts.findIndex(p => p.id === activeOfferProductId);
+      if (prodIdx > -1) {
+        allAdminProducts[prodIdx].isSpecialOffer = false;
+        allAdminProducts[prodIdx].offerPrice = null;
+        allAdminProducts[prodIdx].offerEndTime = null;
+      }
+
+      if (window.ZAZA_DB) {
+        await window.ZAZA_DB.setProductSpecialOffer(activeOfferProductId, offerData);
+      }
+
+      let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+      const cIdx = customProducts.findIndex(p => p.id === activeOfferProductId);
+      if (cIdx > -1) {
+        customProducts[cIdx].isSpecialOffer = false;
+        customProducts[cIdx].offerPrice = null;
+        customProducts[cIdx].offerEndTime = null;
+        localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+      }
+
+      closeProductSpecialOfferModal();
+      renderAdminProductsTable(allAdminProducts);
+      showToast('Special offer removed for this gear. Back to standard price.');
+    }
+
+    function confirmDeleteProduct(productId) {
+      const prod = allAdminProducts.find(p => p.id === productId);
+      const title = prod ? prod.title : productId;
+
+      showCustomConfirm({
+        title: 'Delete Product?',
+        desc: `Are you sure you want to permanently remove "${title}" from the store catalog?`,
+        dangerText: 'Delete Gear',
+        onConfirm: async () => {
+          allAdminProducts = allAdminProducts.filter(p => p.id !== productId);
+          renderAdminProductsTable(allAdminProducts);
+
+          if (window.ZAZA_DB) {
+            await window.ZAZA_DB.deleteProduct(productId);
+          }
+
+          let customProducts = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
+          customProducts = customProducts.filter(p => p.id !== productId);
+          localStorage.setItem('zaza_custom_products', JSON.stringify(customProducts));
+
+          showToast('Product removed from store catalog! 🗑️');
+        }
+      });
     }
 
     // --- SPECIAL OFFER LOGIC & PHOTO COMPRESSION ---

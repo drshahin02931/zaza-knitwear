@@ -563,7 +563,7 @@ button {
 }
 
 /* ==========================================================================
-   SPECIAL OFFER & FLASH DEAL SECTION (LIVE COUNTDOWN TIMER)
+   SPECIAL OFFER & FLASH DEAL SECTION (VIBRANT ELECTRIC HOT RED)
    ========================================================================== */
 .special-offer-section {
   max-width: 1320px;
@@ -572,9 +572,9 @@ button {
 }
 
 .special-offer-card {
-  background: linear-gradient(135deg, #1C1C26 0%, #0D0D12 100%);
-  border: 2px solid var(--accent-neon);
-  box-shadow: 0 0 35px rgba(132, 255, 0, 0.25);
+  background: linear-gradient(135deg, #1C080E 0%, #0D0D12 100%);
+  border: 2px solid #FF003C;
+  box-shadow: 0 0 40px rgba(255, 0, 60, 0.35);
   border-radius: var(--radius-lg);
   padding: 38px 44px;
   display: grid;
@@ -589,8 +589,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-neon);
-  color: #000;
+  background: #FF003C;
+  color: #FFFFFF;
   padding: 5px 14px;
   border-radius: var(--radius-full);
   font-size: 0.78rem;
@@ -598,7 +598,7 @@ button {
   letter-spacing: 0.8px;
   text-transform: uppercase;
   margin-bottom: 14px;
-  box-shadow: 0 0 14px rgba(132, 255, 0, 0.5);
+  box-shadow: 0 0 16px rgba(255, 0, 60, 0.6);
 }
 
 .offer-title {
@@ -617,7 +617,7 @@ button {
   margin-bottom: 22px;
 }
 
-/* Countdown Clock Blocks */
+/* Countdown Clock Blocks (Electric Crimson Red) */
 .countdown-clock-wrap {
   display: flex;
   align-items: center;
@@ -627,13 +627,13 @@ button {
 }
 
 .countdown-box {
-  background: #0A0A0E;
-  border: 1px solid var(--border-subtle);
+  background: #14070B;
+  border: 1px solid rgba(255, 0, 60, 0.4);
   border-radius: var(--radius-md);
   padding: 10px 16px;
   text-align: center;
   min-width: 68px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), 0 0 15px rgba(255, 0, 60, 0.15);
   position: relative;
 }
 
@@ -641,15 +641,16 @@ button {
   font-size: 1.7rem;
   font-weight: 900;
   font-family: var(--font-display);
-  color: var(--accent-neon);
+  color: #FF2E5B;
   line-height: 1;
   display: block;
+  text-shadow: 0 0 14px rgba(255, 0, 60, 0.5);
 }
 
 .countdown-label {
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #A3A8B5;
   text-transform: uppercase;
   margin-top: 4px;
   letter-spacing: 0.5px;
@@ -658,8 +659,29 @@ button {
 .countdown-sep {
   font-size: 1.4rem;
   font-weight: 900;
-  color: var(--accent-neon);
-  opacity: 0.6;
+  color: #FF003C;
+  opacity: 0.8;
+  text-shadow: 0 0 10px rgba(255, 0, 60, 0.6);
+}
+
+.offer-deal-price {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #FF1F53 !important;
+  text-shadow: 0 0 14px rgba(255, 0, 60, 0.45);
+}
+
+.btn-offer-claim {
+  background: #FF003C !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 22px rgba(255, 0, 60, 0.5) !important;
+  transition: all var(--transition-fast);
+}
+
+.btn-offer-claim:hover {
+  background: #E60036 !important;
+  box-shadow: 0 6px 28px rgba(255, 0, 60, 0.75) !important;
+  transform: translateY(-2px);
 }
 
 /* Offer Visual Box */
@@ -674,8 +696,8 @@ button {
   height: 320px;
   border-radius: 18px;
   overflow: hidden;
-  border: 2px solid var(--accent-neon);
-  box-shadow: 0 0 30px rgba(132, 255, 0, 0.35);
+  border: 2px solid #FF003C;
+  box-shadow: 0 0 35px rgba(255, 0, 60, 0.4);
   margin: 0 auto;
 }
 
@@ -689,14 +711,52 @@ button {
   position: absolute;
   top: -12px;
   right: 14px;
-  background: #FF0055;
+  background: #FF003C;
   color: #FFFFFF;
   padding: 6px 14px;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 900;
-  box-shadow: 0 0 16px rgba(255, 0, 85, 0.6);
+  box-shadow: 0 0 18px rgba(255, 0, 60, 0.7);
   transform: rotate(5deg);
+}
+
+/* Hot Red Highlights on Product Catalog Cards */
+.product-card.has-deal {
+  border-color: rgba(255, 0, 60, 0.55) !important;
+  box-shadow: 0 4px 20px rgba(255, 0, 60, 0.2);
+}
+
+.badge-tag.tag-deal-red {
+  background: #FF003C !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(255, 0, 60, 0.7) !important;
+  animation: pulse-red-deal 2s infinite ease-in-out;
+}
+
+@keyframes pulse-red-deal {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 60, 0.5); }
+  50% { box-shadow: 0 0 22px rgba(255, 0, 60, 0.9); }
+}
+
+.deal-price-red {
+  color: #FF1F53 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 60, 0.35);
+}
+
+.deal-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 0, 60, 0.12);
+  border: 1px solid rgba(255, 0, 60, 0.35);
+  color: #FF2E5B;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-top: 4px;
 }
 
 /* ==========================================================================
