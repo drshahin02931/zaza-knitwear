@@ -530,6 +530,52 @@
       background: rgba(255, 255, 255, 0.03);
     }
 
+    /* Product Color Badges Selector */
+    .color-badge-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .color-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: var(--bg-secondary);
+      border: 1.5px solid var(--border-subtle);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .color-badge-item:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #FFF;
+    }
+    .color-badge-item.active {
+      border-color: var(--accent-neon);
+      background: rgba(132, 255, 0, 0.12);
+      color: #FFF;
+      box-shadow: 0 0 12px rgba(132, 255, 0, 0.25);
+    }
+    .color-badge-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .color-badge-check {
+      font-size: 0.72rem;
+      color: var(--accent-neon);
+      margin-left: 2px;
+    }
+
     /* ==========================================================================
        ADMIN LIGHT MODE FULL SUITE
        ========================================================================== */
@@ -779,6 +825,25 @@
       background: #F8FAFC !important;
       border-color: #CBD5E1 !important;
       color: #0F172A !important;
+    }
+
+    [data-theme="light"] .color-badge-item {
+      background: #F1F5F9 !important;
+      border-color: #CBD5E1 !important;
+      color: #334155 !important;
+    }
+    [data-theme="light"] .color-badge-item:hover {
+      background: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    [data-theme="light"] .color-badge-item.active {
+      background: #DCFCE7 !important;
+      border-color: #16A34A !important;
+      color: #15803D !important;
+      box-shadow: 0 0 10px rgba(22, 163, 74, 0.2) !important;
+    }
+    [data-theme="light"] .color-badge-check {
+      color: #16A34A !important;
     }
   </style>
 </head>
@@ -1060,6 +1125,37 @@
           <textarea id="newProdDesc" rows="3" placeholder="Write gear description, knit details, yarn quality, fit specs..."></textarea>
         </div>
 
+        <!-- Product Available Colors Selector -->
+        <div class="form-group" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <label style="color:#FFF; font-size:0.88rem; font-weight:800; margin-bottom:0; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-palette" style="color:var(--accent-neon);"></i>
+              Available Product Colors / ألوان القطعة المتاحة للعميل *
+            </label>
+            <span id="newProdColorsCount" style="font-size:0.75rem; color:var(--accent-neon); font-weight:800; background:rgba(132, 255, 0, 0.12); padding:3px 10px; border-radius:12px; border:1px solid rgba(132, 255, 0, 0.3);">
+              1 Selected
+            </span>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+            اضغط على الألوان المتاحة لهذا المنتج (تقدر تختار لون أو أكتر، والعميل هيقدر يختار منهم وهو بيشتري):
+          </p>
+
+          <!-- Predefined Colors Swatches -->
+          <div class="color-badge-picker" id="newProdColorGrid">
+            <!-- Populated via JavaScript -->
+          </div>
+
+          <!-- Add Custom Color Inline -->
+          <div style="display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border-subtle); flex-wrap:wrap;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">لون إضافي مخصص:</span>
+            <input type="text" id="newCustomColorName" placeholder="اسم اللون (مثال: نيون بينك)..." style="flex:1; min-width:160px; padding:7px 12px; font-size:0.82rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF;">
+            <input type="color" id="newCustomColorHex" value="#FF0077" style="width:36px; height:32px; padding:2px; border-radius:6px; border:1px solid var(--border-subtle); background:none; cursor:pointer;">
+            <button type="button" class="btn-outline" onclick="addNewCustomColorToPalette('new')" style="padding:7px 14px; font-size:0.8rem; cursor:pointer;">
+              <i class="fa-solid fa-plus"></i> إضافة اللون
+            </button>
+          </div>
+        </div>
+
         <!-- Product Photo Upload with Live Compression & Preview -->
         <div class="form-grid-2" style="align-items: center; background: rgba(132, 255, 0, 0.04); padding: 16px; border-radius: var(--radius-md); border: 1px dashed var(--border-neon); margin-bottom: 20px;">
           <div class="form-group" style="margin-bottom:0;">
@@ -1192,6 +1288,37 @@
         <div class="form-group" style="margin-bottom:14px;">
           <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Description</label>
           <textarea id="editProdDesc" rows="3" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.88rem; resize:vertical;"></textarea>
+        </div>
+
+        <!-- Product Available Colors Selector for Edit Modal -->
+        <div class="form-group" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <label style="color:#FFF; font-size:0.85rem; font-weight:800; margin-bottom:0; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-palette" style="color:var(--accent-neon);"></i>
+              Available Product Colors / ألوان القطعة المتاحة *
+            </label>
+            <span id="editProdColorsCount" style="font-size:0.75rem; color:var(--accent-neon); font-weight:800; background:rgba(132, 255, 0, 0.12); padding:2px 8px; border-radius:12px; border:1px solid rgba(132, 255, 0, 0.3);">
+              1 Selected
+            </span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+            حدد الألوان التي تود إتاحتها للعميل عند اختيار هذه القطعة:
+          </p>
+
+          <!-- Color Badges Grid -->
+          <div class="color-badge-picker" id="editProdColorGrid">
+            <!-- Populated via JavaScript -->
+          </div>
+
+          <!-- Add Custom Color Row -->
+          <div style="display:flex; align-items:center; gap:8px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border-subtle); flex-wrap:wrap;">
+            <span style="font-size:0.78rem; font-weight:700; color:var(--text-secondary);">لون إضافي:</span>
+            <input type="text" id="editCustomColorName" placeholder="اسم اللون..." style="flex:1; min-width:140px; padding:6px 10px; font-size:0.8rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF;">
+            <input type="color" id="editCustomColorHex" value="#00FFCC" style="width:34px; height:30px; padding:2px; border-radius:6px; border:1px solid var(--border-subtle); background:none; cursor:pointer;">
+            <button type="button" class="btn-outline" onclick="addNewCustomColorToPalette('edit')" style="padding:6px 12px; font-size:0.78rem; cursor:pointer;">
+              <i class="fa-solid fa-plus"></i> إضافة
+            </button>
+          </div>
         </div>
 
         <!-- Product Photo Edit with Auto-Compression -->
@@ -1424,10 +1551,115 @@
       if (elBreakdown) elBreakdown.textContent = `${deliveredOrders.length} Delivered • ${craftingCount} In Crafting`;
 
       renderOrdersTable();
+      renderColorBadges('newProdColorGrid', newProductColors, 'new');
     }
 
     // --- MANAGE PRODUCTS & HOT RED SPECIAL OFFERS ---
     let allAdminProducts = [];
+
+    // --- PRODUCT COLORS PALETTE & MANAGER ---
+    const DEFAULT_COLOR_PALETTE = [
+      { name: 'Cyber Neon Lime', hex: '#84FF00' },
+      { name: 'Jet Stealth Black', hex: '#111111' },
+      { name: 'Hot Crimson Red', hex: '#FF003C' },
+      { name: 'Pure Snow White', hex: '#FFFFFF' },
+      { name: 'Electric Sky Blue', hex: '#00E5FF' },
+      { name: 'Sunset Neon Orange', hex: '#FF6B00' },
+      { name: 'Cyber Violet Purple', hex: '#A855F7' },
+      { name: 'Volt Acid Yellow', hex: '#FFE600' },
+      { name: 'Tactical Desert Tan', hex: '#947854' },
+      { name: 'Graphite Melange Grey', hex: '#6B7280' }
+    ];
+
+    let newProductColors = [{ name: 'Cyber Neon Lime', hex: '#84FF00' }];
+    let editProductColors = [];
+
+    function renderColorBadges(containerId, activeList, type) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const allColors = [...DEFAULT_COLOR_PALETTE];
+      activeList.forEach(c => {
+        if (!allColors.some(p => p.name.toLowerCase() === c.name.toLowerCase())) {
+          allColors.push(c);
+        }
+      });
+
+      container.innerHTML = allColors.map(c => {
+        const isSelected = activeList.some(item => item.name.toLowerCase() === c.name.toLowerCase());
+        const safeName = c.name.replace(/'/g, "\\'");
+        return `
+          <div class="color-badge-item ${isSelected ? 'active' : ''}" 
+               onclick="toggleColorSelection('${type}', '${safeName}', '${c.hex}')">
+            <span class="color-badge-dot" style="background-color: ${c.hex};"></span>
+            <span>${c.name}</span>
+            ${isSelected ? '<i class="fa-solid fa-check color-badge-check"></i>' : ''}
+          </div>
+        `;
+      }).join('');
+
+      const countEl = document.getElementById(type === 'new' ? 'newProdColorsCount' : 'editProdColorsCount');
+      if (countEl) {
+        countEl.textContent = `${activeList.length} Selected`;
+      }
+    }
+
+    function toggleColorSelection(type, colorName, colorHex) {
+      let list = type === 'new' ? newProductColors : editProductColors;
+      const idx = list.findIndex(c => c.name.toLowerCase() === colorName.toLowerCase());
+
+      if (idx > -1) {
+        if (list.length > 1) {
+          list.splice(idx, 1);
+        } else {
+          showToast('Product must have at least 1 colorway!');
+          return;
+        }
+      } else {
+        list.push({ name: colorName, hex: colorHex });
+      }
+
+      if (type === 'new') {
+        newProductColors = list;
+        renderColorBadges('newProdColorGrid', newProductColors, 'new');
+      } else {
+        editProductColors = list;
+        renderColorBadges('editProdColorGrid', editProductColors, 'edit');
+      }
+    }
+
+    function addNewCustomColorToPalette(type) {
+      const nameInput = document.getElementById(type === 'new' ? 'newCustomColorName' : 'editCustomColorName');
+      const hexInput = document.getElementById(type === 'new' ? 'newCustomColorHex' : 'editCustomColorHex');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const hex = hexInput ? hexInput.value : '#FF0055';
+
+      if (!name) {
+        showToast('Please enter a color name!');
+        return;
+      }
+
+      const newColor = { name, hex };
+      if (!DEFAULT_COLOR_PALETTE.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        DEFAULT_COLOR_PALETTE.push(newColor);
+      }
+
+      let list = type === 'new' ? newProductColors : editProductColors;
+      if (!list.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        list.push(newColor);
+      }
+
+      if (nameInput) nameInput.value = '';
+
+      if (type === 'new') {
+        newProductColors = list;
+        renderColorBadges('newProdColorGrid', newProductColors, 'new');
+      } else {
+        editProductColors = list;
+        renderColorBadges('editProdColorGrid', editProductColors, 'edit');
+      }
+      showToast(`Color "${name}" added and selected! 🎨`);
+    }
 
     async function loadAdminProducts() {
       let prods = [];
@@ -1489,6 +1721,12 @@
           dealStatusHtml = `<span class="offer-status-badge offer-status-none">Standard Gear</span>`;
         }
 
+        const colorsDotsHtml = (prod.colors && prod.colors.length > 0)
+          ? prod.colors.map(c => `
+              <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${c.hex}; border:1px solid rgba(255,255,255,0.4); margin-right:3px;" title="${c.name}"></span>
+            `).join('')
+          : '<span style="font-size:0.72rem; color:var(--text-muted);">Standard</span>';
+
         return `
           <tr>
             <td>
@@ -1497,8 +1735,12 @@
                   <img src="${prod.image}" alt="${prod.title}" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div>
-                  <strong style="color:#FFF; font-size:0.9rem;">${prod.title}</strong>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">ID: ${prod.id}</div>
+                  <strong style="color:var(--text-primary); font-size:0.9rem;">${prod.title}</strong>
+                  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">ID: ${prod.id}</div>
+                  <div style="display:flex; align-items:center; gap:2px; flex-wrap:wrap;">
+                    ${colorsDotsHtml}
+                    <span style="font-size:0.7rem; color:var(--text-muted); margin-left:4px;">${(prod.colors || []).length} colors</span>
+                  </div>
                 </div>
               </div>
             </td>
@@ -1508,7 +1750,7 @@
               </span>
             </td>
             <td>
-              <strong style="font-size:0.95rem; color:#FFF;">${prod.price} EGP</strong>
+              <strong style="font-size:0.95rem; color:var(--text-primary);">${prod.price} EGP</strong>
               ${prod.oldPrice ? `<div style="font-size:0.72rem; color:var(--text-muted); text-decoration:line-through;">${prod.oldPrice} EGP</div>` : ''}
             </td>
             <td>
@@ -1524,7 +1766,7 @@
             </td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
-                <button class="btn-edit-prod" onclick="openEditProductModal('${prod.id}')" title="Edit Gear Details (Name, Price, Cost, Category, Photo)">
+                <button class="btn-edit-prod" onclick="openEditProductModal('${prod.id}')" title="Edit Gear Details (Name, Price, Cost, Category, Colors, Photo)">
                   <i class="fa-solid fa-pen-to-square"></i> Edit
                 </button>
                 <button class="btn-mark-offer" onclick="openProductSpecialOfferModal('${prod.id}')" title="Configure Special Offer Price & Time">
@@ -1559,6 +1801,12 @@
       document.getElementById('editProdDesc').value = prod.description || '';
 
       updateEditProfitPreview();
+
+      // Render product colors
+      editProductColors = (prod.colors && prod.colors.length > 0)
+        ? JSON.parse(JSON.stringify(prod.colors))
+        : [{ name: 'Cyber Neon Lime', hex: '#84FF00' }];
+      renderColorBadges('editProdColorGrid', editProductColors, 'edit');
 
       currentEditProductImageData = prod.image || 'images/neon_cat_helmet.jpg';
       document.getElementById('editProdImagePreview').src = currentEditProductImageData;
@@ -1646,16 +1894,18 @@
         costPrice,
         oldPrice,
         description: desc,
-        image
+        image,
+        colors: editProductColors.map(c => ({
+          name: c.name,
+          hex: c.hex,
+          img: c.img || image
+        }))
       };
 
       // 1. Update in-memory
       const prodIdx = allAdminProducts.findIndex(p => p.id === activeEditProductId);
       if (prodIdx > -1) {
         Object.assign(allAdminProducts[prodIdx], updatedFields);
-        if (allAdminProducts[prodIdx].colors && allAdminProducts[prodIdx].colors.length > 0) {
-          allAdminProducts[prodIdx].colors[0].img = image;
-        }
       }
 
       // 2. Update Supabase
@@ -1677,7 +1927,7 @@
       closeEditProductModal();
       renderAdminProductsTable(allAdminProducts);
       loadAdminData();
-      showToast('Product & cost updated successfully! ⚡');
+      showToast('Product & colors updated successfully! ⚡');
     }
 
     let activeOfferProductId = null;
@@ -1825,7 +2075,22 @@
       }
 
       tableBody.innerHTML = orders.map(ord => {
-        const itemsList = ord.items.map(i => `• ${i.title} (${i.color}) × ${i.qty}`).join('<br>');
+        const itemsList = (ord.items || []).map(i => {
+          const colorName = i.color || 'Standard';
+          return `
+            <div style="margin-bottom:6px; line-height:1.35;">
+              <span style="font-weight:700; color:var(--text-primary); font-size:0.85rem;">${i.title}</span>
+              <div style="display:flex; align-items:center; gap:6px; margin-top:3px; flex-wrap:wrap;">
+                <span style="display:inline-flex; align-items:center; gap:5px; background:rgba(132, 255, 0, 0.12); border:1px solid rgba(132, 255, 0, 0.35); border-radius:12px; padding:2px 8px; font-size:0.75rem; font-weight:800; color:var(--accent-neon);">
+                  <i class="fa-solid fa-palette" style="font-size:0.68rem;"></i>
+                  <span>${colorName}</span>
+                </span>
+                ${i.size ? `<span style="font-size:0.72rem; color:var(--text-muted); background:var(--bg-glass); border:1px solid var(--border-subtle); border-radius:8px; padding:2px 6px;">${i.size}</span>` : ''}
+                <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">× ${i.qty || 1}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
 
         return `
           <tr>
@@ -1834,11 +2099,11 @@
               <div style="font-size:0.75rem; color:var(--text-muted);">${ord.date}</div>
             </td>
             <td>
-              <strong style="color:#FFF;">${ord.customerName}</strong>
+              <strong style="color:var(--text-primary);">${ord.customerName}</strong>
               <div style="font-size:0.75rem; color:var(--text-muted);">${ord.phone}</div>
             </td>
             <td>
-              <div style="font-size:0.84rem;">${ord.governorate} - ${ord.city}</div>
+              <div style="font-size:0.84rem; color:var(--text-primary);">${ord.governorate} - ${ord.city}</div>
               <div style="font-size:0.75rem; color:var(--text-muted);">${ord.address}</div>
               ${ord.notes ? `<div style="font-size:0.75rem; color:var(--accent-neon); margin-top:2px;">Note: ${ord.notes}</div>` : ''}
             </td>
@@ -1848,7 +2113,7 @@
               <div style="font-size:0.72rem; color:var(--text-muted);">Cash on Delivery</div>
             </td>
             <td>
-              <select onchange="updateStatus('${ord.id}', this.value)" style="padding:7px 12px; border-radius:var(--radius-full); font-size:0.78rem; font-weight:800; border:1px solid var(--border-subtle); background:#0E0E14; color:#FFF; cursor:pointer;">
+              <select onchange="updateStatus('${ord.id}', this.value)" style="padding:7px 12px; border-radius:var(--radius-full); font-size:0.78rem; font-weight:800; border:1px solid var(--border-subtle); background:var(--bg-surface); color:var(--text-primary); cursor:pointer;">
                 <option value="new" ${ord.status === 'new' ? 'selected' : ''}>🟡 New Order</option>
                 <option value="crafting" ${ord.status === 'crafting' ? 'selected' : ''}>🔵 In Crafting</option>
                 <option value="shipping" ${ord.status === 'shipping' ? 'selected' : ''}>🟣 Out with Courier</option>
@@ -2067,6 +2332,14 @@
           return;
         }
 
+        const chosenColors = (newProductColors && newProductColors.length > 0)
+          ? newProductColors.map(c => ({
+              name: c.name,
+              hex: c.hex,
+              img: currentNewProductImageData || 'images/neon_cat_helmet.jpg'
+            }))
+          : [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: currentNewProductImageData || 'images/neon_cat_helmet.jpg' }];
+
         const newProduct = {
           id: 'zaza-custom-' + Date.now(),
           title: title,
@@ -2081,7 +2354,7 @@
           reviewsCount: 1,
           image: currentNewProductImageData || 'images/neon_cat_helmet.jpg',
           description: desc,
-          colors: [{ name: 'Cyber Neon Lime', hex: '#84FF00', img: currentNewProductImageData || 'images/neon_cat_helmet.jpg' }],
+          colors: chosenColors,
           sizes: ['Universal Stretch']
         };
 
@@ -2110,6 +2383,10 @@
         if (statusEl) statusEl.textContent = 'Ready ✓';
         const previewEl = document.getElementById('newProdProfitPreview');
         if (previewEl) previewEl.style.display = 'none';
+
+        // Reset color selections to default
+        newProductColors = [{ name: 'Cyber Neon Lime', hex: '#84FF00' }];
+        renderColorBadges('newProdColorGrid', newProductColors, 'new');
 
         loadAdminData();
         showToast('New gear published to Supabase Cloud & Live Store! 🚀⚡');

@@ -1076,6 +1076,11 @@ button {
   box-shadow: 0 0 8px var(--accent-neon);
 }
 
+.swatch-dot.active {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 2px var(--accent-neon), 0 0 10px rgba(132, 255, 0, 0.4);
+}
+
 /* Price & Add to Cart */
 .product-footer {
   margin-top: auto;

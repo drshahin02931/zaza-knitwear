@@ -297,9 +297,20 @@ function renderProducts() {
   }
 
   grid.innerHTML = filtered.map(product => {
-    const swatchesHtml = product.colors.map(c => `
-      <span class="swatch-dot" style="background-color: ${c.hex};" title="${c.name}" onclick="event.stopPropagation(); previewProductColor('${product.id}', '${c.img}')"></span>
-    `).join('');
+    const colors = (Array.isArray(product.colors) && product.colors.length > 0)
+      ? product.colors
+      : [{ name: 'Standard Color', hex: '#84FF00', img: product.image }];
+
+    const swatchesHtml = colors.map((c, idx) => {
+      const safeName = (c.name || 'Standard').replace(/'/g, "\\'");
+      const safeImg = (c.img || product.image).replace(/'/g, "\\'");
+      return `
+        <span class="swatch-dot ${idx === 0 ? 'active' : ''}" 
+              style="background-color: ${c.hex};" 
+              title="${c.name || 'Standard'}" 
+              onclick="event.stopPropagation(); previewProductColor('${product.id}', '${safeImg}', '${safeName}', this)"></span>
+      `;
+    }).join('');
 
     const isDeal = Boolean(product.isSpecialOffer && product.offerPrice);
     const displayPrice = isDeal ? product.offerPrice : product.price;
@@ -318,7 +329,7 @@ function renderProducts() {
     }
 
     return `
-      <article class="product-card ${isDeal ? 'has-deal' : ''}" id="card-${product.id}">
+      <article class="product-card ${isDeal ? 'has-deal' : ''}" id="card-${product.id}" data-selected-color="${colors[0].name}">
         <div class="product-image-wrap" onclick="openProductModal('${product.id}')">
           ${badgeHtml}
           <img src="${product.image}" alt="${product.title}" id="img-${product.id}" loading="lazy">
@@ -359,9 +370,17 @@ function renderProducts() {
 }
 
 // Swatch preview helper
-window.previewProductColor = function(productId, imgSrc) {
+window.previewProductColor = function(productId, imgSrc, colorName, dotEl) {
+  const card = document.getElementById(`card-${productId}`);
+  if (card && colorName) {
+    card.dataset.selectedColor = colorName;
+  }
+  if (dotEl && card) {
+    card.querySelectorAll('.swatch-dot').forEach(d => d.classList.remove('active'));
+    dotEl.classList.add('active');
+  }
   const imgEl = document.getElementById(`img-${productId}`);
-  if (imgEl) {
+  if (imgEl && imgSrc) {
     imgEl.style.opacity = '0.5';
     setTimeout(() => {
       imgEl.src = imgSrc;
@@ -451,8 +470,10 @@ function setupEventListeners() {
   if (qvAddToCartBtn) {
     qvAddToCartBtn.addEventListener('click', () => {
       if (!activeModalProduct) return;
-      const selectedColor = document.querySelector('#qvColors .color-option-btn.selected')?.dataset.color || activeModalProduct.colors[0].name;
-      const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size || activeModalProduct.sizes[0];
+      const selectedColor = document.querySelector('#qvColors .color-option-btn.selected')?.dataset.color 
+        || (activeModalProduct.colors?.[0]?.name || 'Standard Color');
+      const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size 
+        || (activeModalProduct.sizes?.[0] || 'Universal Stretch');
       const customNote = document.getElementById('qvCustomNote')?.value.trim() || '';
 
       const isDeal = Boolean(activeModalProduct.isSpecialOffer && activeModalProduct.offerPrice);
@@ -478,8 +499,10 @@ function setupEventListeners() {
   if (qvDirectBuyBtn) {
     qvDirectBuyBtn.addEventListener('click', () => {
       if (!activeModalProduct) return;
-      const selectedColor = document.querySelector('#qvColors .color-option-btn.selected')?.dataset.color || activeModalProduct.colors[0].name;
-      const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size || activeModalProduct.sizes[0];
+      const selectedColor = document.querySelector('#qvColors .color-option-btn.selected')?.dataset.color 
+        || (activeModalProduct.colors?.[0]?.name || 'Standard Color');
+      const selectedSize = document.querySelector('#qvSizes .size-btn.selected')?.dataset.size 
+        || (activeModalProduct.sizes?.[0] || 'Universal Stretch');
       const customNote = document.getElementById('qvCustomNote')?.value.trim() || '';
 
       const isDeal = Boolean(activeModalProduct.isSpecialOffer && activeModalProduct.offerPrice);
@@ -592,6 +615,11 @@ function quickAddToCart(productId) {
   const prod = getAllProducts().find(p => p.id === productId);
   if (!prod) return;
 
+  const card = document.getElementById(`card-${productId}`);
+  const chosenColor = (card && card.dataset.selectedColor)
+    ? card.dataset.selectedColor
+    : (prod.colors && prod.colors.length > 0 ? prod.colors[0].name : 'Standard Color');
+
   const isDeal = Boolean(prod.isSpecialOffer && prod.offerPrice);
   const actualPrice = isDeal ? prod.offerPrice : prod.price;
 
@@ -600,14 +628,14 @@ function quickAddToCart(productId) {
     title: prod.title,
     price: actualPrice,
     image: prod.image,
-    color: prod.colors[0].name,
-    size: prod.sizes[0],
+    color: chosenColor,
+    size: (prod.sizes && prod.sizes.length > 0) ? prod.sizes[0] : 'Universal Stretch',
     note: '',
     qty: 1
   });
 
   openCartDrawer();
-  showToast(`Added "${prod.title.slice(0, 24)}..." to cart! ⚡`);
+  showToast(`Added "${prod.title.slice(0, 24)}..." (${chosenColor}) to cart! ⚡`);
 }
 
 function addToCart(newItem) {
@@ -789,19 +817,28 @@ window.openProductModal = function(productId) {
 
   document.getElementById('qvReviews').textContent = `(${prod.reviewsCount} verified reviews)`;
   document.getElementById('qvDesc').textContent = prod.description;
-  document.getElementById('selectedColorName').textContent = prod.colors[0].name;
+
+  const modalColors = (Array.isArray(prod.colors) && prod.colors.length > 0)
+    ? prod.colors
+    : [{ name: 'Standard Color', hex: '#84FF00', img: prod.image }];
+
+  document.getElementById('selectedColorName').textContent = modalColors[0].name;
 
   // Render colors
   const colorsContainer = document.getElementById('qvColors');
-  colorsContainer.innerHTML = prod.colors.map((c, i) => `
-    <button class="color-option-btn ${i === 0 ? 'selected' : ''}" 
-            style="background-color: ${c.hex};" 
-            title="${c.name}" 
-            data-color="${c.name}"
-            data-img="${c.img}"
-            onclick="selectModalColor(this, '${c.name}', '${c.img}')">
-    </button>
-  `).join('');
+  colorsContainer.innerHTML = modalColors.map((c, i) => {
+    const safeName = (c.name || 'Standard').replace(/'/g, "\\'");
+    const safeImg = (c.img || prod.image).replace(/'/g, "\\'");
+    return `
+      <button class="color-option-btn ${i === 0 ? 'selected' : ''}" 
+              style="background-color: ${c.hex};" 
+              title="${c.name || 'Standard'}" 
+              data-color="${c.name || 'Standard'}"
+              data-img="${safeImg}"
+              onclick="selectModalColor(this, '${safeName}', '${safeImg}')">
+      </button>
+    `;
+  }).join('');
 
   // Render sizes
   const sizesContainer = document.getElementById('qvSizes');
