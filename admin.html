@@ -714,7 +714,10 @@
       color: #94A3B8 !important;
     }
 
-    /* Inputs, Labels & Forms in Light Mode */
+    /* Universal Inputs, Labels & Forms in Light Mode */
+    [data-theme="light"] input,
+    [data-theme="light"] select,
+    [data-theme="light"] textarea,
     [data-theme="light"] .admin-card-section input,
     [data-theme="light"] .admin-card-section select,
     [data-theme="light"] .admin-card-section textarea,
@@ -724,16 +727,23 @@
       background: #FFFFFF !important;
       border: 1px solid #CBD5E1 !important;
       color: #0F172A !important;
+      caret-color: #0F172A !important;
+      -webkit-text-fill-color: #0F172A !important;
     }
 
+    [data-theme="light"] input::placeholder,
+    [data-theme="light"] textarea::placeholder,
+    [data-theme="light"] .admin-card-section input::placeholder,
+    [data-theme="light"] .admin-card-section textarea::placeholder {
+      color: #64748B !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #64748B !important;
+    }
+
+    [data-theme="light"] label,
     [data-theme="light"] .admin-card-section label,
     [data-theme="light"] .confirm-modal-card label {
       color: #1E293B !important;
-    }
-
-    [data-theme="light"] .admin-card-section input::placeholder,
-    [data-theme="light"] .admin-card-section textarea::placeholder {
-      color: #94A3B8 !important;
     }
 
     [data-theme="light"] #newProdProfitPreview {
@@ -1051,7 +1061,7 @@
         </div>
 
         <div style="display:flex; align-items:center; gap:12px;">
-          <input type="text" id="adminProdSearchInput" placeholder="Search gear..." oninput="filterAdminProducts(this.value)" style="padding:8px 14px; border-radius:var(--radius-full); background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.82rem; width:220px;">
+          <input type="text" id="adminProdSearchInput" placeholder="Search gear..." oninput="filterAdminProducts(this.value)" style="padding:8px 14px; border-radius:var(--radius-full); background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.82rem; width:220px;">
         </div>
       </div>
 
@@ -1148,7 +1158,7 @@
           <!-- Add Custom Color Inline -->
           <div style="display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border-subtle); flex-wrap:wrap;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">لون إضافي مخصص:</span>
-            <input type="text" id="newCustomColorName" placeholder="اسم اللون (مثال: نيون بينك)..." style="flex:1; min-width:160px; padding:7px 12px; font-size:0.82rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF;">
+            <input type="text" id="newCustomColorName" placeholder="اسم اللون (مثال: نيون بينك)..." style="flex:1; min-width:160px; padding:7px 12px; font-size:0.82rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit;">
             <input type="color" id="newCustomColorHex" value="#FF0077" style="width:36px; height:32px; padding:2px; border-radius:6px; border:1px solid var(--border-subtle); background:none; cursor:pointer;">
             <button type="button" class="btn-outline" onclick="addNewCustomColorToPalette('new')" style="padding:7px 14px; font-size:0.8rem; cursor:pointer;">
               <i class="fa-solid fa-plus"></i> إضافة اللون
@@ -1205,12 +1215,12 @@
 
       <form id="storeWhatsAppForm" onsubmit="handleSaveStoreWhatsApp(event)" style="display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap;">
         <div class="form-group" style="flex:1; min-width:280px; margin-bottom:0;">
-          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">
+          <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">
             WhatsApp Phone Number / رقم الواتساب (مثال: 01012345678 أو 201012345678)
           </label>
           <div style="position:relative;">
             <i class="fa-brands fa-whatsapp" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#25D366; font-size:1.1rem;"></i>
-            <input type="tel" id="storeWhatsAppInput" placeholder="010xxxxxxxx" required style="width:100%; padding:12px 14px 12px 42px; border-radius:8px; background:var(--bg-secondary); border:1px solid rgba(37, 211, 102, 0.35); color:#FFF; font-size:1rem; font-weight:700; letter-spacing:0.5px;">
+            <input type="tel" id="storeWhatsAppInput" placeholder="010xxxxxxxx" required style="width:100%; padding:12px 14px 12px 42px; border-radius:8px; background:var(--bg-secondary); border:1px solid rgba(37, 211, 102, 0.35); color:inherit; font-size:1rem; font-weight:700; letter-spacing:0.5px;">
           </div>
         </div>
 
@@ -1242,14 +1252,14 @@
         <input type="hidden" id="editProdId">
 
         <div class="form-group" style="margin-bottom:14px;">
-          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Product Name / Title *</label>
-          <input type="text" id="editProdTitle" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+          <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Product Name / Title *</label>
+          <input type="text" id="editProdTitle" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.9rem;">
         </div>
 
         <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Category *</label>
-            <select id="editProdCategory" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+            <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Category *</label>
+            <select id="editProdCategory" required style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.9rem;">
               <option value="helmets">Helmet Covers</option>
               <option value="balaclavas">Balaclavas</option>
               <option value="beanies">Beanies</option>
@@ -1258,14 +1268,14 @@
           </div>
 
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Badge / Tag</label>
-            <input type="text" id="editProdTag" placeholder="e.g. BESTSELLER 🔥" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.9rem;">
+            <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Badge / Tag</label>
+            <input type="text" id="editProdTag" placeholder="e.g. BESTSELLER 🔥" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.9rem;">
           </div>
         </div>
 
         <div class="form-grid-3" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#FFF; font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Selling Price (EGP) *</label>
+            <label style="color:var(--text-primary); font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Selling Price (EGP) *</label>
             <input type="number" id="editProdPrice" required min="10" oninput="updateEditProfitPreview()" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--accent-neon); font-size:1.05rem; font-weight:800;">
           </div>
 
@@ -1275,8 +1285,8 @@
           </div>
 
           <div class="form-group" style="margin-bottom:0;">
-            <label style="color:#AAA; font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Strike Price (EGP)</label>
-            <input type="number" id="editProdOldPrice" min="10" placeholder="e.g. 890" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#AAA; font-size:0.95rem;">
+            <label style="color:var(--text-secondary); font-size:0.82rem; font-weight:700; margin-bottom:6px; display:block;">Strike Price (EGP)</label>
+            <input type="number" id="editProdOldPrice" min="10" placeholder="e.g. 890" style="width:100%; padding:10px 12px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.95rem;">
           </div>
         </div>
 
@@ -1286,14 +1296,14 @@
         </div>
 
         <div class="form-group" style="margin-bottom:14px;">
-          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Description</label>
-          <textarea id="editProdDesc" rows="3" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF; font-size:0.88rem; resize:vertical;"></textarea>
+          <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">Description</label>
+          <textarea id="editProdDesc" rows="3" style="width:100%; padding:10px 14px; border-radius:8px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit; font-size:0.88rem; resize:vertical;"></textarea>
         </div>
 
         <!-- Product Available Colors Selector for Edit Modal -->
         <div class="form-group" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-            <label style="color:#FFF; font-size:0.85rem; font-weight:800; margin-bottom:0; display:flex; align-items:center; gap:8px;">
+            <label style="color:var(--text-primary); font-size:0.85rem; font-weight:800; margin-bottom:0; display:flex; align-items:center; gap:8px;">
               <i class="fa-solid fa-palette" style="color:var(--accent-neon);"></i>
               Available Product Colors / ألوان القطعة المتاحة *
             </label>
@@ -1313,7 +1323,7 @@
           <!-- Add Custom Color Row -->
           <div style="display:flex; align-items:center; gap:8px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border-subtle); flex-wrap:wrap;">
             <span style="font-size:0.78rem; font-weight:700; color:var(--text-secondary);">لون إضافي:</span>
-            <input type="text" id="editCustomColorName" placeholder="اسم اللون..." style="flex:1; min-width:140px; padding:6px 10px; font-size:0.8rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:#FFF;">
+            <input type="text" id="editCustomColorName" placeholder="اسم اللون..." style="flex:1; min-width:140px; padding:6px 10px; font-size:0.8rem; border-radius:6px; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:inherit;">
             <input type="color" id="editCustomColorHex" value="#00FFCC" style="width:34px; height:30px; padding:2px; border-radius:6px; border:1px solid var(--border-subtle); background:none; cursor:pointer;">
             <button type="button" class="btn-outline" onclick="addNewCustomColorToPalette('edit')" style="padding:6px 12px; font-size:0.78rem; cursor:pointer;">
               <i class="fa-solid fa-plus"></i> إضافة
@@ -1374,13 +1384,13 @@
         <input type="hidden" id="modalOfferProdId">
 
         <div class="form-group" style="margin-bottom:14px;">
-          <label style="color:#FFF; font-size:0.85rem; font-weight:700;">Special Deal Price (EGP) *</label>
-          <input type="number" id="modalOfferPriceInput" required placeholder="e.g. 590" style="border-color:#FF003C; box-shadow:0 0 10px rgba(255, 0, 60, 0.2);">
+          <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700;">Special Deal Price (EGP) *</label>
+          <input type="number" id="modalOfferPriceInput" required placeholder="e.g. 590" style="border-color:#FF003C; box-shadow:0 0 10px rgba(255, 0, 60, 0.2); color:inherit;">
         </div>
 
         <div class="form-group" style="margin-bottom:14px;">
-          <label style="color:#FFF; font-size:0.85rem; font-weight:700;">Offer Expiration Date & Time (Optional)</label>
-          <input type="datetime-local" id="modalOfferEndTimeInput">
+          <label style="color:var(--text-primary); font-size:0.85rem; font-weight:700;">Offer Expiration Date & Time (Optional)</label>
+          <input type="datetime-local" id="modalOfferEndTimeInput" style="color:inherit;">
           <span style="font-size:0.75rem; color:#FF7A95; display:block; margin-top:4px;">
             🕒 لو سيبته فاضي، الأوفر هيكون شغال علطول وبدون وقت انتهاء (No Expiration / Ongoing Deal).
           </span>
@@ -1391,7 +1401,7 @@
             <input type="checkbox" id="modalOfferActiveToggle" checked>
             <span class="slider" style="background-color:#FF003C;"></span>
           </label>
-          <span style="font-size:0.84rem; font-weight:700; color:#FFF;">Activate this Special Offer immediately</span>
+          <span style="font-size:0.84rem; font-weight:700; color:var(--text-primary);">Activate this Special Offer immediately</span>
         </div>
 
         <div style="display:flex; gap:10px; justify-content:flex-end;">

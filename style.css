@@ -2397,17 +2397,52 @@ button {
   color: #2D333F;
 }
 
+/* Universal Light Mode Input & Text Contrast Fix */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+  caret-color: #0F172A !important;
+  -webkit-text-fill-color: #0F172A !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #64748B !important;
+}
+
 [data-theme="light"] .form-group input,
 [data-theme="light"] .form-group select,
-[data-theme="light"] .form-group textarea {
-  background: #F7F8FB;
-  border-color: #DDE2EB;
-  color: #0D0E12;
+[data-theme="light"] .form-group textarea,
+[data-theme="light"] .promo-input,
+[data-theme="light"] .custom-note-input,
+[data-theme="light"] .search-input-wrap input {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+  caret-color: #0F172A !important;
+  -webkit-text-fill-color: #0F172A !important;
+}
+
+[data-theme="light"] .search-input-wrap input {
+  border: none !important;
+}
+
+[data-theme="light"] .promo-input::placeholder,
+[data-theme="light"] .custom-note-input::placeholder,
+[data-theme="light"] .form-group input::placeholder,
+[data-theme="light"] .form-group textarea::placeholder {
+  color: #64748B !important;
+  -webkit-text-fill-color: #64748B !important;
 }
 
 [data-theme="light"] .checkout-summary-box {
-  background: #F7F8FB;
-  border-color: #E2E6ED;
+  background: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
 }
 
 [data-theme="light"] .footer-main {
