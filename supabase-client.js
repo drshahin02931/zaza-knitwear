@@ -323,6 +323,45 @@ const ZAZA_DB = {
     } catch (err) {
       return false;
     }
+  },
+
+  // 4. STORE SETTINGS (WhatsApp number, etc.)
+  async getSetting(key) {
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/store_settings?key=eq.${key}`, {
+        headers: this.getHeaders()
+      });
+      if (!res.ok) return null;
+      const rows = await res.json();
+      if (!rows || rows.length === 0) return null;
+      return rows[0].value;
+    } catch (err) {
+      console.warn('Failed to get setting from Supabase:', err);
+      return null;
+    }
+  },
+
+  async saveSetting(key, value) {
+    try {
+      const payload = {
+        key: key,
+        value: String(value),
+        updated_at: new Date().toISOString()
+      };
+      // Upsert via POST with merge-duplicates
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/store_settings`, {
+        method: 'POST',
+        headers: {
+          ...this.getHeaders(true),
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to save setting to Supabase:', err);
+      return false;
+    }
   }
 };
 

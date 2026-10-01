@@ -793,6 +793,46 @@
       </form>
     </section>
 
+    <!-- Store Settings & WhatsApp Integration -->
+    <section class="admin-card-section" style="background: radial-gradient(circle at top right, rgba(37, 211, 102, 0.08) 0%, rgba(13, 14, 18, 0.95) 100%); border: 1px solid rgba(37, 211, 102, 0.35); box-shadow: 0 8px 30px rgba(37, 211, 102, 0.1);">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+        <div>
+          <h3 style="font-size:1.25rem; font-weight:800; color:#FFFFFF; margin-bottom:4px; display:flex; align-items:center; gap:10px;">
+            <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:1.5rem;"></i>
+            Store WhatsApp Configuration / رقم واتساب المتجر للطلبات والتفصيل
+          </h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">
+            الرقم ده هو اللي العميل بيبعت عليه طلبات التفصيل (Custom Orders) مباشرة من المتجر، وأي محادثة تأكيد أوردر.
+          </p>
+        </div>
+        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(37, 211, 102, 0.15); color:#25D366; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:800; border:1px solid rgba(37, 211, 102, 0.4);">
+          <span style="width:8px; height:8px; border-radius:50%; background:#25D366; box-shadow:0 0 8px #25D366;"></span>
+          Cloud & Store Live Sync ✓
+        </span>
+      </div>
+
+      <form id="storeWhatsAppForm" onsubmit="handleSaveStoreWhatsApp(event)" style="display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap;">
+        <div class="form-group" style="flex:1; min-width:280px; margin-bottom:0;">
+          <label style="color:#FFF; font-size:0.85rem; font-weight:700; margin-bottom:6px; display:block;">
+            WhatsApp Phone Number / رقم الواتساب (مثال: 01012345678 أو 201012345678)
+          </label>
+          <div style="position:relative;">
+            <i class="fa-brands fa-whatsapp" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#25D366; font-size:1.1rem;"></i>
+            <input type="tel" id="storeWhatsAppInput" placeholder="010xxxxxxxx" required style="width:100%; padding:12px 14px 12px 42px; border-radius:8px; background:var(--bg-secondary); border:1px solid rgba(37, 211, 102, 0.35); color:#FFF; font-size:1rem; font-weight:700; letter-spacing:0.5px;">
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="submit" class="btn-primary" style="background:#25D366; color:#000; box-shadow:0 0 20px rgba(37, 211, 102, 0.4); padding:12px 24px; border:none; cursor:pointer;">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ رقم الواتساب
+          </button>
+          <button type="button" onclick="testStoreWhatsApp()" class="btn-outline" style="border-color:rgba(37, 211, 102, 0.4); color:#25D366; background:rgba(37, 211, 102, 0.08); padding:11px 20px; cursor:pointer;">
+            <i class="fa-solid fa-paper-plane"></i> تجربة المحادثة
+          </button>
+        </div>
+      </form>
+    </section>
+
   <!-- Modal: Edit Product Details -->
   <div class="confirm-modal-overlay" id="editProductModal">
     <div class="confirm-modal-card" style="border-color:var(--border-neon); box-shadow:0 0 35px rgba(132, 255, 0, 0.2); max-width:540px; text-align:left; max-height:92vh; overflow-y:auto;">
@@ -1798,8 +1838,56 @@
       }, 3000);
     }
 
+    // --- STORE WHATSAPP SETTINGS LOGIC ---
+    async function loadStoreWhatsApp() {
+      let num = localStorage.getItem('zaza_whatsapp_phone');
+      if (window.ZAZA_DB) {
+        try {
+          const cloudNum = await window.ZAZA_DB.getSetting('whatsapp_number');
+          if (cloudNum) {
+            num = cloudNum;
+            localStorage.setItem('zaza_whatsapp_phone', cloudNum);
+          }
+        } catch (e) {}
+      }
+      const inputEl = document.getElementById('storeWhatsAppInput');
+      if (inputEl) {
+        inputEl.value = num || '01000000000';
+      }
+    }
+
+    async function handleSaveStoreWhatsApp(e) {
+      if (e) e.preventDefault();
+      const inputEl = document.getElementById('storeWhatsAppInput');
+      if (!inputEl) return;
+      let val = inputEl.value.trim().replace(/[\s\-\+]/g, '');
+      if (!val) {
+        showToast('برجاء كتابة رقم واتساب صحيح!');
+        return;
+      }
+      // If starts with 01, auto-prepend Egypt 20
+      if (val.startsWith('01')) {
+        val = '2' + val;
+      }
+      localStorage.setItem('zaza_whatsapp_phone', val);
+      if (window.ZAZA_DB) {
+        await window.ZAZA_DB.saveSetting('whatsapp_number', val);
+      }
+      inputEl.value = val;
+      showToast(`تم حفظ رقم الواتساب (+${val}) وتحديثه في المتجر بنجاح! 🚀💬`);
+    }
+
+    function testStoreWhatsApp() {
+      const inputEl = document.getElementById('storeWhatsAppInput');
+      let val = inputEl ? inputEl.value.trim().replace(/[\s\-\+]/g, '') : '';
+      if (!val) val = localStorage.getItem('zaza_whatsapp_phone') || '201000000000';
+      if (val.startsWith('01')) val = '2' + val;
+      window.open(`https://wa.me/${val}?text=${encodeURIComponent('مرحباً ZAZA X ⚡ تجربة اتصال واتساب المتجر للطلبات والتفصيل')}`, '_blank');
+    }
+
     // Initial load
     loadAdminData();
+    loadStoreWhatsApp();
   </script>
 </body>
 </html>

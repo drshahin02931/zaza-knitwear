@@ -258,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   setupEventListeners();
   initSpecialOfferCountdown();
+  syncPageWhatsAppLinks();
 });
 
 // --- 5. RENDER PRODUCTS GRID ---
@@ -945,17 +946,45 @@ function handleCheckoutSubmit(e) {
   const itemsSummary = newOrder.items.map(it => `• ${it.title} (${it.color} - ${it.size}) × ${it.qty}`).join('%0A');
   const waMessage = `Hello ZAZA X Team ⚡%0AI would like to confirm my order:%0AOrder Number: *${orderId}*%0ARider: *${name}*%0APhone: *${phone}*%0AAddress: *${govName} - ${city} - ${address}*%0A%0AGear Ordered:%0A${itemsSummary}%0A%0ATotal Due upon Delivery: *${total} EGP*`;
   
-  const waBtn = document.getElementById('successWhatsappBtn');
-  if (waBtn) {
-    waBtn.href = `https://wa.me/201000000000?text=${waMessage}`;
-  }
+  getStoreWhatsAppNumber().then(waPhone => {
+    const waBtn = document.getElementById('successWhatsappBtn');
+    if (waBtn) {
+      waBtn.href = `https://wa.me/${waPhone}?text=${waMessage}`;
+    }
+  });
 
   document.getElementById('orderSuccessModal')?.classList.add('active');
   showToast('Order confirmed! ZAZA gear is being crafted ⚡');
 }
 
+// --- STORE WHATSAPP DYNAMIC NUMBER HELPER ---
+async function getStoreWhatsAppNumber() {
+  let num = localStorage.getItem('zaza_whatsapp_phone');
+  if (window.ZAZA_DB) {
+    try {
+      const cloudNum = await window.ZAZA_DB.getSetting('whatsapp_number');
+      if (cloudNum) {
+        num = cloudNum;
+        localStorage.setItem('zaza_whatsapp_phone', cloudNum);
+      }
+    } catch (e) {}
+  }
+  let clean = (num || '201000000000').trim().replace(/[\s\-\+]/g, '');
+  if (clean.startsWith('01')) clean = '2' + clean;
+  return clean;
+}
+
+// Update all static WhatsApp links on page
+async function syncPageWhatsAppLinks() {
+  const phone = await getStoreWhatsAppNumber();
+  const linkEl = document.getElementById('footerWhatsAppLink');
+  const iconEl = document.getElementById('footerWhatsAppIcon');
+  if (linkEl) linkEl.href = `https://wa.me/${phone}`;
+  if (iconEl) iconEl.href = `https://wa.me/${phone}`;
+}
+
 // --- 10. CUSTOM BESPOKE SUBMISSION ---
-function handleCustomBespokeSubmit(e) {
+async function handleCustomBespokeSubmit(e) {
   e.preventDefault();
 
   const pieceType = document.getElementById('customPieceType')?.value;
@@ -965,12 +994,32 @@ function handleCustomBespokeSubmit(e) {
   const name = document.getElementById('customClientName')?.value;
   const phone = document.getElementById('customClientPhone')?.value;
 
-  const waMessage = `Hello ZAZA X ⚡%0AI want to request a bespoke custom piece:%0A%0APiece Type: *${pieceType}*%0AColors: *${colors}*%0AHelmet/Size: *${size}*%0ADesign Specs: *${notes}*%0ARider Name: *${name}*%0APhone: *${phone}*`;
+  const waPhone = await getStoreWhatsAppNumber();
+  const waMessage = `مرحباً ZAZA X ⚡%0Aأود طلب قطعة تفصيل خاصة بي (Bespoke Piece):%0A%0Aنوع القطعة: *${pieceType}*%0Aالألوان: *${colors}*%0Aالخوذة / المقاس: *${size}*%0Aالمواصفات والتفاصيل: *${notes}*%0Aاسم العميل: *${name}*%0Aرقم الهاتف: *${phone}*`;
 
-  window.open(`https://wa.me/201000000000?text=${waMessage}`, '_blank');
+  window.open(`https://wa.me/${waPhone}?text=${waMessage}`, '_blank');
   document.getElementById('customOrderModal')?.classList.remove('active');
   showToast('Opening WhatsApp with your ZAZA request! ⚡');
 }
+
+// Inline Quick Custom WhatsApp Handler
+async function handleQuickCustomWhatsApp(e) {
+  e.preventDefault();
+  const textEl = document.getElementById('quickCustomText');
+  const customNotes = textEl ? textEl.value.trim() : '';
+
+  if (!customNotes) {
+    showToast('برجاء كتابة مواصفات القطعة المطلوبة!');
+    return;
+  }
+
+  const waPhone = await getStoreWhatsAppNumber();
+  const waMessage = `مرحباً ZAZA X ⚡%0Aأود طلب قطعة تفصيل هاند ميد خاصة بي:%0A%0A*تفاصيل الطلب والمواصفات:*%0A${encodeURIComponent(customNotes)}%0A%0Aبرجاء تأكيد إمكانية التنفيذ والتكلفة ومدة التسليم 🏍️`;
+
+  window.open(`https://wa.me/${waPhone}?text=${waMessage}`, '_blank');
+  showToast('جارٍ فتح واتساب مع تفاصيل طلبك! ⚡💬');
+}
+window.handleQuickCustomWhatsApp = handleQuickCustomWhatsApp;
 
 // --- 11. TOAST NOTIFICATION UTILITY ---
 function showToast(message) {
