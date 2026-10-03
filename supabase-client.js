@@ -445,6 +445,18 @@ const ZAZA_DB = {
 
   async deleteAdminUser(userId) {
     try {
+      // Permanent Owner Protection: never allow deleting 'shahin'
+      const checkRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}&select=username`, {
+        headers: this.getHeaders()
+      });
+      if (checkRes.ok) {
+        const rows = await checkRes.json();
+        if (rows && rows.length > 0 && String(rows[0].username).toLowerCase() === 'shahin') {
+          console.warn('Cannot delete the permanent master owner account (shahin).');
+          return false;
+        }
+      }
+
       const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}`, {
         method: 'DELETE',
         headers: this.getHeaders()

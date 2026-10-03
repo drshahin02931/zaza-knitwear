@@ -2113,7 +2113,13 @@
         if (badge) badge.style.display = 'inline-flex';
         if (nameEl) nameEl.textContent = `${currentAdminSession.name} (@${currentAdminSession.username})`;
         if (roleBadge) {
-          if (currentAdminSession.role === 'super_admin') {
+          if (String(currentAdminSession.username).toLowerCase() === 'shahin') {
+            roleBadge.innerHTML = '<i class="fa-solid fa-crown" style="color:#FFD700; margin-left:3px;"></i> المالك الرئيسي';
+            roleBadge.className = 'admin-role-badge super';
+            roleBadge.style.borderColor = '#FFD700';
+            roleBadge.style.color = '#FFD700';
+            roleBadge.style.background = 'rgba(255,215,0,0.18)';
+          } else if (currentAdminSession.role === 'super_admin') {
             roleBadge.textContent = '👑 مدير عام';
             roleBadge.className = 'admin-role-badge super';
           } else {
@@ -2235,6 +2241,10 @@
       const session = getStoredAdminSession();
       const lockScreen = document.getElementById('adminLockScreen');
       if (session) {
+        if (String(session.username).toLowerCase() === 'shahin') {
+          session.role = 'super_admin';
+          session.name = 'dr.shahin';
+        }
         currentAdminSession = session;
         updateAdminNavUI();
         if (lockScreen) lockScreen.style.display = 'none';
@@ -2316,37 +2326,51 @@
         }
 
         tbody.innerHTML = users.map(u => {
-          const isCurrentUser = currentAdminSession && (currentAdminSession.id === u.id || currentAdminSession.username === u.username);
-          const roleClass = u.role === 'super_admin' ? 'super' : 'regular';
-          const roleText = u.role === 'super_admin' ? '👑 مدير عام (Super)' : '🛡️ مشرف (Admin)';
+          const isOwner = String(u.username).toLowerCase() === 'shahin';
+          const isCurrentUser = currentAdminSession && (currentAdminSession.id === u.id || String(currentAdminSession.username).toLowerCase() === String(u.username).toLowerCase());
+          
+          let roleBadgeHtml = '';
+          if (isOwner) {
+            roleBadgeHtml = `<span class="admin-role-badge super" style="background:rgba(255,215,0,0.18); border-color:#FFD700; color:#FFD700; font-weight:900;"><i class="fa-solid fa-crown" style="color:#FFD700;"></i> المالك الرئيسي (Owner & Super)</span>`;
+          } else if (u.role === 'super_admin') {
+            roleBadgeHtml = `<span class="admin-role-badge super">👑 مدير عام (Super)</span>`;
+          } else {
+            roleBadgeHtml = `<span class="admin-role-badge regular">🛡️ مشرف (Admin)</span>`;
+          }
+
           const lastLoginStr = u.last_login 
             ? new Date(u.last_login).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' })
             : '<span style="color:var(--text-muted);">لم يسجل بعد</span>';
 
-          const deleteBtn = (!isCurrentUser) ? `
-            <button type="button" onclick="handleDeleteAdminUser('${u.id}', '${u.username}')" class="btn-outline" style="padding:4px 10px; font-size:0.75rem; color:#FF5555; border-color:rgba(255,85,85,0.4);" title="حذف حساب المشرف">
-              <i class="fa-solid fa-trash-can"></i> حذف
-            </button>
-          ` : `<span style="font-size:0.75rem; color:var(--accent-neon); font-weight:700;">(حسابك الحالي)</span>`;
+          let actionBtnHtml = '';
+          if (isOwner) {
+            actionBtnHtml = `<span style="font-size:0.78rem; color:#FFD700; font-weight:800; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-shield-halved"></i> محمي نهائياً (Immune)</span>`;
+          } else if (isCurrentUser && !isOwner) {
+            actionBtnHtml = `<span style="font-size:0.75rem; color:var(--accent-neon); font-weight:700;">(حسابك الحالي)</span>`;
+          } else {
+            actionBtnHtml = `
+              <button type="button" onclick="handleDeleteAdminUser('${u.id}', '${u.username}')" class="btn-outline" style="padding:5px 12px; font-size:0.75rem; color:#FF5555; border-color:rgba(255,85,85,0.4);" title="حذف حساب المشرف نهائياً">
+                <i class="fa-solid fa-trash-can"></i> حذف المسؤول
+              </button>
+            `;
+          }
 
           return `
             <tr>
               <td>
                 <div style="display:flex; align-items:center; gap:10px;">
-                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(132,255,0,0.1); border:1px solid var(--accent-neon); display:flex; align-items:center; justify-content:center; color:var(--accent-neon); font-weight:800; font-size:0.85rem;">
-                    ${(u.name || 'A').charAt(0).toUpperCase()}
+                  <div style="width:34px; height:34px; border-radius:50%; background:${isOwner ? 'rgba(255,215,0,0.15)' : 'rgba(132,255,0,0.1)'}; border:1.5px solid ${isOwner ? '#FFD700' : 'var(--accent-neon)'}; display:flex; align-items:center; justify-content:center; color:${isOwner ? '#FFD700' : 'var(--accent-neon)'}; font-weight:800; font-size:0.85rem;">
+                    ${isOwner ? '<i class="fa-solid fa-crown" style="font-size:0.75rem;"></i>' : (u.name || 'A').charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <div style="font-weight:700; color:#FFFFFF;">${u.name || u.username}</div>
+                    <div style="font-weight:700; color:#FFFFFF;">${u.name || u.username} ${isOwner ? '⚡' : ''}</div>
                     <div style="font-size:0.78rem; color:var(--text-muted);">@${u.username}</div>
                   </div>
                 </div>
               </td>
-              <td>
-                <span class="admin-role-badge ${roleClass}">${roleText}</span>
-              </td>
+              <td>${roleBadgeHtml}</td>
               <td style="font-size:0.82rem;">${lastLoginStr}</td>
-              <td style="text-align:center;">${deleteBtn}</td>
+              <td style="text-align:center;">${actionBtnHtml}</td>
             </tr>
           `;
         }).join('');
@@ -2526,17 +2550,17 @@
     }
 
     async function handleDeleteAdminUser(userId, username) {
-      if (!currentAdminSession || currentAdminSession.role !== 'super_admin') {
-        showToast('حذف المشرفين مقتصر على المدير العام فقط');
+      if (String(username).toLowerCase() === 'shahin') {
+        showToast('⚠️ لا يمكن حذف حساب المالك الرئيسي (dr.shahin) نهائياً تحت أي ظرف!');
         return;
       }
 
-      if (currentAdminSession.id === userId) {
-        showToast('لا يمكنك حذف حسابك الشخصي الحالي!');
+      if (currentAdminSession && currentAdminSession.id === userId) {
+        showToast('لا يمكنك حذف حسابك الشخصي الحالي أثناء تسجيل الدخول منه!');
         return;
       }
 
-      if (!confirm(`هل أنت متأكد من حذف حساب المسؤول (@${username}) نهائياً؟ لن يتمكن من الدخول للوحة التحكم بعدها.`)) {
+      if (!confirm(`هل أنت متأكد من رغبتك في حذف حساب المسؤول (@${username}) نهائياً؟ لن يتمكن من الوصول إلى لوحة التحكم بعدها.`)) {
         return;
       }
 
@@ -2546,7 +2570,7 @@
           showToast(`تم حذف حساب المسؤول (@${username}) بنجاح.`);
           loadAndRenderAdminUsersList();
         } else {
-          showToast('فشل حذف حساب المسؤول. حاول مرة أخرى.');
+          showToast('فشل حذف حساب المسؤول. تأكد من الاتصال بقاعدة البيانات.');
         }
       } catch (err) {
         console.error('Error deleting admin:', err);
