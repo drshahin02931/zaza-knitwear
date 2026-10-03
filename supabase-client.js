@@ -368,12 +368,26 @@ const ZAZA_DB = {
   async getAdminUserByUsername(username) {
     try {
       const cleanUser = encodeURIComponent(String(username).trim().toLowerCase());
-      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?username=ilike.${cleanUser}&select=*`, {
+      // 1. Direct match on username
+      let res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?username=ilike.${cleanUser}&select=*`, {
         headers: this.getHeaders()
       });
-      if (!res.ok) return null;
-      const rows = await res.json();
-      return rows && rows.length > 0 ? rows[0] : null;
+      if (res.ok) {
+        const rows = await res.json();
+        if (rows && rows.length > 0) return rows[0];
+      }
+      
+      // 2. Flexible alias matching (e.g. dr.shahin vs shahin vs dr_shahin or display name)
+      const alt = cleanUser.includes('shahin') ? 'dr.shahin' : cleanUser;
+      res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?or=(username.ilike.${alt},username.ilike.shahin,name.ilike.${cleanUser})&select=*`, {
+        headers: this.getHeaders()
+      });
+      if (res.ok) {
+        const rows = await res.json();
+        if (rows && rows.length > 0) return rows[0];
+      }
+
+      return null;
     } catch (err) {
       console.error('Failed to get admin user:', err);
       return null;
@@ -400,7 +414,7 @@ const ZAZA_DB = {
         name: String(name).trim(),
         password_hash: passwordHash,
         salt: salt,
-        role: role || 'admin',
+        role: role || 'super_admin',
         created_at: new Date().toISOString()
       };
       const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users`, {
@@ -445,15 +459,19 @@ const ZAZA_DB = {
 
   async deleteAdminUser(userId) {
     try {
-      // Permanent Owner Protection: never allow deleting 'shahin'
-      const checkRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}&select=username`, {
+      // Permanent Master Owner Protection: never allow deleting dr.shahin
+      const checkRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}&select=username,name`, {
         headers: this.getHeaders()
       });
       if (checkRes.ok) {
         const rows = await checkRes.json();
-        if (rows && rows.length > 0 && String(rows[0].username).toLowerCase() === 'shahin') {
-          console.warn('Cannot delete the permanent master owner account (shahin).');
-          return false;
+        if (rows && rows.length > 0) {
+          const uName = String(rows[0].username || '').toLowerCase();
+          const dName = String(rows[0].name || '').toLowerCase();
+          if (['dr.shahin', 'shahin', 'dr_shahin'].includes(uName) || dName.includes('shahin')) {
+            console.warn('Cannot delete the permanent master owner account (dr.shahin).');
+            return false;
+          }
         }
       }
 

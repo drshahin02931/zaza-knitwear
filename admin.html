@@ -2113,8 +2113,10 @@
         if (badge) badge.style.display = 'inline-flex';
         if (nameEl) nameEl.textContent = `${currentAdminSession.name} (@${currentAdminSession.username})`;
         if (roleBadge) {
-          if (String(currentAdminSession.username).toLowerCase() === 'shahin') {
-            roleBadge.innerHTML = '<i class="fa-solid fa-crown" style="color:#FFD700; margin-left:3px;"></i> المالك الرئيسي';
+          const uLower = String(currentAdminSession.username || '').toLowerCase();
+          const nLower = String(currentAdminSession.name || '').toLowerCase();
+          if (['dr.shahin', 'shahin', 'dr_shahin'].includes(uLower) || nLower.includes('shahin')) {
+            roleBadge.innerHTML = '<i class="fa-solid fa-crown" style="color:#FFD700; margin-left:3px;"></i> المالك الرئيسي (dr.shahin)';
             roleBadge.className = 'admin-role-badge super';
             roleBadge.style.borderColor = '#FFD700';
             roleBadge.style.color = '#FFD700';
@@ -2241,7 +2243,9 @@
       const session = getStoredAdminSession();
       const lockScreen = document.getElementById('adminLockScreen');
       if (session) {
-        if (String(session.username).toLowerCase() === 'shahin') {
+        const uLower = String(session.username || '').toLowerCase();
+        const nLower = String(session.name || '').toLowerCase();
+        if (['dr.shahin', 'shahin', 'dr_shahin'].includes(uLower) || nLower.includes('shahin')) {
           session.role = 'super_admin';
           session.name = 'dr.shahin';
         }
@@ -2326,12 +2330,14 @@
         }
 
         tbody.innerHTML = users.map(u => {
-          const isOwner = String(u.username).toLowerCase() === 'shahin';
-          const isCurrentUser = currentAdminSession && (currentAdminSession.id === u.id || String(currentAdminSession.username).toLowerCase() === String(u.username).toLowerCase());
+          const uLower = String(u.username || '').toLowerCase();
+          const nLower = String(u.name || '').toLowerCase();
+          const isOwner = ['dr.shahin', 'shahin', 'dr_shahin'].includes(uLower) || nLower.includes('shahin');
+          const isCurrentUser = currentAdminSession && (currentAdminSession.id === u.id || String(currentAdminSession.username).toLowerCase() === uLower);
           
           let roleBadgeHtml = '';
           if (isOwner) {
-            roleBadgeHtml = `<span class="admin-role-badge super" style="background:rgba(255,215,0,0.18); border-color:#FFD700; color:#FFD700; font-weight:900;"><i class="fa-solid fa-crown" style="color:#FFD700;"></i> المالك الرئيسي (Owner & Super)</span>`;
+            roleBadgeHtml = `<span class="admin-role-badge super" style="background:rgba(255,215,0,0.18); border-color:#FFD700; color:#FFD700; font-weight:900;"><i class="fa-solid fa-crown" style="color:#FFD700;"></i> المالك الرئيسي (dr.shahin)</span>`;
           } else if (u.role === 'super_admin') {
             roleBadgeHtml = `<span class="admin-role-badge super">👑 مدير عام (Super)</span>`;
           } else {
@@ -2550,7 +2556,8 @@
     }
 
     async function handleDeleteAdminUser(userId, username) {
-      if (String(username).toLowerCase() === 'shahin') {
+      const uLower = String(username || '').toLowerCase();
+      if (['dr.shahin', 'shahin', 'dr_shahin'].includes(uLower) || uLower.includes('shahin')) {
         showToast('⚠️ لا يمكن حذف حساب المالك الرئيسي (dr.shahin) نهائياً تحت أي ظرف!');
         return;
       }
