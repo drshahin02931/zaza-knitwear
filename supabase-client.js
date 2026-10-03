@@ -362,6 +362,98 @@ const ZAZA_DB = {
       console.error('Failed to save setting to Supabase:', err);
       return false;
     }
+  },
+
+  // 5. ADMIN AUTHENTICATION & MULTI-USER MANAGEMENT
+  async getAdminUserByUsername(username) {
+    try {
+      const cleanUser = encodeURIComponent(String(username).trim().toLowerCase());
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?username=ilike.${cleanUser}&select=*`, {
+        headers: this.getHeaders()
+      });
+      if (!res.ok) return null;
+      const rows = await res.json();
+      return rows && rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      console.error('Failed to get admin user:', err);
+      return null;
+    }
+  },
+
+  async getAllAdminUsers() {
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?select=id,username,name,role,created_at,last_login&order=created_at.asc`, {
+        headers: this.getHeaders()
+      });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch (err) {
+      console.error('Failed to get all admins:', err);
+      return [];
+    }
+  },
+
+  async createAdminUser({ username, name, passwordHash, salt, role }) {
+    try {
+      const payload = {
+        username: String(username).trim().toLowerCase(),
+        name: String(name).trim(),
+        password_hash: passwordHash,
+        salt: salt,
+        role: role || 'admin',
+        created_at: new Date().toISOString()
+      };
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users`, {
+        method: 'POST',
+        headers: this.getHeaders(true),
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to create admin user:', err);
+      return false;
+    }
+  },
+
+  async updateAdminPassword(userId, passwordHash, salt) {
+    try {
+      const payload = {
+        password_hash: passwordHash,
+        salt: salt
+      };
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}`, {
+        method: 'PATCH',
+        headers: this.getHeaders(true),
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to update admin password:', err);
+      return false;
+    }
+  },
+
+  async updateAdminLastLogin(userId) {
+    try {
+      await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}`, {
+        method: 'PATCH',
+        headers: this.getHeaders(true),
+        body: JSON.stringify({ last_login: new Date().toISOString() })
+      });
+    } catch (e) {}
+  },
+
+  async deleteAdminUser(userId) {
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admin_users?id=eq.${userId}`, {
+        method: 'DELETE',
+        headers: this.getHeaders()
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to delete admin user:', err);
+      return false;
+    }
   }
 };
 

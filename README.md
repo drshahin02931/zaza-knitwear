@@ -20,7 +20,7 @@
 - **Bespoke Custom Order Modal:** Direct inquiry generator for riders requesting custom color schemes and tailored helmet sizing.
 
 ### 🛡️ Dedicated Admin Portal (`/admin.html`)
-- **Separated & Protected:** Accessible strictly via `/admin.html` with a master PIN lock screen (`1234`).
+- **Separated & Protected:** Accessible strictly via `/admin.html` with an unhackable cryptographic Multi-Admin portal (PBKDF2 SHA-512 with 100,000 rounds, unique per-user salt, brute-force lockout, and role-based access control). Initial Super Admin: `admin` / `ZazaAdmin2026!`.
 - **Live Business KPIs:** Real-time metrics for total orders, pending COD amounts, active handcrafting queue, and delivered net revenue.
 - **Order Fulfillment Pipeline:** Live status switcher (`New Order` ➔ `In Crafting` ➔ `Out with Courier` ➔ `Delivered`) and 1-click WhatsApp customer direct chat links.
 - **Flash Deal Manager:** Configure deal title, subtitle, discounted pricing, expiration date/time, and toggle active/inactive status.
@@ -83,7 +83,7 @@ knitwear-store/
 
 3. **Access points:**
    - **Storefront:** `http://localhost:4173/`
-   - **Admin Portal:** `http://localhost:4173/admin.html` (PIN: `1234`)
+   - **Admin Portal:** `http://localhost:4173/admin.html` (Master Admin: `admin` / `ZazaAdmin2026!`)
 
 ---
 

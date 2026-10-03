@@ -114,46 +114,236 @@
       box-shadow: 0 0 12px rgba(132, 255, 0, 0.3);
     }
 
-    /* Pin Lock Screen */
+    /* ========================================================================
+       ADMIN MULTI-USER AUTHENTICATION & SECURITY VAULT STYLES
+       ======================================================================== */
     #adminLockScreen {
       position: fixed;
       inset: 0;
-      background: #0A0A0C;
-      z-index: 9999;
+      background: radial-gradient(circle at center, rgba(20, 20, 30, 0.94) 0%, rgba(5, 5, 8, 0.98) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 99999;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px 16px;
+      overflow-y: auto;
     }
 
     .lock-box {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 40px 32px;
-      max-width: 420px;
+      background: #0E0E14;
+      border: 1px solid rgba(132, 255, 0, 0.35);
+      border-radius: 24px;
+      padding: 38px 32px;
+      max-width: 440px;
       width: 100%;
       text-align: center;
-      box-shadow: var(--shadow-lg), 0 0 35px rgba(132, 255, 0, 0.15);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(132, 255, 0, 0.12);
+      position: relative;
+      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .lock-pin-input {
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.94) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .login-field-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .login-field-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      letter-spacing: 0.4px;
+    }
+
+    .login-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .login-input-wrap .field-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: color 0.2s ease;
+    }
+
+    .login-input {
       width: 100%;
-      padding: 14px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      font-size: 1.2rem;
-      text-align: center;
-      letter-spacing: 6px;
-      color: var(--accent-neon);
-      margin: 20px 0;
-      font-weight: 800;
+      padding: 13px 44px 13px 42px;
+      background: #14141D;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 12px;
+      font-size: 0.92rem;
+      color: #FFFFFF;
+      font-family: var(--font-body);
+      transition: all 0.2s ease;
+      outline: none;
     }
 
-    .lock-pin-input:focus {
+    .login-input:focus {
       border-color: var(--accent-neon);
-      box-shadow: 0 0 16px rgba(132, 255, 0, 0.3);
+      background: #181824;
+      box-shadow: 0 0 16px rgba(132, 255, 0, 0.25);
+    }
+
+    .login-input-wrap:focus-within .field-icon {
+      color: var(--accent-neon);
+    }
+
+    .password-eye-toggle {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .password-eye-toggle:hover {
+      color: #FFFFFF;
+    }
+
+    .login-remember-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0 24px;
+      font-size: 0.82rem;
+    }
+
+    .login-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .login-checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent-neon);
+      cursor: pointer;
+    }
+
+    .login-alert-box {
+      background: rgba(255, 77, 77, 0.12);
+      border: 1px solid #FF4D4D;
+      color: #FF7B7B;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .login-lockout-banner {
+      background: rgba(255, 170, 0, 0.12);
+      border: 1px solid #FFAA00;
+      color: #FFC04D;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    /* Admin Security Modal & Tabs */
+    .admin-security-card {
+      background: #111118;
+      border: 1.5px solid rgba(132, 255, 0, 0.35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(132, 255, 0, 0.15);
+      border-radius: 22px;
+      max-width: 680px;
+      width: 100%;
+      padding: 30px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .security-tabs-header {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+    }
+
+    .security-tab-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: #181822;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .security-tab-btn:hover {
+      background: #202030;
+      color: #FFFFFF;
+    }
+
+    .security-tab-btn.active {
+      background: var(--accent-neon);
+      color: #000000;
+      border-color: var(--accent-neon);
+      box-shadow: 0 0 12px rgba(132, 255, 0, 0.35);
+    }
+
+    .admin-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .admin-role-badge.super {
+      background: rgba(132, 255, 0, 0.15);
+      border: 1px solid var(--accent-neon);
+      color: var(--accent-neon);
+    }
+
+    .admin-role-badge.regular {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid #3B82F6;
+      color: #60A5FA;
     }
 
     /* Switch toggle */
@@ -794,15 +984,15 @@
       color: #0F172A !important;
     }
 
-    /* Lock Screen in Light Mode */
+    /* Lock Screen & Admin Security in Light Mode */
     [data-theme="light"] #adminLockScreen {
-      background: #F1F5F9 !important;
+      background: radial-gradient(circle at center, rgba(241, 245, 249, 0.94) 0%, rgba(226, 232, 240, 0.98) 100%) !important;
     }
 
     [data-theme="light"] #adminLockScreen .lock-box {
       background: #FFFFFF !important;
       border-color: #CBD5E1 !important;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12), 0 0 30px rgba(16, 185, 129, 0.1) !important;
     }
 
     [data-theme="light"] #adminLockScreen h2 {
@@ -813,10 +1003,53 @@
       color: #64748B !important;
     }
 
-    [data-theme="light"] .lock-pin-input {
+    [data-theme="light"] .login-field-label {
+      color: #334155 !important;
+    }
+
+    [data-theme="light"] .login-input {
       background: #F8FAFC !important;
       border-color: #CBD5E1 !important;
       color: #0F172A !important;
+    }
+
+    [data-theme="light"] .login-input:focus {
+      background: #FFFFFF !important;
+      border-color: #10B981 !important;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2) !important;
+    }
+
+    [data-theme="light"] .login-checkbox-label {
+      color: #475569 !important;
+    }
+
+    [data-theme="light"] .password-eye-toggle {
+      color: #64748B !important;
+    }
+    [data-theme="light"] .password-eye-toggle:hover {
+      color: #0F172A !important;
+    }
+
+    [data-theme="light"] .admin-security-card {
+      background: #FFFFFF !important;
+      border-color: #CBD5E1 !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15) !important;
+      color: #0F172A !important;
+    }
+
+    [data-theme="light"] .security-tab-btn {
+      background: #F1F5F9 !important;
+      border-color: #CBD5E1 !important;
+      color: #475569 !important;
+    }
+    [data-theme="light"] .security-tab-btn:hover {
+      background: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    [data-theme="light"] .security-tab-btn.active {
+      background: #0F172A !important;
+      border-color: #0F172A !important;
+      color: #FFFFFF !important;
     }
 
     /* Top Nav Buttons in Light Mode */
@@ -862,25 +1095,87 @@
   <!-- ========================================================================
        SECURITY PIN LOCK SCREEN
        ======================================================================== -->
+  <!-- ========================================================================
+       MULTI-ADMIN CRYPTOGRAPHIC ACCESS GATEWAY (PBKDF2 SHA-512)
+       ======================================================================== -->
   <div id="adminLockScreen">
     <div class="lock-box">
-      <div style="width:64px; height:64px; border-radius:18px; border:2px solid var(--accent-neon); margin:0 auto 18px; overflow:hidden; box-shadow:0 0 20px rgba(132, 255, 0, 0.35);">
+      <!-- Logo & Security Badge -->
+      <div style="width:68px; height:68px; border-radius:20px; border:2px solid var(--accent-neon); margin:0 auto 16px; overflow:hidden; box-shadow:0 0 25px rgba(132, 255, 0, 0.4);">
         <img src="images/zaza_logo.jpg" alt="ZAZA Logo" style="width:100%; height:100%; object-fit:cover;">
       </div>
-      <h2 style="font-size:1.5rem; font-weight:900; color:#FFFFFF; margin-bottom:6px;">ZAZA X ADMIN ACCESS</h2>
-      <p style="color:var(--text-secondary); font-size:0.85rem;">Enter store master PIN to access the management portal</p>
       
-      <form id="pinForm" onsubmit="event.preventDefault(); verifyPin();">
-        <input type="password" id="pinInput" class="lock-pin-input" placeholder="••••" maxlength="6" autofocus>
-        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px;">
-          <i class="fa-solid fa-lock-open"></i> Unlock Dashboard
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(132, 255, 0, 0.1); border:1px solid var(--accent-neon); padding:4px 12px; border-radius:var(--radius-full); margin-bottom:12px;">
+        <i class="fa-solid fa-shield-halved" style="color:var(--accent-neon); font-size:0.75rem;"></i>
+        <span style="font-size:0.72rem; font-weight:800; color:var(--accent-neon); letter-spacing:0.5px; text-transform:uppercase;">Military-Grade PBKDF2 Vault</span>
+      </div>
+
+      <h2 style="font-size:1.45rem; font-weight:900; color:#FFFFFF; margin-bottom:6px; font-family:var(--font-display);">ZAZA X ADMIN ACCESS</h2>
+      <p style="color:var(--text-secondary); font-size:0.84rem; margin-bottom:20px;">تسجيل دخول المسؤولين والمشرفين إلى مركز التحكم</p>
+
+      <!-- Brute-Force Lockout Banner -->
+      <div id="adminLockoutBanner" class="login-lockout-banner">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size:1.1rem; flex-shrink:0;"></i>
+        <div>
+          <div style="font-weight:800; font-size:0.85rem;">الحساب مقفل مؤقتاً لحماية المتجر</div>
+          <div style="font-size:0.76rem; opacity:0.9; margin-top:2px;" id="lockoutTimerText">يرجى الانتظار 15 دقيقة بعد عدة محاولات خاطئة</div>
+        </div>
+      </div>
+
+      <!-- General Alert Box -->
+      <div id="adminLoginAlert" class="login-alert-box">
+        <i class="fa-solid fa-circle-exclamation" style="flex-shrink:0;"></i>
+        <span id="adminLoginAlertText">اسم المستخدم أو كلمة المرور غير صحيحة</span>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <!-- Username Field -->
+        <div class="login-field-group">
+          <label class="login-field-label" for="adminLoginUsername">
+            <i class="fa-solid fa-user-shield" style="margin-left:4px;"></i> اسم المستخدم / Username
+          </label>
+          <div class="login-input-wrap">
+            <i class="fa-solid fa-user field-icon"></i>
+            <input type="text" id="adminLoginUsername" class="login-input" placeholder="اسم المستخدم (مثال: admin)" autocomplete="username" required autofocus>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="login-field-group">
+          <label class="login-field-label" for="adminLoginPassword">
+            <i class="fa-solid fa-key" style="margin-left:4px;"></i> كلمة المرور المشفرة / Password
+          </label>
+          <div class="login-input-wrap">
+            <i class="fa-solid fa-lock field-icon"></i>
+            <input type="password" id="adminLoginPassword" class="login-input" placeholder="••••••••••••" autocomplete="current-password" required>
+            <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('adminLoginPassword', 'adminEyeIcon')" aria-label="Toggle password visibility">
+              <i class="fa-solid fa-eye" id="adminEyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me Row -->
+        <div class="login-remember-row">
+          <label class="login-checkbox-label">
+            <input type="checkbox" id="adminRememberMe" checked>
+            <span>تذكر جهازي (7 أيام) / Remember device</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="adminLoginSubmitBtn" class="btn-primary" style="width:100%; justify-content:center; padding:13px; font-weight:800; font-size:0.95rem; border-radius:12px;">
+          <i class="fa-solid fa-unlock-keyhole"></i>
+          <span id="adminLoginBtnText">تسجيل الدخول الآمن / Secure Sign In</span>
         </button>
       </form>
-      <div id="pinError" style="color:#FF4D4D; font-size:0.8rem; margin-top:12px; display:none;">Incorrect PIN. (Default PIN: 1234)</div>
       
-      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border-subtle);">
-        <a href="index.html" style="font-size:0.84rem; color:var(--text-muted); text-decoration:underline;">
-          <i class="fa-solid fa-arrow-left"></i> Return to Live Customer Store
+      <div style="margin-top:22px; padding-top:16px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+        <span style="color:var(--text-muted);">
+          <i class="fa-solid fa-lock" style="color:var(--accent-neon);"></i> SHA-512 Encrypted
+        </span>
+        <a href="index.html" style="color:var(--text-muted); text-decoration:underline;">
+          <i class="fa-solid fa-arrow-left"></i> متجر العملاء / Store
         </a>
       </div>
     </div>
@@ -890,7 +1185,7 @@
        ADMIN TOP NAVIGATION
        ======================================================================== -->
   <header class="admin-nav">
-    <div style="display:flex; align-items:center; gap:16px;">
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
       <a href="admin.html" style="display:flex; align-items:center; gap:10px;">
         <div style="width:36px; height:36px; border-radius:10px; overflow:hidden; border:1.5px solid var(--accent-neon);">
           <img src="images/zaza_logo.jpg" alt="ZAZA Logo" style="width:100%; height:100%; object-fit:cover;">
@@ -900,9 +1195,22 @@
         </h1>
       </a>
       <span class="admin-badge">PORTAL /admin</span>
+
+      <!-- Active Admin User Identity Badge -->
+      <div id="activeAdminBadge" style="display:none; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:5px 14px; border-radius:var(--radius-full); border:1px solid var(--border-subtle); font-size:0.8rem;">
+        <i class="fa-solid fa-circle-user" style="color:var(--accent-neon); font-size:0.95rem;"></i>
+        <span id="activeAdminName" style="font-weight:700; color:#FFF;">Admin</span>
+        <span id="activeAdminRoleBadge" class="admin-role-badge super">مدير عام</span>
+      </div>
     </div>
 
-    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <!-- Manage Admins & Security Button -->
+      <button class="btn-outline" onclick="openAdminSecurityModal()" id="btnManageAdmins" style="padding:8px 14px; font-size:0.82rem;" title="إدارة حسابات الأدمن وكلمات السر والأمان">
+        <i class="fa-solid fa-users-gear" style="color:var(--accent-neon);"></i>
+        <span>Admins & Security / المسؤولين</span>
+      </button>
+
       <!-- Dark / Light Theme Toggle Button -->
       <button class="theme-toggle-btn" id="adminThemeToggleBtn" onclick="toggleAdminTheme()" aria-label="Toggle dark/light mode" title="Toggle Dark/Light Mode">
         <i class="fa-solid fa-moon moon-icon"></i>
@@ -923,8 +1231,10 @@
         <span>View Live Store</span>
       </a>
 
-      <button onclick="lockPortal()" class="action-btn" style="padding:8px 14px; font-size:0.82rem;" title="Lock Session">
-        <i class="fa-solid fa-lock"></i>
+      <!-- Sign Out Button -->
+      <button onclick="handleAdminSignOut()" class="btn-outline" style="padding:8px 14px; font-size:0.82rem; color:#FF5555; border-color:rgba(255,85,85,0.4);" title="تسجيل الخروج من لوحة التحكم">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Sign Out / خروج</span>
       </button>
     </div>
   </header>
@@ -1444,6 +1754,175 @@
     </div>
   </div>
 
+  <!-- ========================================================================
+       ADMIN SECURITY & MULTI-USER MANAGEMENT MODAL
+       ======================================================================== -->
+  <div class="confirm-modal-overlay" id="adminSecurityModal">
+    <div class="admin-security-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border-subtle); padding-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:44px; height:44px; border-radius:12px; background:rgba(132, 255, 0, 0.12); border:1.5px solid var(--accent-neon); display:flex; align-items:center; justify-content:center; color:var(--accent-neon); font-size:1.2rem;">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:900; color:#FFFFFF; font-family:var(--font-display);">Security & Admin Control</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">إدارة المشرفين، الصلاحيات وتغيير كلمات المرور المشفرة</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminSecurityModal()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:6px;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="security-tabs-header">
+        <button type="button" class="security-tab-btn active" id="secTabBtnList" onclick="switchAdminSecurityTab('list')">
+          <i class="fa-solid fa-users"></i> المسؤولين النشطين (Active Admins)
+        </button>
+        <button type="button" class="security-tab-btn" id="secTabBtnAdd" onclick="switchAdminSecurityTab('add')">
+          <i class="fa-solid fa-user-plus"></i> إضافة مسؤول جديد (Add Admin)
+        </button>
+        <button type="button" class="security-tab-btn" id="secTabBtnPass" onclick="switchAdminSecurityTab('pass')">
+          <i class="fa-solid fa-key"></i> تغيير كلمة المرور (Change Password)
+        </button>
+      </div>
+
+      <!-- TAB 1: ACTIVE ADMINS LIST -->
+      <div id="secTabContentList">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <span style="font-size:0.85rem; color:var(--text-secondary); font-weight:700;">حسابات الإدارة المسجلة في السحابة المشفرة:</span>
+          <button type="button" class="btn-outline" onclick="loadAndRenderAdminUsersList()" style="padding:5px 12px; font-size:0.75rem;">
+            <i class="fa-solid fa-arrows-rotate"></i> تحديث القائمة
+          </button>
+        </div>
+        <div style="overflow-x:auto; border-radius:12px; border:1px solid var(--border-subtle); background:#0B0B10;">
+          <table class="admin-table" style="margin:0;">
+            <thead>
+              <tr>
+                <th>المسؤول (Name & User)</th>
+                <th>الصلاحية (Role)</th>
+                <th>آخر تسجيل دخول (Last Login)</th>
+                <th style="text-align:center;">إجراءات (Actions)</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <tr>
+                <td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);">
+                  <i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل المسؤولين...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: ADD NEW ADMIN -->
+      <div id="secTabContentAdd" style="display:none;">
+        <form id="adminNewUserForm" onsubmit="handleCreateNewAdmin(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="newAdminFullName">الاسم الكامل (Display Name) *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-id-card field-icon"></i>
+                <input type="text" id="newAdminFullName" class="login-input" placeholder="مثال: يوسف أحمد" required>
+              </div>
+            </div>
+
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="newAdminUsername">اسم المستخدم (Username) *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-at field-icon"></i>
+                <input type="text" id="newAdminUsername" class="login-input" placeholder="e.g. youssef_admin" pattern="[a-zA-Z0-9_\.\-]{3,30}" title="3-30 أحرف إنجليزية أو أرقام فقط" required>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:16px; margin-bottom:16px;">
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="newAdminPassword">كلمة المرور المشفرة (Strong Password) *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-lock field-icon"></i>
+                <input type="password" id="newAdminPassword" class="login-input" placeholder="8 خانات على الأقل مع رموز وأرقام" minlength="8" required>
+                <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('newAdminPassword', 'newAdminEyeIcon')">
+                  <i class="fa-solid fa-eye" id="newAdminEyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="newAdminRole">الصلاحية (Role Level) *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-shield-halved field-icon"></i>
+                <select id="newAdminRole" class="login-input" style="padding-left:42px; cursor:pointer;" required>
+                  <option value="admin">🛡️ مشرف متجر (Store Admin)</option>
+                  <option value="super_admin">👑 مدير عام (Super Admin)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="newAdminAlert" class="login-alert-box" style="margin-bottom:16px;"></div>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+            <button type="button" class="confirm-btn-cancel" onclick="switchAdminSecurityTab('list')">إلغاء</button>
+            <button type="submit" id="btnCreateAdminSubmit" class="btn-primary" style="padding:10px 24px;">
+              <i class="fa-solid fa-user-plus"></i> إنشاء حساب المسؤول
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 3: CHANGE PASSWORD -->
+      <div id="secTabContentPass" style="display:none;">
+        <form id="adminChangePassForm" onsubmit="handleChangeAdminPassword(event)">
+          <div class="login-field-group">
+            <label class="login-field-label" for="changeCurrentPassword">كلمة المرور الحالية (Current Password) *</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-lock-open field-icon"></i>
+              <input type="password" id="changeCurrentPassword" class="login-input" placeholder="أدخل كلمة المرور الحالية للتأكيد" required>
+              <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('changeCurrentPassword', 'changeCurrentEyeIcon')">
+                <i class="fa-solid fa-eye" id="changeCurrentEyeIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="changeNewPassword">كلمة المرور الجديدة (New Password) *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-key field-icon"></i>
+                <input type="password" id="changeNewPassword" class="login-input" placeholder="8 خانات على الأقل" minlength="8" required>
+                <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('changeNewPassword', 'changeNewEyeIcon')">
+                  <i class="fa-solid fa-eye" id="changeNewEyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="login-field-group" style="margin-bottom:0;">
+              <label class="login-field-label" for="changeConfirmPassword">تأكيد كلمة المرور الجديدة *</label>
+              <div class="login-input-wrap">
+                <i class="fa-solid fa-circle-check field-icon"></i>
+                <input type="password" id="changeConfirmPassword" class="login-input" placeholder="أعد إدخال كلمة المرور" minlength="8" required>
+                <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('changeConfirmPassword', 'changeConfirmEyeIcon')">
+                  <i class="fa-solid fa-eye" id="changeConfirmEyeIcon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="changePassAlert" class="login-alert-box" style="margin-bottom:16px;"></div>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+            <button type="button" class="confirm-btn-cancel" onclick="closeAdminSecurityModal()">إغلاق</button>
+            <button type="submit" id="btnChangePassSubmit" class="btn-primary" style="padding:10px 24px;">
+              <i class="fa-solid fa-key"></i> حفظ كلمة المرور المشفرة
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
     <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
@@ -1453,31 +1932,629 @@
   <!-- Supabase Cloud Database Client -->
   <script src="supabase-client.js"></script>
   <script>
-    // --- PIN LOCK SYSTEM ---
-    const MASTER_PIN = '1234';
+    // --- MULTI-ADMIN CRYPTOGRAPHIC AUTHENTICATION SYSTEM (PBKDF2 SHA-512, 100,000 ROUNDS) ---
+    let currentAdminSession = null;
     let currentFilter = 'all';
     let currentOfferImageData = 'images/neon_cat_helmet.jpg';
 
-    function verifyPin() {
-      const pin = document.getElementById('pinInput').value.trim();
-      const err = document.getElementById('pinError');
-      if (pin === MASTER_PIN || pin === '') {
-        document.getElementById('adminLockScreen').style.display = 'none';
-        sessionStorage.setItem('zaza_admin_auth', 'true');
-        loadAdminData();
+    // 1. CRYPTO UTILITIES (Native Web Crypto API)
+    async function computePasswordHash(password, salt) {
+      const enc = new TextEncoder();
+      const keyMaterial = await window.crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits', 'deriveKey']
+      );
+      const derivedBits = await window.crypto.subtle.deriveBits(
+        {
+          name: 'PBKDF2',
+          salt: enc.encode(salt),
+          iterations: 100000,
+          hash: 'SHA-512'
+        },
+        keyMaterial,
+        512
+      );
+      return Array.from(new Uint8Array(derivedBits))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    function generateSecureCryptoSalt(bytesLength = 16) {
+      const array = new Uint8Array(bytesLength);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
       } else {
-        err.style.display = 'block';
+        input.type = 'password';
+        if (icon) {
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
       }
     }
 
-    function lockPortal() {
-      sessionStorage.removeItem('zaza_admin_auth');
-      document.getElementById('adminLockScreen').style.display = 'flex';
-      document.getElementById('pinInput').value = '';
+    // 2. ANTI-BRUTE-FORCE LOCKOUT GUARD (Max 5 attempts -> 15 min lock)
+    const MAX_LOGIN_ATTEMPTS = 5;
+    const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
+    let lockoutIntervalTimer = null;
+
+    function getBruteForceStatus() {
+      try {
+        const raw = localStorage.getItem('zaza_admin_guard');
+        return raw ? JSON.parse(raw) : { attempts: 0, lockoutUntil: 0 };
+      } catch (e) {
+        return { attempts: 0, lockoutUntil: 0 };
+      }
     }
 
-    if (sessionStorage.getItem('zaza_admin_auth') === 'true') {
-      document.getElementById('adminLockScreen').style.display = 'none';
+    function setBruteForceStatus(status) {
+      localStorage.setItem('zaza_admin_guard', JSON.stringify(status));
+    }
+
+    function checkBruteForceLockout() {
+      const status = getBruteForceStatus();
+      const now = Date.now();
+      const banner = document.getElementById('adminLockoutBanner');
+      const submitBtn = document.getElementById('adminLoginSubmitBtn');
+      const timerText = document.getElementById('lockoutTimerText');
+
+      if (status.lockoutUntil && status.lockoutUntil > now) {
+        if (banner) banner.style.display = 'flex';
+        if (submitBtn) submitBtn.disabled = true;
+
+        const updateTimer = () => {
+          const remainingSec = Math.max(0, Math.ceil((status.lockoutUntil - Date.now()) / 1000));
+          if (remainingSec <= 0) {
+            clearInterval(lockoutIntervalTimer);
+            setBruteForceStatus({ attempts: 0, lockoutUntil: 0 });
+            if (banner) banner.style.display = 'none';
+            if (submitBtn) submitBtn.disabled = false;
+          } else {
+            const mins = Math.floor(remainingSec / 60);
+            const secs = remainingSec % 60;
+            if (timerText) {
+              timerText.textContent = `يرجى الانتظار ${mins} دقيقة و ${secs} ثانية قبل إعادة المحاولة`;
+            }
+          }
+        };
+
+        clearInterval(lockoutIntervalTimer);
+        updateTimer();
+        lockoutIntervalTimer = setInterval(updateTimer, 1000);
+        return true;
+      } else {
+        if (banner) banner.style.display = 'none';
+        if (submitBtn) submitBtn.disabled = false;
+        return false;
+      }
+    }
+
+    function recordFailedLoginAttempt() {
+      const status = getBruteForceStatus();
+      status.attempts = (status.attempts || 0) + 1;
+      if (status.attempts >= MAX_LOGIN_ATTEMPTS) {
+        status.lockoutUntil = Date.now() + LOCKOUT_DURATION_MS;
+      }
+      setBruteForceStatus(status);
+      checkBruteForceLockout();
+    }
+
+    function resetLoginAttempts() {
+      localStorage.removeItem('zaza_admin_guard');
+      clearInterval(lockoutIntervalTimer);
+      const banner = document.getElementById('adminLockoutBanner');
+      if (banner) banner.style.display = 'none';
+      const submitBtn = document.getElementById('adminLoginSubmitBtn');
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    // 3. ADMIN SESSION MANAGEMENT
+    function getStoredAdminSession() {
+      try {
+        const local = localStorage.getItem('zaza_admin_session');
+        const sess = local || sessionStorage.getItem('zaza_admin_session');
+        if (!sess) return null;
+        const parsed = JSON.parse(sess);
+        if (parsed && parsed.expiresAt && Date.now() < parsed.expiresAt) {
+          return parsed;
+        }
+        clearAdminSession();
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveAdminSession(sessionData, rememberMe) {
+      const expiresAt = Date.now() + (rememberMe ? 7 * 24 * 3600 * 1000 : 24 * 3600 * 1000);
+      const sessionObj = { ...sessionData, expiresAt };
+      if (rememberMe) {
+        localStorage.setItem('zaza_admin_session', JSON.stringify(sessionObj));
+      } else {
+        sessionStorage.setItem('zaza_admin_session', JSON.stringify(sessionObj));
+      }
+      currentAdminSession = sessionObj;
+      updateAdminNavUI();
+    }
+
+    function clearAdminSession() {
+      localStorage.removeItem('zaza_admin_session');
+      sessionStorage.removeItem('zaza_admin_session');
+      sessionStorage.removeItem('zaza_admin_auth');
+      currentAdminSession = null;
+      updateAdminNavUI();
+    }
+
+    function updateAdminNavUI() {
+      const badge = document.getElementById('activeAdminBadge');
+      const nameEl = document.getElementById('activeAdminName');
+      const roleBadge = document.getElementById('activeAdminRoleBadge');
+      const btnManage = document.getElementById('btnManageAdmins');
+
+      if (currentAdminSession) {
+        if (badge) badge.style.display = 'inline-flex';
+        if (nameEl) nameEl.textContent = `${currentAdminSession.name} (@${currentAdminSession.username})`;
+        if (roleBadge) {
+          if (currentAdminSession.role === 'super_admin') {
+            roleBadge.textContent = '👑 مدير عام';
+            roleBadge.className = 'admin-role-badge super';
+          } else {
+            roleBadge.textContent = '🛡️ مشرف متجر';
+            roleBadge.className = 'admin-role-badge regular';
+          }
+        }
+        if (btnManage) btnManage.style.display = 'inline-flex';
+      } else {
+        if (badge) badge.style.display = 'none';
+        if (btnManage) btnManage.style.display = 'none';
+      }
+    }
+
+    // 4. LOGIN & LOGOUT HANDLERS
+    async function handleAdminLogin(e) {
+      if (e) e.preventDefault();
+      if (checkBruteForceLockout()) return;
+
+      const userEl = document.getElementById('adminLoginUsername');
+      const passEl = document.getElementById('adminLoginPassword');
+      const rememberEl = document.getElementById('adminRememberMe');
+      const alertBox = document.getElementById('adminLoginAlert');
+      const alertText = document.getElementById('adminLoginAlertText');
+      const submitBtn = document.getElementById('adminLoginSubmitBtn');
+      const btnText = document.getElementById('adminLoginBtnText');
+
+      const username = userEl ? userEl.value.trim() : '';
+      const password = passEl ? passEl.value : '';
+
+      if (!username || !password) {
+        if (alertBox) {
+          alertBox.style.display = 'flex';
+          alertText.textContent = 'يرجى إدخال اسم المستخدم وكلمة المرور';
+        }
+        return;
+      }
+
+      // UI Loading state
+      if (alertBox) alertBox.style.display = 'none';
+      if (submitBtn) submitBtn.disabled = true;
+      if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري التحقق المشفر...';
+
+      try {
+        if (!window.ZAZA_DB) {
+          throw new Error('Supabase client not loaded');
+        }
+
+        const adminUser = await window.ZAZA_DB.getAdminUserByUsername(username);
+
+        if (!adminUser || !adminUser.password_hash || !adminUser.salt) {
+          recordFailedLoginAttempt();
+          if (alertBox) {
+            alertBox.style.display = 'flex';
+            alertText.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+          }
+          return;
+        }
+
+        // Compute WebCrypto PBKDF2 SHA-512 hash
+        const computedHash = await computePasswordHash(password, adminUser.salt);
+
+        if (computedHash !== adminUser.password_hash) {
+          recordFailedLoginAttempt();
+          if (alertBox) {
+            alertBox.style.display = 'flex';
+            alertText.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+          }
+          return;
+        }
+
+        // Login success!
+        resetLoginAttempts();
+        saveAdminSession({
+          id: adminUser.id,
+          username: adminUser.username,
+          name: adminUser.name,
+          role: adminUser.role
+        }, rememberEl ? rememberEl.checked : true);
+
+        // Update last login in database
+        window.ZAZA_DB.updateAdminLastLogin(adminUser.id);
+
+        // Hide lock screen
+        const lockScreen = document.getElementById('adminLockScreen');
+        if (lockScreen) lockScreen.style.display = 'none';
+
+        // Clear password input
+        if (passEl) passEl.value = '';
+
+        showToast(`مرحباً بك يا ${adminUser.name} ⚡ تم الدخول بأمان وتشفير كامل!`);
+        loadAdminData();
+        loadStoreWhatsApp();
+      } catch (err) {
+        console.error('Login error:', err);
+        if (alertBox) {
+          alertBox.style.display = 'flex';
+          alertText.textContent = 'حدث خطأ أثناء الاتصال بقاعدة البيانات المشفرة. تأكد من اتصال الإنترنت.';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> تسجيل الدخول الآمن / Secure Sign In';
+      }
+    }
+
+    function handleAdminSignOut() {
+      clearAdminSession();
+      const lockScreen = document.getElementById('adminLockScreen');
+      if (lockScreen) lockScreen.style.display = 'flex';
+      const userEl = document.getElementById('adminLoginUsername');
+      const passEl = document.getElementById('adminLoginPassword');
+      if (passEl) passEl.value = '';
+      if (userEl) userEl.focus();
+      showToast('تم تسجيل الخروج وتأمين لوحة التحكم بنجاح 🔒');
+    }
+
+    function checkAdminSessionOnLoad() {
+      checkBruteForceLockout();
+      const session = getStoredAdminSession();
+      const lockScreen = document.getElementById('adminLockScreen');
+      if (session) {
+        currentAdminSession = session;
+        updateAdminNavUI();
+        if (lockScreen) lockScreen.style.display = 'none';
+        return true;
+      } else {
+        if (lockScreen) lockScreen.style.display = 'flex';
+        return false;
+      }
+    }
+
+    // 5. ADMIN SECURITY MODAL & MULTI-USER MANAGEMENT
+    function openAdminSecurityModal(tab = 'list') {
+      if (!currentAdminSession) {
+        showToast('يجب تسجيل الدخول أولاً للوصول إلى مركز الأمان');
+        return;
+      }
+      const modal = document.getElementById('adminSecurityModal');
+      if (modal) {
+        modal.classList.add('active');
+        switchAdminSecurityTab(tab);
+      }
+    }
+
+    function closeAdminSecurityModal() {
+      const modal = document.getElementById('adminSecurityModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function switchAdminSecurityTab(tab) {
+      const tabList = document.getElementById('secTabContentList');
+      const tabAdd = document.getElementById('secTabContentAdd');
+      const tabPass = document.getElementById('secTabContentPass');
+      const btnList = document.getElementById('secTabBtnList');
+      const btnAdd = document.getElementById('secTabBtnAdd');
+      const btnPass = document.getElementById('secTabBtnPass');
+
+      if (!tabList || !tabAdd || !tabPass) return;
+
+      tabList.style.display = tab === 'list' ? 'block' : 'none';
+      tabAdd.style.display = tab === 'add' ? 'block' : 'none';
+      tabPass.style.display = tab === 'pass' ? 'block' : 'none';
+
+      if (btnList) btnList.classList.toggle('active', tab === 'list');
+      if (btnAdd) btnAdd.classList.toggle('active', tab === 'add');
+      if (btnPass) btnPass.classList.toggle('active', tab === 'pass');
+
+      // Restrict "Add New Admin" tab to Super Admins only
+      if (btnAdd) {
+        if (currentAdminSession && currentAdminSession.role !== 'super_admin') {
+          btnAdd.style.display = 'none';
+        } else {
+          btnAdd.style.display = 'inline-flex';
+        }
+      }
+
+      if (tab === 'list') {
+        loadAndRenderAdminUsersList();
+      }
+    }
+
+    async function loadAndRenderAdminUsersList() {
+      const tbody = document.getElementById('adminUsersTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل قائمة المشرفين...
+          </td>
+        </tr>
+      `;
+
+      try {
+        const users = await window.ZAZA_DB.getAllAdminUsers();
+        if (!users || users.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);">
+                لا يوجد مسؤولين مسجلين حالياً.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        const isSuperAdmin = currentAdminSession && currentAdminSession.role === 'super_admin';
+
+        tbody.innerHTML = users.map(u => {
+          const isCurrentUser = currentAdminSession && currentAdminSession.id === u.id;
+          const roleClass = u.role === 'super_admin' ? 'super' : 'regular';
+          const roleText = u.role === 'super_admin' ? '👑 مدير عام (Super)' : '🛡️ مشرف (Admin)';
+          const lastLoginStr = u.last_login 
+            ? new Date(u.last_login).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' })
+            : '<span style="color:var(--text-muted);">لم يسجل بعد</span>';
+
+          const deleteBtn = (isSuperAdmin && !isCurrentUser) ? `
+            <button type="button" onclick="handleDeleteAdminUser('${u.id}', '${u.username}')" class="btn-outline" style="padding:4px 10px; font-size:0.75rem; color:#FF5555; border-color:rgba(255,85,85,0.4);" title="حذف حساب المشرف">
+              <i class="fa-solid fa-trash-can"></i> حذف
+            </button>
+          ` : (isCurrentUser ? `<span style="font-size:0.75rem; color:var(--accent-neon); font-weight:700;">(حسابك الحالي)</span>` : `<span style="font-size:0.75rem; color:var(--text-muted);">-</span>`);
+
+          return `
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(132,255,0,0.1); border:1px solid var(--accent-neon); display:flex; align-items:center; justify-content:center; color:var(--accent-neon); font-weight:800; font-size:0.85rem;">
+                    ${(u.name || 'A').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style="font-weight:700; color:#FFFFFF;">${u.name || u.username}</div>
+                    <div style="font-size:0.78rem; color:var(--text-muted);">@${u.username}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="admin-role-badge ${roleClass}">${roleText}</span>
+              </td>
+              <td style="font-size:0.82rem;">${lastLoginStr}</td>
+              <td style="text-align:center;">${deleteBtn}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error fetching admin users:', err);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align:center; padding:20px; color:#FF5555;">
+              فشل تحميل قائمة المسؤولين. يرجى إعادة المحاولة.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    async function handleCreateNewAdmin(e) {
+      if (e) e.preventDefault();
+      if (!currentAdminSession || currentAdminSession.role !== 'super_admin') {
+        showToast('عذراً، صلاحية إنشاء مسؤول جديد مقتصرة على المدير العام فقط');
+        return;
+      }
+
+      const nameEl = document.getElementById('newAdminFullName');
+      const userEl = document.getElementById('newAdminUsername');
+      const passEl = document.getElementById('newAdminPassword');
+      const roleEl = document.getElementById('newAdminRole');
+      const alertEl = document.getElementById('newAdminAlert');
+      const submitBtn = document.getElementById('btnCreateAdminSubmit');
+
+      const name = nameEl.value.trim();
+      const username = userEl.value.trim().toLowerCase();
+      const password = passEl.value;
+      const role = roleEl.value;
+
+      if (!name || !username || !password) {
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'يرجى ملء جميع الحقول المطلوبة';
+        }
+        return;
+      }
+
+      if (password.length < 8) {
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'كلمة المرور يجب ألا تقل عن 8 خانات لتأمين النظام';
+        }
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (alertEl) alertEl.style.display = 'none';
+
+      try {
+        // Check if username already exists
+        const existing = await window.ZAZA_DB.getAdminUserByUsername(username);
+        if (existing) {
+          if (alertEl) {
+            alertEl.style.display = 'flex';
+            alertEl.textContent = `اسم المستخدم (@${username}) مسجل بالفعل. اختر اسم مستخدم آخر.`;
+          }
+          return;
+        }
+
+        // Generate cryptographic salt and PBKDF2 SHA-512 hash
+        const salt = generateSecureCryptoSalt(16);
+        const passwordHash = await computePasswordHash(password, salt);
+
+        const ok = await window.ZAZA_DB.createAdminUser({
+          username,
+          name,
+          passwordHash,
+          salt,
+          role
+        });
+
+        if (ok) {
+          showToast(`تم إنشاء حساب المسؤول (@${username}) بنجاح وتشفيره بـ SHA-512! 🚀`);
+          nameEl.value = '';
+          userEl.value = '';
+          passEl.value = '';
+          switchAdminSecurityTab('list');
+        } else {
+          throw new Error('Database insert failed');
+        }
+      } catch (err) {
+        console.error('Error creating admin:', err);
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'فشل إنشاء الحساب في السحابة. تحقق من الاتصال.';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    async function handleChangeAdminPassword(e) {
+      if (e) e.preventDefault();
+      if (!currentAdminSession) {
+        showToast('يجب تسجيل الدخول أولاً لتغيير كلمة المرور');
+        return;
+      }
+
+      const currPassEl = document.getElementById('changeCurrentPassword');
+      const newPassEl = document.getElementById('changeNewPassword');
+      const confPassEl = document.getElementById('changeConfirmPassword');
+      const alertEl = document.getElementById('changePassAlert');
+      const submitBtn = document.getElementById('btnChangePassSubmit');
+
+      const currentPass = currPassEl.value;
+      const newPass = newPassEl.value;
+      const confPass = confPassEl.value;
+
+      if (!currentPass || !newPass || !confPass) {
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'يرجى إدخال جميع الحقول المطلوبة';
+        }
+        return;
+      }
+
+      if (newPass !== confPass) {
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'كلمة المرور الجديدة وتأكيدها غير متطابقين!';
+        }
+        return;
+      }
+
+      if (newPass.length < 8) {
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'كلمة المرور الجديدة يجب ألا تقل عن 8 خانات';
+        }
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (alertEl) alertEl.style.display = 'none';
+
+      try {
+        // Fetch current user from DB to verify current password
+        const dbUser = await window.ZAZA_DB.getAdminUserByUsername(currentAdminSession.username);
+        if (!dbUser) throw new Error('User not found');
+
+        const currentComputedHash = await computePasswordHash(currentPass, dbUser.salt);
+        if (currentComputedHash !== dbUser.password_hash) {
+          if (alertEl) {
+            alertEl.style.display = 'flex';
+            alertEl.textContent = 'كلمة المرور الحالية غير صحيحة!';
+          }
+          return;
+        }
+
+        // Generate new salt and hash for new password
+        const newSalt = generateSecureCryptoSalt(16);
+        const newHash = await computePasswordHash(newPass, newSalt);
+
+        const ok = await window.ZAZA_DB.updateAdminPassword(dbUser.id, newHash, newSalt);
+        if (ok) {
+          showToast('تم تحديث كلمة المرور وتشفيرها بنجاح تام! 🛡️⚡');
+          currPassEl.value = '';
+          newPassEl.value = '';
+          confPassEl.value = '';
+          closeAdminSecurityModal();
+        } else {
+          throw new Error('Update password failed');
+        }
+      } catch (err) {
+        console.error('Password change error:', err);
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          alertEl.textContent = 'حدث خطأ أثناء تحديث كلمة المرور في قاعدة البيانات.';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    async function handleDeleteAdminUser(userId, username) {
+      if (!currentAdminSession || currentAdminSession.role !== 'super_admin') {
+        showToast('حذف المشرفين مقتصر على المدير العام فقط');
+        return;
+      }
+
+      if (currentAdminSession.id === userId) {
+        showToast('لا يمكنك حذف حسابك الشخصي الحالي!');
+        return;
+      }
+
+      if (!confirm(`هل أنت متأكد من حذف حساب المسؤول (@${username}) نهائياً؟ لن يتمكن من الدخول للوحة التحكم بعدها.`)) {
+        return;
+      }
+
+      try {
+        const ok = await window.ZAZA_DB.deleteAdminUser(userId);
+        if (ok) {
+          showToast(`تم حذف حساب المسؤول (@${username}) بنجاح.`);
+          loadAndRenderAdminUsersList();
+        } else {
+          showToast('فشل حذف حساب المسؤول. حاول مرة أخرى.');
+        }
+      } catch (err) {
+        console.error('Error deleting admin:', err);
+        showToast('حدث خطأ أثناء محاولة الحذف.');
+      }
     }
 
     // --- DATA & METRICS ---
@@ -2570,8 +3647,11 @@
 
     // Initial load
     initAdminTheme();
-    loadAdminData();
-    loadStoreWhatsApp();
+    const isAuthenticated = checkAdminSessionOnLoad();
+    if (isAuthenticated) {
+      loadAdminData();
+      loadStoreWhatsApp();
+    }
   </script>
 </body>
 </html>
