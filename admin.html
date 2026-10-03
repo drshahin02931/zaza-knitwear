@@ -938,25 +938,25 @@
          ACCOUNTING & PROFIT KPI BOXES (CYBERPUNK GLASSMORPHIC CARDS)
          ======================================================================== -->
     <div class="accounting-boxes-grid">
-      <!-- BOX 1: Delivered Revenue -->
+      <!-- BOX 1: Total Revenue -->
       <div class="accounting-box-card">
         <div class="box-icon-wrap icon-lime">
           <i class="fa-solid fa-coins"></i>
         </div>
         <div class="box-content">
-          <span class="box-label">Delivered Revenue / المبيعات</span>
+          <span class="box-label">Total Revenue / إجمالي المبيعات</span>
           <div class="box-value" id="adminRevenue">0 EGP</div>
-          <div class="box-subtext">Cash collected on delivered orders</div>
+          <div class="box-subtext" id="adminRevenueSubtext">All active customer orders</div>
         </div>
       </div>
 
-      <!-- BOX 2: Total Cost of Sold Goods -->
+      <!-- BOX 2: Total Cost of Goods -->
       <div class="accounting-box-card">
         <div class="box-icon-wrap icon-blue">
           <i class="fa-solid fa-receipt"></i>
         </div>
         <div class="box-content">
-          <span class="box-label">Sold Cost / تكلفة البضاعة المباعة</span>
+          <span class="box-label">Gear Costs / تكلفة المنتجات</span>
           <div class="box-value text-blue" id="adminTotalCost">0 EGP</div>
           <div class="box-subtext" id="adminCostDesc">Raw materials & craft cost</div>
         </div>
@@ -973,7 +973,7 @@
             <span class="badge-profit-pill" id="adminMarginPill">+0% Margin</span>
           </div>
           <div class="box-value text-neon-glow" id="adminNetProfit">0 EGP</div>
-          <div class="box-subtext" style="color:rgba(132, 255, 0, 0.85);">
+          <div class="box-subtext" id="adminProfitSubtext" style="color:rgba(132, 255, 0, 0.85);">
             Revenue minus product costs (الربح الصافي)
           </div>
         </div>
@@ -1490,34 +1490,46 @@
       loadAdminData();
     }
 
-    async function loadAdminData() {
-      // 1. Live Sync with Supabase Cloud
-      if (window.ZAZA_DB) {
-        try {
-          const cloudOrders = await window.ZAZA_DB.getOrders();
-          if (cloudOrders && Array.isArray(cloudOrders)) {
-            localStorage.setItem('zaza_orders', JSON.stringify(cloudOrders));
-          }
-        } catch (e) {}
-      }
+    const ADMIN_BASE_PRODUCTS = [
+      { id: 'zaza-01', title: 'ZAZA Signature Cat-Ears Knitted Helmet Cover (Cyber Lime)', costPrice: 260, price: 750, image: 'images/neon_cat_helmet.jpg', category: 'helmets' },
+      { id: 'zaza-02', title: 'Tactical Cyber Balaclava Ski Hood', costPrice: 180, price: 520, image: 'images/balaclava_front.jpg', category: 'balaclavas' },
+      { id: 'zaza-03', title: 'Chunky Wool Beanie Bear Ears Edition', costPrice: 130, price: 380, image: 'images/beanie_bear.jpg', category: 'beanies' },
+      { id: 'zaza-04', title: 'Oversized Streetwear Knit Cardigan (Cyber Black)', costPrice: 420, price: 1190, image: 'images/knit_cardigan.jpg', category: 'cardigans' },
+      { id: 'zaza-05', title: 'Cyber Devil Horns Helmet Cover (Crimson Red)', costPrice: 270, price: 780, image: 'images/devil_horns_cover.jpg', category: 'helmets' },
+      { id: 'zaza-06', title: 'Thermal Ribbed Moto Snood Neck Warmer', costPrice: 140, price: 340, image: 'images/moto_snood.jpg', category: 'balaclavas' }
+    ];
 
-      // First ensure products are loaded for accurate cost price lookup
-      await loadAdminProducts();
+    function calculateAndRenderMetrics(orders) {
+      if (!orders) orders = getOrders();
 
-      const orders = getOrders();
-
+      const validOrders = orders.filter(o => o.status !== 'cancelled');
       const deliveredOrders = orders.filter(o => o.status === 'delivered');
-      const revenue = deliveredOrders.reduce((s, o) => s + (o.subtotal || o.total), 0);
+      const shippingOrders = orders.filter(o => o.status === 'shipping');
+      const craftingOrders = orders.filter(o => o.status === 'crafting');
+      const newOrders = orders.filter(o => o.status === 'new');
+      const pendingOrders = orders.filter(o => o.status === 'new' || o.status === 'crafting' || o.status === 'shipping');
+
+      // 1. Total Revenue from all valid confirmed orders
+      const totalRevenue = validOrders.reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+      const deliveredRevenue = deliveredOrders.reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+      const pendingCod = pendingOrders.reduce((s, o) => s + (o.total || 0), 0);
 
       // Cost price lookup map
       const costMap = {};
+      ADMIN_BASE_PRODUCTS.forEach(p => {
+        if (p.id) costMap[p.id] = parseFloat(p.costPrice) || 0;
+        if (p.title) costMap[p.title.toLowerCase().trim()] = parseFloat(p.costPrice) || 0;
+      });
       allAdminProducts.forEach(p => {
         if (p.id) costMap[p.id] = parseFloat(p.costPrice) || 0;
         if (p.title) costMap[p.title.toLowerCase().trim()] = parseFloat(p.costPrice) || 0;
       });
 
-      let totalDeliveredCost = 0;
-      deliveredOrders.forEach(o => {
+      let totalCost = 0;
+      let deliveredCost = 0;
+
+      validOrders.forEach(o => {
+        let orderCost = 0;
         if (Array.isArray(o.items)) {
           o.items.forEach(item => {
             const qty = item.qty || 1;
@@ -1527,38 +1539,94 @@
             } else if (item.title && costMap[item.title.toLowerCase().trim()] !== undefined) {
               itemCost = costMap[item.title.toLowerCase().trim()];
             } else {
-              itemCost = Math.round((item.price || 0) * 0.35);
+              itemCost = Math.round((item.price || 0) * 0.35); // standard 35% knitwear craft cost fallback
             }
-            totalDeliveredCost += (itemCost * qty);
+            orderCost += (itemCost * qty);
           });
+        }
+        totalCost += orderCost;
+        if (o.status === 'delivered') {
+          deliveredCost += orderCost;
         }
       });
 
-      const netProfit = Math.max(0, revenue - totalDeliveredCost);
-      const profitMargin = revenue > 0 ? Math.round((netProfit / revenue) * 100) : 0;
+      const netProfit = Math.max(0, totalRevenue - totalCost);
+      const profitMargin = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
+      const deliveredNetProfit = Math.max(0, deliveredRevenue - deliveredCost);
 
       const totalCount = orders.length;
-      const craftingCount = orders.filter(o => o.status === 'crafting').length;
-      const pendingOrders = orders.filter(o => o.status === 'new' || o.status === 'crafting' || o.status === 'shipping');
-      const pendingCod = pendingOrders.reduce((s, o) => s + o.total, 0);
 
       const elRevenue = document.getElementById('adminRevenue');
+      const elRevenueSub = document.getElementById('adminRevenueSubtext');
       const elCost = document.getElementById('adminTotalCost');
+      const elCostDesc = document.getElementById('adminCostDesc');
       const elProfit = document.getElementById('adminNetProfit');
+      const elProfitSub = document.getElementById('adminProfitSubtext');
       const elMargin = document.getElementById('adminMarginPill');
       const elPending = document.getElementById('adminPendingCod');
       const elPendingCount = document.getElementById('adminPendingCountText');
       const elTotal = document.getElementById('adminTotalCount');
       const elBreakdown = document.getElementById('adminOrdersBreakdown');
 
-      if (elRevenue) elRevenue.textContent = `${revenue.toLocaleString()} EGP`;
-      if (elCost) elCost.textContent = `${totalDeliveredCost.toLocaleString()} EGP`;
+      if (elRevenue) elRevenue.textContent = `${totalRevenue.toLocaleString()} EGP`;
+      if (elRevenueSub) {
+        if (pendingCod > 0 && deliveredRevenue > 0) {
+          elRevenueSub.textContent = `محصل: ${deliveredRevenue.toLocaleString()} EGP • معلق: ${pendingCod.toLocaleString()} EGP`;
+        } else if (pendingCod > 0) {
+          elRevenueSub.textContent = `معلق قيد التحصيل: ${pendingCod.toLocaleString()} EGP`;
+        } else if (deliveredRevenue > 0) {
+          elRevenueSub.textContent = `تم تحصيل المبلغ بالكامل ✓`;
+        } else {
+          elRevenueSub.textContent = `All active customer orders`;
+        }
+      }
+
+      if (elCost) elCost.textContent = `${totalCost.toLocaleString()} EGP`;
+      if (elCostDesc) {
+        elCostDesc.textContent = `تكلفة تصنيع وخامات الطلبات`;
+      }
+
       if (elProfit) elProfit.textContent = `${netProfit.toLocaleString()} EGP`;
       if (elMargin) elMargin.textContent = `+${profitMargin}% Margin`;
+      if (elProfitSub) {
+        if (deliveredNetProfit > 0 && deliveredNetProfit !== netProfit) {
+          elProfitSub.textContent = `صافي الأرباح (محصل فعلياً: ${deliveredNetProfit.toLocaleString()} EGP)`;
+        } else if (deliveredNetProfit > 0) {
+          elProfitSub.textContent = `صافي أرباح محصلة بالكامل 💰`;
+        } else {
+          elProfitSub.textContent = `صافي المكسب من مبيعات القطع`;
+        }
+      }
+
       if (elPending) elPending.textContent = `${pendingCod.toLocaleString()} EGP`;
-      if (elPendingCount) elPendingCount.textContent = `${pendingOrders.length} orders in shipping & prep`;
+      if (elPendingCount) elPendingCount.textContent = `${pendingOrders.length} طلبات قيد الشحن والتجهيز`;
       if (elTotal) elTotal.textContent = `${totalCount} Orders`;
-      if (elBreakdown) elBreakdown.textContent = `${deliveredOrders.length} Delivered • ${craftingCount} In Crafting`;
+      if (elBreakdown) {
+        const parts = [];
+        if (deliveredOrders.length > 0) parts.push(`${deliveredOrders.length} Delivered`);
+        if (shippingOrders.length > 0) parts.push(`${shippingOrders.length} In Delivery`);
+        if (craftingOrders.length > 0) parts.push(`${craftingOrders.length} In Crafting`);
+        if (newOrders.length > 0) parts.push(`${newOrders.length} New`);
+        elBreakdown.textContent = parts.length > 0 ? parts.join(' • ') : '0 Delivered';
+      }
+    }
+
+    async function loadAdminData(syncCloud = true) {
+      // 1. Live Sync with Supabase Cloud
+      if (syncCloud && window.ZAZA_DB) {
+        try {
+          const cloudOrders = await window.ZAZA_DB.getOrders();
+          if (cloudOrders && Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+            localStorage.setItem('zaza_orders', JSON.stringify(cloudOrders));
+          }
+        } catch (e) {}
+      }
+
+      // First ensure products are loaded for accurate cost price lookup
+      await loadAdminProducts();
+
+      const orders = getOrders();
+      calculateAndRenderMetrics(orders);
 
       renderOrdersTable();
       renderColorBadges('newProdColorGrid', newProductColors, 'new');
@@ -1681,7 +1749,7 @@
 
       if (!prods || prods.length === 0) {
         const custom = JSON.parse(localStorage.getItem('zaza_custom_products')) || [];
-        const base = typeof BASE_PRODUCTS !== 'undefined' ? BASE_PRODUCTS : [];
+        const base = (typeof BASE_PRODUCTS !== 'undefined' ? BASE_PRODUCTS : ADMIN_BASE_PRODUCTS);
         prods = [...custom, ...base];
       }
 
@@ -2146,13 +2214,25 @@
       }).join('');
     }
 
-    function updateStatus(orderId, newStatus) {
+    async function updateStatus(orderId, newStatus) {
       const orders = getOrders();
       const order = orders.find(o => o.id === orderId);
       if (order) {
         order.status = newStatus;
-        saveOrders(orders);
-        if (window.ZAZA_DB) window.ZAZA_DB.updateOrderStatus(orderId, newStatus);
+        localStorage.setItem('zaza_orders', JSON.stringify(orders));
+
+        // Immediately update metrics and table on screen
+        calculateAndRenderMetrics(orders);
+        renderOrdersTable();
+
+        // Update in Supabase Cloud
+        if (window.ZAZA_DB) {
+          try {
+            await window.ZAZA_DB.updateOrderStatus(orderId, newStatus);
+          } catch (e) {
+            console.error('Error updating status in Supabase:', e);
+          }
+        }
         showToast(`Order #${orderId} marked as ${newStatus}! ⚡`);
       }
     }
@@ -2208,14 +2288,20 @@
         badge: `#${orderId}`,
         details: custInfo,
         dangerText: 'Delete Order',
-        onConfirm: () => {
+        onConfirm: async () => {
           let updated = getOrders().filter(o => o.id !== orderId);
-          saveOrders(updated);
+          localStorage.setItem('zaza_orders', JSON.stringify(updated));
 
-          if (window.ZAZA_DB) window.ZAZA_DB.deleteOrder(orderId);
+          calculateAndRenderMetrics(updated);
+          renderOrdersTable();
+
+          if (window.ZAZA_DB) {
+            try {
+              await window.ZAZA_DB.deleteOrder(orderId);
+            } catch (e) {}
+          }
           fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' }).catch(() => {});
 
-          loadAdminData();
           showToast(`Order #${orderId} deleted permanently! 🗑️`);
         }
       });
