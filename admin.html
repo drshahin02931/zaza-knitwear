@@ -16,6 +16,10 @@
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="images/zaza_logo.jpg">
+  <link rel="shortcut icon" href="favicon.ico">
+
   <script>
     (function() {
       const savedTheme = localStorage.getItem('zaza_theme') || 'dark';
@@ -1832,17 +1836,17 @@
               <label class="login-field-label" for="newAdminUsername">اسم المستخدم (Username) *</label>
               <div class="login-input-wrap">
                 <i class="fa-solid fa-at field-icon"></i>
-                <input type="text" id="newAdminUsername" class="login-input" placeholder="e.g. youssef_admin" pattern="[a-zA-Z0-9_\.\-]{3,30}" title="3-30 أحرف إنجليزية أو أرقام فقط" required>
+                <input type="text" id="newAdminUsername" class="login-input" placeholder="e.g. youssef_admin أو يوسف" required>
               </div>
             </div>
           </div>
 
           <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:16px; margin-bottom:16px;">
             <div class="login-field-group" style="margin-bottom:0;">
-              <label class="login-field-label" for="newAdminPassword">كلمة المرور المشفرة (Strong Password) *</label>
+              <label class="login-field-label" for="newAdminPassword">كلمة المرور المشفرة (Password) *</label>
               <div class="login-input-wrap">
                 <i class="fa-solid fa-lock field-icon"></i>
-                <input type="password" id="newAdminPassword" class="login-input" placeholder="8 خانات على الأقل مع رموز وأرقام" minlength="8" required>
+                <input type="password" id="newAdminPassword" class="login-input" placeholder="4 خانات على الأقل" minlength="4" required>
                 <button type="button" class="password-eye-toggle" onclick="togglePasswordVisibility('newAdminPassword', 'newAdminEyeIcon')">
                   <i class="fa-solid fa-eye" id="newAdminEyeIcon"></i>
                 </button>
@@ -1854,8 +1858,8 @@
               <div class="login-input-wrap">
                 <i class="fa-solid fa-shield-halved field-icon"></i>
                 <select id="newAdminRole" class="login-input" style="padding-left:42px; cursor:pointer;" required>
+                  <option value="super_admin" selected>👑 مدير عام (Super Admin - صلاحية كاملة)</option>
                   <option value="admin">🛡️ مشرف متجر (Store Admin)</option>
-                  <option value="super_admin">👑 مدير عام (Super Admin)</option>
                 </select>
               </div>
             </div>
@@ -2277,13 +2281,9 @@
       if (btnAdd) btnAdd.classList.toggle('active', tab === 'add');
       if (btnPass) btnPass.classList.toggle('active', tab === 'pass');
 
-      // Restrict "Add New Admin" tab to Super Admins only
+      // Enable "Add New Admin" tab for all authenticated admins
       if (btnAdd) {
-        if (currentAdminSession && currentAdminSession.role !== 'super_admin') {
-          btnAdd.style.display = 'none';
-        } else {
-          btnAdd.style.display = 'inline-flex';
-        }
+        btnAdd.style.display = 'inline-flex';
       }
 
       if (tab === 'list') {
@@ -2315,21 +2315,19 @@
           return;
         }
 
-        const isSuperAdmin = currentAdminSession && currentAdminSession.role === 'super_admin';
-
         tbody.innerHTML = users.map(u => {
-          const isCurrentUser = currentAdminSession && currentAdminSession.id === u.id;
+          const isCurrentUser = currentAdminSession && (currentAdminSession.id === u.id || currentAdminSession.username === u.username);
           const roleClass = u.role === 'super_admin' ? 'super' : 'regular';
           const roleText = u.role === 'super_admin' ? '👑 مدير عام (Super)' : '🛡️ مشرف (Admin)';
           const lastLoginStr = u.last_login 
             ? new Date(u.last_login).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' })
             : '<span style="color:var(--text-muted);">لم يسجل بعد</span>';
 
-          const deleteBtn = (isSuperAdmin && !isCurrentUser) ? `
+          const deleteBtn = (!isCurrentUser) ? `
             <button type="button" onclick="handleDeleteAdminUser('${u.id}', '${u.username}')" class="btn-outline" style="padding:4px 10px; font-size:0.75rem; color:#FF5555; border-color:rgba(255,85,85,0.4);" title="حذف حساب المشرف">
               <i class="fa-solid fa-trash-can"></i> حذف
             </button>
-          ` : (isCurrentUser ? `<span style="font-size:0.75rem; color:var(--accent-neon); font-weight:700;">(حسابك الحالي)</span>` : `<span style="font-size:0.75rem; color:var(--text-muted);">-</span>`);
+          ` : `<span style="font-size:0.75rem; color:var(--accent-neon); font-weight:700;">(حسابك الحالي)</span>`;
 
           return `
             <tr>
@@ -2366,9 +2364,8 @@
 
     async function handleCreateNewAdmin(e) {
       if (e) e.preventDefault();
-      if (!currentAdminSession || currentAdminSession.role !== 'super_admin') {
-        showToast('عذراً، صلاحية إنشاء مسؤول جديد مقتصرة على المدير العام فقط');
-        return;
+      if (!currentAdminSession) {
+        currentAdminSession = getStoredAdminSession();
       }
 
       const nameEl = document.getElementById('newAdminFullName');
@@ -2379,9 +2376,9 @@
       const submitBtn = document.getElementById('btnCreateAdminSubmit');
 
       const name = nameEl.value.trim();
-      const username = userEl.value.trim().toLowerCase();
+      let username = userEl.value.trim().toLowerCase().replace(/\s+/g, '_');
       const password = passEl.value;
-      const role = roleEl.value;
+      const role = roleEl ? roleEl.value : 'super_admin';
 
       if (!name || !username || !password) {
         if (alertEl) {
@@ -2391,10 +2388,10 @@
         return;
       }
 
-      if (password.length < 8) {
+      if (password.length < 4) {
         if (alertEl) {
           alertEl.style.display = 'flex';
-          alertEl.textContent = 'كلمة المرور يجب ألا تقل عن 8 خانات لتأمين النظام';
+          alertEl.textContent = 'كلمة المرور يجب ألا تقل عن 4 خانات';
         }
         return;
       }
@@ -2408,7 +2405,7 @@
         if (existing) {
           if (alertEl) {
             alertEl.style.display = 'flex';
-            alertEl.textContent = `اسم المستخدم (@${username}) مسجل بالفعل. اختر اسم مستخدم آخر.`;
+            alertEl.textContent = `اسم المستخدم (@${username}) مسجل بالفعل باسم (${existing.name}). يرجى اختيار اسم مستخدم آخر.`;
           }
           return;
         }
@@ -2422,7 +2419,7 @@
           name,
           passwordHash,
           salt,
-          role
+          role: role || 'super_admin'
         });
 
         if (ok) {
