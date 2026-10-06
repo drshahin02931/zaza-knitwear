@@ -1040,6 +1040,24 @@
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15) !important;
       color: #0F172A !important;
     }
+    [data-theme="light"] .admin-security-card h3 {
+      color: #0F172A !important;
+    }
+    [data-theme="light"] .admin-security-card h4 {
+      color: #15803D !important;
+    }
+    [data-theme="light"] .admin-security-card p {
+      color: #64748B !important;
+    }
+    [data-theme="light"] .admin-security-card div[style*="background:#0B0B10"],
+    [data-theme="light"] .admin-security-card div[style*="background: #0B0B10"] {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+    }
+    [data-theme="light"] .admin-security-card form[style*="background:rgba(255, 255, 255, 0.02)"] {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
 
     [data-theme="light"] .security-tab-btn {
       background: #F1F5F9 !important;
@@ -1213,6 +1231,12 @@
       <button class="btn-outline" onclick="openAdminSecurityModal()" id="btnManageAdmins" style="padding:8px 14px; font-size:0.82rem;" title="إدارة حسابات الأدمن وكلمات السر والأمان">
         <i class="fa-solid fa-users-gear" style="color:var(--accent-neon);"></i>
         <span>Admins & Security / المسؤولين</span>
+      </button>
+
+      <!-- Manage Categories Button -->
+      <button class="btn-outline" onclick="openCategoriesModal()" id="btnManageCategories" style="padding:8px 14px; font-size:0.82rem;" title="إدارة أقسام وتصنيفات المتجر (إضافة وحذف)">
+        <i class="fa-solid fa-folder-tree" style="color:var(--accent-neon);"></i>
+        <span>Categories / الأقسام</span>
       </button>
 
       <!-- Dark / Light Theme Toggle Button -->
@@ -1927,6 +1951,114 @@
     </div>
   </div>
 
+  <!-- ========================================================================
+       CATEGORIES MANAGEMENT MODAL
+       ======================================================================== -->
+  <div class="confirm-modal-overlay" id="categoriesManagementModal">
+    <div class="admin-security-card" style="max-width: 680px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border-subtle); padding-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:44px; height:44px; border-radius:12px; background:rgba(132, 255, 0, 0.12); border:1.5px solid var(--accent-neon); display:flex; align-items:center; justify-content:center; color:var(--accent-neon); font-size:1.2rem;">
+            <i class="fa-solid fa-folder-tree"></i>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:900; color:#FFFFFF; font-family:var(--font-display);">Store Categories / أقسام وتصنيفات المتجر</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">إضافة أقسام جديدة وحذف الأقسام مباشرة من واجهة المتجر وقاعدة البيانات</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCategoriesModal()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:6px;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Add New Category Form Box -->
+      <form id="newCategoryForm" onsubmit="handleAddNewCategory(event)" style="background:rgba(255, 255, 255, 0.02); border:1px solid var(--border-subtle); border-radius:14px; padding:18px; margin-bottom:24px;">
+        <h4 style="font-size:0.92rem; font-weight:800; color:var(--accent-neon); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-folder-plus"></i> إضافة قسم جديد (Add New Category)
+        </h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="login-field-group" style="margin-bottom:0;">
+            <label class="login-field-label" for="newCatNameAr">اسم القسم بالعربي (Arabic Name) *</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-tag field-icon"></i>
+              <input type="text" id="newCatNameAr" class="login-input" placeholder="مثال: شنط وباك باكس" required oninput="handleCategoryInputAr()">
+            </div>
+          </div>
+          <div class="login-field-group" style="margin-bottom:0;">
+            <label class="login-field-label" for="newCatNameEn">اسم القسم بالإنجليزي (English Name)</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-font field-icon"></i>
+              <input type="text" id="newCatNameEn" class="login-input" placeholder="e.g. Bags & Backpacks" oninput="handleCategoryInputEn()">
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+          <div class="login-field-group" style="margin-bottom:0;">
+            <label class="login-field-label" for="newCatKey">المفتاح البرمجي (Slug / Key) *</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-key field-icon"></i>
+              <input type="text" id="newCatKey" class="login-input" placeholder="e.g. bags" required pattern="[a-z0-9_-]+" title="حروف إنجليزية صغيرة بدون مسافات" oninput="this.dataset.manualEdited = 'true'">
+            </div>
+          </div>
+          <div class="login-field-group" style="margin-bottom:0;">
+            <label class="login-field-label" for="newCatIcon">الأيقونة (Category Icon)</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-icons field-icon"></i>
+              <select id="newCatIcon" class="login-input" style="padding-right:34px; cursor:pointer;">
+                <option value="fa-tag">🏷️ عام / بطاقة (fa-tag)</option>
+                <option value="fa-shield-halved">🛡️ خوذات وموتوسيكلات (fa-shield-halved)</option>
+                <option value="fa-mask">🎭 بالاكلافا وماسكات (fa-mask)</option>
+                <option value="fa-hat-cowboy-side">🧢 طواقي وآيس كاب (fa-hat-cowboy-side)</option>
+                <option value="fa-shirt">👕 سويت شيرت وتي شيرت (fa-shirt)</option>
+                <option value="fa-bag-shopping">🛍️ حقائب وشنط (fa-bag-shopping)</option>
+                <option value="fa-glasses">🕶️ نظارات واكسسوار (fa-glasses)</option>
+                <option value="fa-gem">💎 قطع بريميوم محدودة (fa-gem)</option>
+                <option value="fa-fire">🔥 تريند وعروض خاصة (fa-fire)</option>
+                <option value="fa-bolt">⚡ إصدارات سريعة (fa-bolt)</option>
+                <option value="fa-mitten">🧤 قفازات وهاند ميد (fa-mitten)</option>
+                <option value="fa-socks">🧦 جوارب ومكملات (fa-socks)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitNewCat" class="btn-primary" style="width:100%; justify-content:center; padding:10px 16px; font-weight:800; font-size:0.88rem;">
+          <i class="fa-solid fa-plus-circle"></i> إضافة القسم الجديد للمتجر فوراً
+        </button>
+      </form>
+
+      <!-- Active Categories Table -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-size:0.86rem; color:var(--text-secondary); font-weight:700;">
+          الأقسام المفعلة حالياً في المتجر:
+        </span>
+        <button type="button" class="btn-outline" onclick="loadAndRenderCategoriesTable()" style="padding:4px 12px; font-size:0.75rem;">
+          <i class="fa-solid fa-arrows-rotate"></i> تحديث
+        </button>
+      </div>
+
+      <div style="overflow-x:auto; border-radius:12px; border:1px solid var(--border-subtle); background:#0B0B10;">
+        <table class="admin-table" style="margin:0;">
+          <thead>
+            <tr>
+              <th>القسم والأيقونة (Category)</th>
+              <th>المفتاح البرمجي (Key)</th>
+              <th style="text-align:center;">إجراء (Action)</th>
+            </tr>
+          </thead>
+          <tbody id="categoriesTableBody">
+            <tr>
+              <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الأقسام...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastNotification" style="position:fixed; bottom:24px; right:24px; background:#181820; color:white; border:1px solid var(--accent-neon); padding:12px 20px; border-radius:var(--radius-full); font-size:0.88rem; box-shadow:0 0 20px rgba(132, 255, 0, 0.3); z-index:9999; display:none; align-items:center; gap:10px; transition:all 0.3s ease;">
     <i class="fa-solid fa-circle-check" style="color:var(--accent-neon);"></i>
@@ -2585,6 +2717,209 @@
       }
     }
 
+    // --- DYNAMIC STORE CATEGORIES MANAGEMENT ---
+    let appCategories = [];
+
+    async function loadAndPopulateCategories() {
+      try {
+        if (window.ZAZA_DB) {
+          appCategories = await window.ZAZA_DB.getCategories();
+        }
+        populateCategoryDropdowns(appCategories);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+      }
+    }
+
+    function populateCategoryDropdowns(cats) {
+      if (!Array.isArray(cats) || cats.length === 0) return;
+      const newCatSelect = document.getElementById('newProdCategory');
+      const editCatSelect = document.getElementById('editProdCategory');
+      
+      const optionsHtml = cats.map(c => `
+        <option value="${c.key}">${c.nameAr || c.nameEn} (${c.nameEn || c.key})</option>
+      `).join('');
+
+      if (newCatSelect) {
+        const prev = newCatSelect.value;
+        newCatSelect.innerHTML = optionsHtml;
+        if (prev && cats.some(c => c.key === prev)) {
+          newCatSelect.value = prev;
+        } else if (cats.length > 0) {
+          newCatSelect.value = cats[0].key;
+        }
+      }
+      if (editCatSelect) {
+        const prev = editCatSelect.value;
+        editCatSelect.innerHTML = optionsHtml;
+        if (prev && cats.some(c => c.key === prev)) {
+          editCatSelect.value = prev;
+        }
+      }
+    }
+
+    function openCategoriesModal() {
+      if (!currentAdminSession) {
+        showToast('يجب تسجيل الدخول أولاً للوصول إلى إدارة الأقسام');
+        return;
+      }
+      const modal = document.getElementById('categoriesManagementModal');
+      if (modal) {
+        modal.classList.add('active');
+        loadAndRenderCategoriesTable();
+      }
+    }
+
+    function closeCategoriesModal() {
+      const modal = document.getElementById('categoriesManagementModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function handleCategoryInputAr() {
+      const arVal = document.getElementById('newCatNameAr').value;
+      const keyInput = document.getElementById('newCatKey');
+      if (keyInput && !keyInput.dataset.manualEdited) {
+        const enVal = document.getElementById('newCatNameEn').value;
+        const source = enVal || arVal;
+        const slug = source.toLowerCase().trim().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+        if (slug) keyInput.value = slug;
+      }
+    }
+
+    function handleCategoryInputEn() {
+      const enVal = document.getElementById('newCatNameEn').value;
+      const keyInput = document.getElementById('newCatKey');
+      if (keyInput && !keyInput.dataset.manualEdited) {
+        const slug = enVal.toLowerCase().trim().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+        if (slug) keyInput.value = slug;
+      }
+    }
+
+    async function loadAndRenderCategoriesTable() {
+      const tbody = document.getElementById('categoriesTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحديث الأقسام...
+          </td>
+        </tr>
+      `;
+
+      try {
+        if (window.ZAZA_DB) {
+          appCategories = await window.ZAZA_DB.getCategories();
+        }
+        populateCategoryDropdowns(appCategories);
+
+        if (!appCategories || appCategories.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">
+                لا توجد أقسام مسجلة حالياً
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = appCategories.map(cat => `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:34px; height:34px; border-radius:8px; background:rgba(132, 255, 0, 0.1); border:1px solid var(--accent-neon); display:flex; align-items:center; justify-content:center; color:var(--accent-neon); font-size:0.95rem; flex-shrink:0;">
+                  <i class="fa-solid ${cat.icon || 'fa-tag'}"></i>
+                </div>
+                <div>
+                  <strong style="color:var(--text-primary); font-size:0.88rem; display:block;">${cat.nameAr || cat.nameEn}</strong>
+                  <span style="color:var(--text-secondary); font-size:0.75rem;">${cat.nameEn || ''}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <code style="background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:6px; font-size:0.78rem; color:var(--accent-neon); font-weight:700;">
+                ${cat.key}
+              </code>
+            </td>
+            <td style="text-align:center;">
+              <button type="button" class="btn-action-delete" onclick="handleDeleteCategoryClick('${cat.id}', '${cat.key}', '${(cat.nameAr || cat.nameEn || cat.key).replace(/'/g, "\\'")}')" style="background:rgba(255,85,85,0.12); border:1px solid rgba(255,85,85,0.4); color:#FF5555; padding:5px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer;" title="حذف هذا القسم">
+                <i class="fa-solid fa-trash-can"></i> حذف
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align:center; padding:20px; color:#FF5555;">
+              حدث خطأ في تحميل الأقسام: ${err.message}
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    async function handleAddNewCategory(e) {
+      e.preventDefault();
+      const nameAr = document.getElementById('newCatNameAr').value.trim();
+      const nameEn = document.getElementById('newCatNameEn').value.trim() || nameAr;
+      const keyInput = document.getElementById('newCatKey');
+      let key = keyInput.value.trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+      const icon = document.getElementById('newCatIcon').value;
+
+      if (!nameAr || !key) {
+        showToast('⚠️ يرجى ملء اسم القسم والمفتاح البرمجي');
+        return;
+      }
+
+      if (appCategories.some(c => c.key === key)) {
+        showToast('⚠️ هذا المفتاح البرمجي مستخدم بالفعل، اختر اسماً أو مفتاحاً آخر');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitNewCat');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
+
+      try {
+        const ok = await window.ZAZA_DB.addCategory({ key, nameEn, nameAr, icon });
+        if (ok) {
+          showToast(`✅ تم إضافة قسم "${nameAr}" بنجاح!`);
+          document.getElementById('newCategoryForm').reset();
+          delete keyInput.dataset.manualEdited;
+          await loadAndRenderCategoriesTable();
+          await loadAndPopulateCategories();
+        } else {
+          showToast('❌ فشل في إضافة القسم. تأكد من اتصال الإنترنت');
+        }
+      } catch (err) {
+        showToast('❌ خطأ: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة القسم الجديد للمتجر فوراً';
+      }
+    }
+
+    async function handleDeleteCategoryClick(catId, catKey, catName) {
+      if (!confirm(`هل أنت متأكد من حذف قسم "${catName}" (${catKey}) نهائياً من المتجر؟\n\nالمنتجات التابعة له لن تُحذف وستظل ظاهرة تحت "كل المنتجات".`)) {
+        return;
+      }
+
+      showToast(`جارٍ حذف قسم "${catName}"...`);
+      try {
+        const ok = await window.ZAZA_DB.deleteCategory(catId);
+        if (ok) {
+          showToast(`🗑️ تم حذف قسم "${catName}" بنجاح!`);
+          await loadAndRenderCategoriesTable();
+          await loadAndPopulateCategories();
+        } else {
+          showToast('❌ فشل في حذف القسم');
+        }
+      } catch (err) {
+        showToast('❌ خطأ: ' + err.message);
+      }
+    }
+
     // --- DATA & METRICS ---
     function getOrders() {
       return JSON.parse(localStorage.getItem('zaza_orders')) || [];
@@ -2727,8 +3062,9 @@
         } catch (e) {}
       }
 
-      // First ensure products are loaded for accurate cost price lookup
+      // First ensure products and dynamic categories are loaded
       await loadAdminProducts();
+      await loadAndPopulateCategories();
 
       const orders = getOrders();
       calculateAndRenderMetrics(orders);
@@ -2976,7 +3312,17 @@
       activeEditProductId = productId;
       document.getElementById('editProdId').value = prod.id;
       document.getElementById('editProdTitle').value = prod.title || '';
-      document.getElementById('editProdCategory').value = prod.category || 'helmets';
+      
+      const editSelect = document.getElementById('editProdCategory');
+      if (editSelect) {
+        if (prod.category && !Array.from(editSelect.options).some(o => o.value === prod.category)) {
+          const opt = document.createElement('option');
+          opt.value = prod.category;
+          opt.textContent = prod.categoryName || prod.category;
+          editSelect.appendChild(opt);
+        }
+        editSelect.value = prod.category || 'helmets';
+      }
       document.getElementById('editProdTag').value = prod.tag || '';
       document.getElementById('editProdPrice').value = prod.price || 0;
       document.getElementById('editProdCostPrice').value = prod.costPrice !== undefined ? prod.costPrice : 0;
@@ -3060,7 +3406,8 @@
 
       const title = document.getElementById('editProdTitle').value.trim();
       const category = document.getElementById('editProdCategory').value;
-      const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+      const matchedCat = (appCategories || []).find(c => c.key === category);
+      const categoryName = matchedCat ? (matchedCat.nameEn || matchedCat.nameAr) : (category.charAt(0).toUpperCase() + category.slice(1));
       const tag = document.getElementById('editProdTag').value.trim() || 'FEATURED GEAR';
       const price = parseInt(document.getElementById('editProdPrice').value, 10);
       const costPrice = parseInt(document.getElementById('editProdCostPrice').value, 10) || 0;
@@ -3545,7 +3892,7 @@
           id: 'zaza-custom-' + Date.now(),
           title: title,
           category: category,
-          categoryName: category.charAt(0).toUpperCase() + category.slice(1),
+          categoryName: ((appCategories || []).find(c => c.key === category)?.nameEn) || category.charAt(0).toUpperCase() + category.slice(1),
           price: price,
           costPrice: costPrice,
           oldPrice: oldPrice,

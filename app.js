@@ -255,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderProducts();
   fetchProductsFromDatabase();
+  loadAndRenderStoreCategories();
   updateCartUI();
   setupEventListeners();
   initSpecialOfferCountdown();
@@ -399,6 +400,51 @@ window.filterCategory = function(catKey) {
   const catalogEl = document.getElementById('catalog');
   if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
 };
+
+// Dynamic Categories Loader for Customer Storefront
+async function loadAndRenderStoreCategories() {
+  const container = document.getElementById('categoryPills');
+  if (!container) return;
+
+  try {
+    let cats = [];
+    if (window.ZAZA_DB) {
+      cats = await window.ZAZA_DB.getCategories();
+    }
+    if (!Array.isArray(cats) || cats.length === 0) return;
+
+    let html = `
+      <button class="pill-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">
+        <i class="fa-solid fa-border-all"></i> All Pieces / كل القطع
+      </button>
+    `;
+
+    cats.forEach(cat => {
+      const isActive = currentCategory === cat.key;
+      const icon = cat.icon || 'fa-tag';
+      const label = cat.nameAr ? `${cat.nameAr}` : (cat.nameEn || cat.key);
+      html += `
+        <button class="pill-btn ${isActive ? 'active' : ''}" data-category="${cat.key}">
+          <i class="fa-solid ${icon}"></i> ${label}
+        </button>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    // Attach event listeners to pills
+    container.querySelectorAll('.pill-btn').forEach(pill => {
+      pill.addEventListener('click', () => {
+        container.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentCategory = pill.dataset.category;
+        renderProducts();
+      });
+    });
+  } catch (err) {
+    console.warn('Could not load dynamic categories for store:', err);
+  }
+}
 
 // --- 6. EVENT LISTENERS ---
 function setupEventListeners() {

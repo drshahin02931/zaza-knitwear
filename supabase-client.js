@@ -484,7 +484,83 @@ const ZAZA_DB = {
       console.error('Failed to delete admin user:', err);
       return false;
     }
+  },
+
+  // 6. DYNAMIC CATEGORIES MANAGEMENT
+  async getCategories() {
+    const defaultCategories = [
+      { id: 'cat-helmets', key: 'helmets', nameEn: 'Helmet Covers', nameAr: 'أغطية خوذات', icon: 'fa-shield-halved' },
+      { id: 'cat-balaclavas', key: 'balaclavas', nameEn: 'Balaclavas & Ski Hoods', nameAr: 'بالاكلافا وماسكات', icon: 'fa-mask' },
+      { id: 'cat-beanies', key: 'beanies', nameEn: 'Beanies', nameAr: 'طواقي شتوية', icon: 'fa-hat-cowboy-side' },
+      { id: 'cat-cardigans', key: 'cardigans', nameEn: 'Streetwear Cardigans', nameAr: 'كارديجان وملابس', icon: 'fa-shirt' }
+    ];
+
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/categories?select=*&order=display_order.asc,created_at.asc`, {
+        headers: this.getHeaders()
+      });
+      if (!res.ok) throw new Error('Cloud categories fetch failed');
+      const rows = await res.json();
+      if (!rows || rows.length === 0) return defaultCategories;
+      
+      const mapped = rows.map(r => ({
+        id: r.id,
+        key: r.key,
+        nameEn: r.name_en || r.name_ar || r.key,
+        nameAr: r.name_ar || r.name_en || r.key,
+        icon: r.icon || 'fa-tag'
+      }));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('zaza_cached_categories', JSON.stringify(mapped));
+      }
+      return mapped;
+    } catch (err) {
+      console.warn('Using local/cached categories fallback:', err.message);
+      if (typeof localStorage !== 'undefined') {
+        const cached = localStorage.getItem('zaza_cached_categories');
+        return cached ? JSON.parse(cached) : defaultCategories;
+      }
+      return defaultCategories;
+    }
+  },
+
+  async addCategory({ key, nameEn, nameAr, icon }) {
+    try {
+      const payload = {
+        key: String(key).trim().toLowerCase(),
+        name_en: String(nameEn || nameAr).trim(),
+        name_ar: String(nameAr || nameEn).trim(),
+        icon: String(icon || 'fa-tag').trim()
+      };
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/categories`, {
+        method: 'POST',
+        headers: this.getHeaders(true),
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to add category:', err);
+      return false;
+    }
+  },
+
+  async deleteCategory(categoryId) {
+    try {
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/categories?id=eq.${categoryId}`, {
+        method: 'DELETE',
+        headers: this.getHeaders()
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Failed to delete category:', err);
+      return false;
+    }
   }
 };
 
-window.ZAZA_DB = ZAZA_DB;
+if (typeof window !== 'undefined') {
+  window.ZAZA_DB = ZAZA_DB;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ZAZA_DB };
+}
