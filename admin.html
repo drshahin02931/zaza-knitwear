@@ -1438,7 +1438,12 @@
             <input type="text" id="newProdTitle" required placeholder="e.g. ZAZA Bat Ears Moto Helmet Cover">
           </div>
           <div class="form-group">
-            <label>Category *</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label style="margin-bottom:0;">Category / القسم *</label>
+              <button type="button" onclick="openCategoriesModal()" style="background:none; border:none; color:var(--accent-neon); font-size:0.78rem; font-weight:700; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:4px;">
+                <i class="fa-solid fa-plus-circle"></i> + إضافة أو تعديل الأقسام
+              </button>
+            </div>
             <select id="newProdCategory" required>
               <option value="helmets">Helmet Covers</option>
               <option value="balaclavas">Balaclavas & Ski Hoods</option>
