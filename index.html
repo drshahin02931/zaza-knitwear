@@ -61,7 +61,6 @@
       <!-- Navigation Links -->
       <nav class="header-nav">
         <a href="#catalog" class="nav-link active">Shop Catalog</a>
-        <a href="#special-offer-anchor" class="nav-link" id="navFlashDealLink" style="color:var(--accent-neon);">⚡ Flash Deal</a>
         <a href="#custom-order" class="nav-link">Bespoke Orders</a>
         <a href="#reviews" class="nav-link">Rider Reviews</a>
       </nav>
@@ -114,80 +113,13 @@
         </div>
       </div>
 
-      <!-- Hero Featured Showcase -->
-      <div class="hero-showcase">
-        <div class="hero-card-featured">
-          <img src="images/neon_cat_helmet.jpg" alt="ZAZA X Signature Neon Cat-Ears Motorcycle Helmet Cover" loading="eager">
-          
-          <div class="hero-floating-badge">
-            <div class="floating-badge-icon">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div class="floating-badge-text">
-              <strong>ZAZA Signature Piece</strong>
-              <span>Electric Lime Glow • Universal Fit</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Hero Featured Showcase Slot (Ready for incoming Drop Image) -->
+      <div class="hero-showcase" id="heroShowcaseSlot" style="display:none;"></div>
 
     </div>
   </section>
 
-  <!-- ========================================================================
-       FEATURE: SPECIAL OFFER & FLASH DEAL SECTION (LIVE COUNTDOWN TIMER)
-       ======================================================================== -->
-  <div id="special-offer-anchor"></div>
-  <section class="special-offer-section" id="specialOfferSection">
-    <div class="special-offer-card">
-      <div class="offer-text-box">
-        <span class="offer-badge-pill" id="offerStickerBadge">⚡ FLASH RIDER DEAL • LIMITED DROP</span>
-        <h3 class="offer-title" id="offerTitleDisplay">MIDNIGHT CYBER RIDER FLASH SALE</h3>
-        <p class="offer-pitch" id="offerSubtitleDisplay">Get the Signature Neon Cat-Ears Cover with Instant Free Shipping!</p>
 
-        <!-- Live Countdown Timer -->
-        <div class="countdown-clock-wrap">
-          <div class="countdown-box">
-            <span class="countdown-val" id="timerDays">00</span>
-            <span class="countdown-label">Days</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-box">
-            <span class="countdown-val" id="timerHours">00</span>
-            <span class="countdown-label">Hours</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-box">
-            <span class="countdown-val" id="timerMins">00</span>
-            <span class="countdown-label">Mins</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-box">
-            <span class="countdown-val" id="timerSecs">00</span>
-            <span class="countdown-label">Secs</span>
-          </div>
-        </div>
-
-        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-          <div>
-            <span class="offer-deal-price" id="offerPriceDisplay">590 EGP</span>
-            <span style="font-size:1rem; color:var(--text-muted); text-decoration:line-through; margin-left:8px;" id="offerOldPriceDisplay">890 EGP</span>
-          </div>
-
-          <button class="btn-primary btn-offer-claim" onclick="claimSpecialOfferDeal()" style="padding:12px 28px;">
-            <i class="fa-solid fa-fire"></i> Claim Flash Deal Now
-          </button>
-        </div>
-      </div>
-
-      <div class="offer-visual-box">
-        <div class="offer-img-frame">
-          <img id="offerImageDisplay" src="images/neon_cat_helmet.jpg" alt="Special Deal Product">
-        </div>
-        <div class="offer-discount-sticker" id="offerStickerDiscount">SAVE 34%</div>
-      </div>
-    </div>
-  </section>
 
   <!-- Features Strip -->
   <section class="features-strip">

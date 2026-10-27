@@ -376,7 +376,7 @@ button {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1fr;
   align-items: center;
   gap: 48px;
   background: radial-gradient(circle at 10% 20%, #1A1A24 0%, #0E0E12 100%);
@@ -386,6 +386,10 @@ button {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+}
+
+.hero-grid:has(.hero-showcase:not([style*="display:none"]):not(:empty)) {
+  grid-template-columns: 1.15fr 0.85fr;
 }
 
 .hero-grid::after {
